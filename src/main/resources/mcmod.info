@@ -1,0 +1,15 @@
+[{
+  "modid": "comforts",
+  "name": "Comforts",
+  "description": "Adds sleeping bags for going on adventures without setting a new spawn. Comes in 16 different colors!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["C4"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": [],
+  "useDependencyInformation": true
+}]

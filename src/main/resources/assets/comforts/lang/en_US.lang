@@ -1,0 +1,21 @@
+item.comforts.sleeping_bag.white.name=White Sleeping Bag
+item.comforts.sleeping_bag.orange.name=Orange Sleeping Bag
+item.comforts.sleeping_bag.magenta.name=Magenta Sleeping Bag
+item.comforts.sleeping_bag.lightBlue.name=Light Blue Sleeping Bag
+item.comforts.sleeping_bag.yellow.name=Yellow Sleeping Bag
+item.comforts.sleeping_bag.lime.name=Lime Sleeping Bag
+item.comforts.sleeping_bag.pink.name=Pink Sleeping Bag
+item.comforts.sleeping_bag.gray.name=Gray Sleeping Bag
+item.comforts.sleeping_bag.silver.name=Light Gray Sleeping Bag
+item.comforts.sleeping_bag.cyan.name=Cyan Sleeping Bag
+item.comforts.sleeping_bag.purple.name=Purple Sleeping Bag
+item.comforts.sleeping_bag.blue.name=Blue Sleeping Bag
+item.comforts.sleeping_bag.brown.name=Brown Sleeping Bag
+item.comforts.sleeping_bag.green.name=Green Sleeping Bag
+item.comforts.sleeping_bag.red.name=Red Sleeping Bag
+item.comforts.sleeping_bag.black.name=Black Sleeping Bag
+
+tile.sleepingbag.noSleep=You can only sleep at night
+tile.sleepingbag.occupied=This sleeping bag is occupied
+tile.sleepingbag.notSafe=You may not rest now, there are monsters nearby
+tile.sleepingbag.tooFarAway=You may not rest now, the sleeping bag is too far away
