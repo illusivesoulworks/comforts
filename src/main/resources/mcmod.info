@@ -1,7 +1,7 @@
 [{
   "modid": "comforts",
   "name": "Comforts",
-  "description": "Adds sleeping bags for going on adventures without setting a new spawn. Comes in 16 different colors!",
+  "description": "Adds sleeping bags and hammocks for portability and daytime napping respectively, all without setting a new spawn. Comes in 16 different colors!",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
@@ -10,6 +10,6 @@
   "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": [],
+  "dependencies": ["toughasnails","morpheus"],
   "useDependencyInformation": true
 }]

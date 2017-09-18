@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "comforts:items/hammock",
+    "layer1": "comforts:items/hammock_color"
+  }
+}

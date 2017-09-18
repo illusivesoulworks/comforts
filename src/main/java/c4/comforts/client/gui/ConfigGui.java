@@ -18,7 +18,7 @@ public class ConfigGui extends GuiConfig {
     }
 
     private static List<IConfigElement> getConfigElements() {
-        List<IConfigElement> list = new ArrayList<IConfigElement>();
+        List<IConfigElement> list = new ArrayList<>();
 
         for (Property prop : CommonProxy.config.getCategory("general").getOrderedValues()) {
             list.add(new ConfigElement(prop));

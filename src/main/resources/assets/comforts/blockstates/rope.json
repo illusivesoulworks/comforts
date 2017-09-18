@@ -1,0 +1,20 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "comforts:rope"
+  },
+  "variants": {
+    "facing": {
+      "north":{"y": 180},
+      "south":{},
+      "east":{"y": 270},
+      "west":{"y": 90}
+    },
+    "supporting": {
+      "true": {
+        "model": "comforts:rope_support"
+      },
+      "false": {}
+    }
+  }
+}

@@ -1,6 +1,8 @@
 package c4.comforts.client.render;
 
-import c4.comforts.blocks.BlockSleepingBag;
+import c4.comforts.common.blocks.BlockHammock;
+import c4.comforts.common.blocks.BlockSleepingBag;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -17,10 +19,17 @@ public class RenderHandler {
     public void onRender(RenderPlayerEvent.Pre e) {
         if (e.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) e.getEntity();
-            if (player.isPlayerSleeping() && player.world.getBlockState(player.bedLocation).getBlock() instanceof BlockSleepingBag) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0F, -0.375F, 0F);
-                this.pop = true;
+            if (player.isPlayerSleeping()) {
+                Block block = player.world.getBlockState(player.bedLocation).getBlock();
+                if (block instanceof BlockSleepingBag) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0F, -0.375F, 0F);
+                    this.pop = true;
+                } else if (block instanceof BlockHammock) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0F, -0.5F, 0F);
+                    this.pop = true;
+                }
             }
         }
     }

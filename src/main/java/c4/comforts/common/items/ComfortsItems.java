@@ -1,6 +1,5 @@
-package c4.comforts.items;
+package c4.comforts.common.items;
 
-import c4.comforts.items.ItemSleepingBag;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -8,10 +7,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ComfortsItems {
 
     @GameRegistry.ObjectHolder("comforts:sleeping_bag")
-    public static ItemSleepingBag sleepingBag;
+    public static ItemSleepingBag SLEEPING_BAG;
+
+    @GameRegistry.ObjectHolder("comforts:hammock")
+    public static ItemHammock HAMMOCK;
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
-        sleepingBag.initModel();
+        SLEEPING_BAG.initModel();
+        HAMMOCK.initModel();
     }
 }

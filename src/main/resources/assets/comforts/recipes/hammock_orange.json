@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "hammock",
+  "pattern": [
+    "sws",
+    "sas",
+    "sws"
+  ],
+  "key": {
+    "a": {
+      "item": "minecraft:wool",
+      "data": 1
+    },
+    "s": {
+      "type": "forge:ore_dict",
+      "ore": "string"
+    },
+    "w": {
+      "type": "forge:ore_dict",
+      "ore": "slabWood"
+    }
+  },
+  "result": {
+    "item": "comforts:hammock",
+    "data": 1
+  }
+}

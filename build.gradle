@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12.1-0.0.1"
+version = "1.12.1-0.0.2"
 group = "c4.comforts" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "comforts"
 
@@ -23,7 +23,7 @@ compileJava {
 minecraft {
     version = "1.12-14.21.1.2387"
     runDir = "run"
-    
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
@@ -31,6 +31,12 @@ minecraft {
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20170624"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+}
+
+jar {
+    manifest {
+        attributes ("FMLCorePlugin": "c4.comforts.asm.ComfortsLoadingPlugin", "FMLCorePluginContainsFMLMod": "true")
+    }
 }
 
 dependencies {

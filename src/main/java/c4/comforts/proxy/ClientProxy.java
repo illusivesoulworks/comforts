@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2017. C4, MIT License
+ */
+
 package c4.comforts.proxy;
 
-import c4.comforts.blocks.ComfortsBlocks;
+import c4.comforts.common.blocks.BlockHammock;
+import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.client.render.RenderHandler;
-import c4.comforts.items.ComfortsItems;
-import c4.comforts.blocks.BlockSleepingBag;
+import c4.comforts.common.items.ComfortsItems;
+import c4.comforts.common.blocks.BlockSleepingBag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -31,10 +36,16 @@ public class ClientProxy extends CommonProxy {
 
         ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
         BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
-        itemColors.registerItemColorHandler(ComfortsItems.sleepingBag.getColorFromItemstack(), ComfortsItems.sleepingBag);
 
-        for (BlockSleepingBag sleepingBag : ComfortsBlocks.sleepingBags) {
+        itemColors.registerItemColorHandler(ComfortsItems.SLEEPING_BAG.getColorFromItemstack(), ComfortsItems.SLEEPING_BAG);
+        itemColors.registerItemColorHandler(ComfortsItems.HAMMOCK.getColorFromItemstack(), ComfortsItems.HAMMOCK);
+
+        for (BlockSleepingBag sleepingBag : ComfortsBlocks.SLEEPING_BAGS) {
             blockColors.registerBlockColorHandler(sleepingBag.colorMultiplier(), sleepingBag);
+        }
+
+        for (BlockHammock hammock : ComfortsBlocks.HAMMOCKS) {
+            blockColors.registerBlockColorHandler(hammock.colorMultiplier(), hammock);
         }
 
         MinecraftForge.EVENT_BUS.register(new RenderHandler());

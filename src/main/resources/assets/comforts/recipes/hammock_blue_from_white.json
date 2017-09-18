@@ -1,0 +1,18 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "dyed_hammock",
+  "ingredients": [
+    {
+      "item": "comforts:sleeping_bag",
+      "data": 0
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlue"
+    }
+  ],
+  "result": {
+    "item": "comforts:sleeping_bag",
+    "data": 11
+  }
+}
