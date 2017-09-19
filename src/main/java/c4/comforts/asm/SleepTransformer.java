@@ -64,7 +64,7 @@ public class SleepTransformer implements IClassTransformer {
                 (MethodNode method, AbstractInsnNode node) -> {
                     InsnList toInject = new InsnList();
 
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/common/SleepHelper", "notTimeToSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/common/util/SleepHelper", "notTimeToSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
 
                     method.instructions.insert(node, toInject);
 
@@ -84,7 +84,7 @@ public class SleepTransformer implements IClassTransformer {
                 (MethodNode method, AbstractInsnNode node) -> {
                     InsnList toInject = new InsnList();
 
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/common/SleepHelper", "advanceTime", "(Lnet/minecraft/world/World;)V"));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/common/util/SleepHelper", "advanceTime", "(Lnet/minecraft/world/World;)V"));
 
                     method.instructions.insertBefore(node, toInject);
 

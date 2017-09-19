@@ -33,7 +33,7 @@ public class SleepHelper {
         if (worldTime % 24000L >= 12000L) {
             worldIn.setWorldTime(i - i % 24000L);
         } else {
-            worldIn.setWorldTime((i - i % 24000L) - 12000L);
+            worldIn.setWorldTime((i - i % 24000L) - 12001L);
         }
     }
 
