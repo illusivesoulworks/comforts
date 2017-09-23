@@ -3,7 +3,7 @@
   "group": "dyed_hammock",
   "ingredients": [
     {
-      "item": "comforts:sleeping_bag",
+      "item": "comforts:hammock",
       "data": 0
     },
     {
@@ -12,7 +12,7 @@
     }
   ],
   "result": {
-    "item": "comforts:sleeping_bag",
+    "item": "comforts:hammock",
     "data": 11
   }
 }

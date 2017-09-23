@@ -33,10 +33,14 @@ public class BlockRope extends Block {
     );
     public static final PropertyBool SUPPORTING = PropertyBool.create("supporting");
 
-    protected static final AxisAlignedBB ROPE_NORTH_AABB = new AxisAlignedBB(0.375D, 0.375D, 0.6875D, 0.625D, 0.625D, 1.0D);
-    protected static final AxisAlignedBB ROPE_SOUTH_AABB = new AxisAlignedBB(0.375D, 0.375D, 0.0D, 0.625D, 0.625D, 0.3125D);
-    protected static final AxisAlignedBB ROPE_WEST_AABB = new AxisAlignedBB(0.6875D, 0.375D, 0.375D, 1.0D, 0.625D, 0.625D);
-    protected static final AxisAlignedBB ROPE_EAST_AABB = new AxisAlignedBB(0.0D, 0.375D, 0.375D, 0.3125D, 0.625D, 0.625D);
+    protected static final AxisAlignedBB ROPE_NORTH_AABB = new AxisAlignedBB(0.375D, 0.0D, 0.75D, 0.625D, 0.5D, 1.0D);
+    protected static final AxisAlignedBB ROPE_SOUTH_AABB = new AxisAlignedBB(0.375D, 0.0D, 0.0D, 0.625D, 0.5D, 0.25D);
+    protected static final AxisAlignedBB ROPE_WEST_AABB = new AxisAlignedBB(0.75D, 0.0D, 0.375D, 1.0D, 0.5D, 0.625D);
+    protected static final AxisAlignedBB ROPE_EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.375D, 0.25D, 0.5D, 0.625D);
+    protected static final AxisAlignedBB ROPE_NORTH_S_AABB = new AxisAlignedBB(0.375D, 0.1875D, 0.5625D, 0.625D, 0.5D, 1.0D);
+    protected static final AxisAlignedBB ROPE_SOUTH_S_AABB = new AxisAlignedBB(0.375D, 0.1875D, 0.0D, 0.625D, 0.5D, 0.4375D);
+    protected static final AxisAlignedBB ROPE_WEST_S_AABB = new AxisAlignedBB(0.5625D, 0.1875D, 0.375D, 1.0D, 0.5D, 0.625D);
+    protected static final AxisAlignedBB ROPE_EAST_S_AABB = new AxisAlignedBB(0.0D, 0.1875D, 0.375D, 0.4375D, 0.5D, 0.625D);
 
     public BlockRope() {
         super(Material.CLOTH);
@@ -51,16 +55,18 @@ public class BlockRope extends Block {
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
+        boolean supporting = state.getValue(SUPPORTING);
+
         switch (state.getValue(FACING))
         {
             case EAST:
-                return ROPE_EAST_AABB;
+                return supporting ? ROPE_EAST_S_AABB : ROPE_EAST_AABB;
             case WEST:
-                return ROPE_WEST_AABB;
+                return supporting ? ROPE_WEST_S_AABB : ROPE_WEST_AABB;
             case SOUTH:
-                return ROPE_SOUTH_AABB;
+                return supporting ? ROPE_SOUTH_S_AABB : ROPE_SOUTH_AABB;
             default:
-                return ROPE_NORTH_AABB;
+                return supporting ? ROPE_NORTH_S_AABB : ROPE_NORTH_AABB;
         }
     }
 

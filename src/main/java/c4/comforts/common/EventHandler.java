@@ -45,9 +45,9 @@ public class EventHandler {
 
         if (state.getBlock() instanceof BlockSleepingBag) {
 
-            if (Loader.isModLoaded("toughasnails") && ConfigHandler.warmBody) {
-                warmBody(player);
-            }
+//            if (Loader.isModLoaded("toughasnails") && ConfigHandler.warmBody) {
+//                warmBody(player);
+//            }
 
             if (!ConfigHandler.autoPickUp) { return; }
 
@@ -63,13 +63,13 @@ public class EventHandler {
         }
     }
 
-    @Optional.Method(modid = "toughasnails")
-    public void warmBody(EntityPlayer player) {
-        ITemperature playerTemp = TemperatureHelper.getTemperatureData(player);
-        int temp = playerTemp.getTemperature().getRawValue();
-        if (temp < 10) {
-            temp += Math.min(5, 10 - temp);
-        }
-        playerTemp.setTemperature(new Temperature(temp));
-    }
+//    @Optional.Method(modid = "toughasnails")
+//    public void warmBody(EntityPlayer player) {
+//        ITemperature playerTemp = TemperatureHelper.getTemperatureData(player);
+//        int temp = playerTemp.getTemperature().getRawValue();
+//        if (temp < 10) {
+//            temp += Math.min(5, 10 - temp);
+//        }
+//        playerTemp.setTemperature(new Temperature(temp));
+//    }
 }

@@ -4,5 +4,6 @@ public class ItemHammock extends ItemBase {
 
     public ItemHammock() {
         super("hammock");
+        this.setMaxStackSize(1);
     }
 }
