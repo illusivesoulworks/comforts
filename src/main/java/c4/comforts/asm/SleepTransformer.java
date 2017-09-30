@@ -56,7 +56,7 @@ public class SleepTransformer implements IClassTransformer {
     }
 
     private static byte[] transformPlayerSleep(byte[] basicClass) {
-        log("Preparing to transform PlayerSleep");
+        log("Preparing to transform Entity Player");
         MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "B_", "()V");
 
         return transform(basicClass, Pair.of(sig, combine(
@@ -76,7 +76,7 @@ public class SleepTransformer implements IClassTransformer {
     }
 
     private static byte[] transformWorldSleep(byte[] basicClass) {
-        log("Preparing to transform WorldSleep");
+        log("Preparing to transform World Server");
         MethodSignature sig = new MethodSignature("tick","func_72835_b","d", "()V");
 
         return transform(basicClass, Pair.of(sig, combine(

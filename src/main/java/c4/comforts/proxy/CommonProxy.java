@@ -10,6 +10,9 @@ import c4.comforts.common.ConfigHandler;
 import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.common.blocks.BlockSleepingBag;
 import c4.comforts.common.EventHandler;
+import c4.comforts.common.capability.CapabilityHandler;
+import c4.comforts.common.capability.IWellRested;
+import c4.comforts.common.capability.WellRested;
 import c4.comforts.compatibility.MorpheusDayHandler;
 import c4.comforts.common.items.ItemHammock;
 import c4.comforts.common.items.ItemSleepingBag;
@@ -17,6 +20,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -42,7 +46,10 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
+
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+        CapabilityManager.INSTANCE.register(IWellRested.class, new WellRested.Storage(), WellRested.class);
     }
 
     @Optional.Method(modid = "morpheus")

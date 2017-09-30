@@ -7,6 +7,9 @@ package c4.comforts.common.util;
 import c4.comforts.Comforts;
 import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.BlockSleepingBag;
+import c4.comforts.network.NetworkHandler;
+import c4.comforts.network.SPacketSleep;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +17,9 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUseBed;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -45,23 +50,24 @@ public class SleepHelper {
         return world.isDaytime() && !(worldTime > 500L && worldTime < 11500L);
     }
 
-    public static boolean allowedToSleep(EntityPlayer player, BlockPos bedLocation) {
+    public static boolean notAllowedToSleep(EntityPlayer player, BlockPos bedLocation) {
 
         Block bedBlock = player.world.getBlockState(bedLocation).getBlock();
         long worldTime = player.world.getWorldTime() % 24000L;
 
         if (bedBlock instanceof BlockSleepingBag || bedBlock == Blocks.BED) {
-            return !player.world.isDaytime();
+            return player.world.isDaytime();
         }
 
-        return bedBlock instanceof BlockHammock && worldTime > 500L && worldTime < 11500L;
+        return !(bedBlock instanceof BlockHammock && worldTime > 500L && worldTime < 11500L);
     }
 
-    public static EntityPlayer.SleepResult trySleep(EntityPlayer player, BlockPos bedLocation)
+    public static EntityPlayer.SleepResult trySleep(EntityPlayer player, BlockPos bedLocation, boolean autoSleep)
     {
         EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(player, bedLocation);
         if (ret != null) return ret;
-        EnumFacing enumfacing = player.world.getBlockState(bedLocation).getValue(BlockHorizontal.FACING);
+        EnumFacing enumfacing;
+        enumfacing = autoSleep ? player.getHorizontalFacing() : player.world.getBlockState(bedLocation).getValue(BlockHorizontal.FACING);
 
         if (!player.world.isRemote)
         {
@@ -75,18 +81,24 @@ public class SleepHelper {
                 return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
             }
 
-            if (!allowedToSleep(player, bedLocation))
-            {
-                return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
-            }
+            if (!autoSleep) {
 
-            try {
-                if (!EntityPlayerAccessor.bedInRange(player, bedLocation, enumfacing))
+                if (notAllowedToSleep(player, bedLocation))
                 {
-                    return EntityPlayer.SleepResult.TOO_FAR_AWAY;
+                    return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
                 }
-            } catch (Exception e) {
-                Comforts.logger.log(Level.ERROR, "Failed to invoke method bedInRange");
+
+                try {
+                    if (!EntityPlayerAccessor.bedInRange(player, bedLocation, enumfacing)) {
+                        return EntityPlayer.SleepResult.TOO_FAR_AWAY;
+                    }
+                } catch (Exception e) {
+                    Comforts.logger.log(Level.ERROR, "Failed to invoke method bedInRange");
+                }
+
+            } else if (player.world.isDaytime()) {
+
+                return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
             }
 
             double d0 = 8.0D;
@@ -146,10 +158,10 @@ public class SleepHelper {
         if (!player.world.isRemote)
         {
             player.world.updateAllPlayersSleepingFlag();
-            SPacketUseBed sleepPacket = new SPacketUseBed(player, bedLocation);
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            playerMP.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, sleepPacket);
-            playerMP.connection.sendPacket(sleepPacket);
+            playerMP.addStat(StatList.SLEEP_IN_BED);
+            SPacketSleep sleepPacket = new SPacketSleep(bedLocation, autoSleep);
+            NetworkHandler.INSTANCE.sendTo(sleepPacket, playerMP);
         }
 
         return EntityPlayer.SleepResult.OK;

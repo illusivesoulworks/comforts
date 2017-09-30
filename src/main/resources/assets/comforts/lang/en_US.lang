@@ -36,6 +36,7 @@ tile.sleeping_bag.noSleep=You can only sleep at night
 tile.sleeping_bag.occupied=This sleeping bag is occupied
 tile.sleeping_bag.notSafe=You may not rest now, there are monsters nearby
 tile.sleeping_bag.tooFarAway=You may not rest now, the sleeping bag is too far away
+tile.sleeping_bag.noSpace=There is no space for the sleeping bag
 
 tile.hammock.noSleep=You can only nap during the day
 tile.hammock.occupied=This hammock is occupied
@@ -43,3 +44,5 @@ tile.hammock.notSafe=You may not rest now, there are monsters nearby
 tile.hammock.tooFarAway=You may not rest now, the hammock is too far away
 
 tile.comforts.rope.name=Rope and Nail
+
+capability.comforts.notSleepy=You may not rest now, you don't feel sleepy yet

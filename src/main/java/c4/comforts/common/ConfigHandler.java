@@ -14,8 +14,10 @@ public class ConfigHandler {
     private static final String CATEGORY_GENERAL = "general";
 
     public static boolean autoPickUp = true;
-//    public static boolean autoUse = true;
-//    public static boolean warmBody = false;
+    public static boolean autoUse = true;
+    public static boolean warmBody = true;
+    public static boolean wellRested = true;
+    public static float sleepyRatio = 2.0F;
     public static Configuration cfg;
 
     public static void readConfig() {
@@ -35,10 +37,12 @@ public class ConfigHandler {
     private static void initConfig() {
         cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration");
         autoPickUp = cfg.getBoolean("Auto Pick-Up Sleeping Bag", CATEGORY_GENERAL, autoPickUp, "Set to true to automatically pick up sleeping bags after sleeping");
-//        autoUse = cfg.getBoolean("Auto Use Sleeping Bag", CATEGORY_GENERAL, autoUse, "Set to true to automatically use sleeping bags");
-//        if (Loader.isModLoaded("toughasnails")) {
-//            warmBody = cfg.getBoolean("Insulated Sleeping Bags", CATEGORY_GENERAL, warmBody, "Set to true to have sleeping bags slightly warm your body if you're cold");
-//        }
+        autoUse = cfg.getBoolean("Auto Use Sleeping Bag", CATEGORY_GENERAL, autoUse, "Set to true to automatically use sleeping bags");
+        wellRested = cfg.getBoolean("Well Rested", CATEGORY_GENERAL, wellRested, "Set to true to activate an effect that prevents sleeping depending on how long you previously slept");
+        sleepyRatio = cfg.getFloat("Sleepy Factor", CATEGORY_GENERAL, sleepyRatio, 1.0F, 10.0F, "If well rested is true, this value is used to determine how long you need before being able to sleep again (larger numbers = can sleep sooner)");
+        if (Loader.isModLoaded("toughasnails")) {
+            warmBody = cfg.getBoolean("Insulated Sleeping Bags", CATEGORY_GENERAL, warmBody, "Set to true to have sleeping bags slightly warm your body if you're cold");
+        }
     }
 
     @Mod.EventBusSubscriber
