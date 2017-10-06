@@ -110,7 +110,7 @@ public class EventHandler {
 
         if (state.getBlock() instanceof BlockSleepingBag) {
 
-            if (Loader.isModLoaded("toughasnails") && ConfigHandler.warmBody && timeSlept > 2000L) {
+            if (Loader.isModLoaded("toughasnails") && ConfigHandler.warmBody && timeSlept > 1000L) {
                 warmBody(player, timeSlept);
             }
 
@@ -133,8 +133,8 @@ public class EventHandler {
         ITemperature playerTemp = TemperatureHelper.getTemperatureData(player);
         int temp = playerTemp.getTemperature().getRawValue();
         if (temp < 10) {
-            int warmTemp = (int) (timeSlept / 2000L);
-            temp = Math.min(10, temp + warmTemp);
+            int warmTemp = (int) (timeSlept / 1000L);
+            temp = Math.min(10, temp + Math.min(5, warmTemp));
         }
         playerTemp.setTemperature(new Temperature(temp));
     }
