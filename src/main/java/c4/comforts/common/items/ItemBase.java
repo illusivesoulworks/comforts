@@ -44,7 +44,7 @@ public class ItemBase extends Item {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0; i < 16; i++) {
-            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(this.getRegistryName(), "inventory"));
         }
     }
 

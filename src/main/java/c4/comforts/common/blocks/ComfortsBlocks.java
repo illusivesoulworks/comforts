@@ -29,13 +29,5 @@ public class ComfortsBlocks {
     public static void initModels() {
 
         ROPE.initModel();
-
-        for (BlockSleepingBag sleepingBag : SLEEPING_BAGS) {
-            sleepingBag.initModel(ComfortsItems.SLEEPING_BAG);
-        }
-
-        for (BlockHammock hammock : HAMMOCKS) {
-            hammock.initModel(ComfortsItems.HAMMOCK);
-        }
     }
 }

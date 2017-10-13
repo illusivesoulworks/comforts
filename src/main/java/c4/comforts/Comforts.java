@@ -15,16 +15,16 @@ import org.apache.logging.log4j.Logger;
 @Mod(   modid = Comforts.MODID,
         name = Comforts.MODNAME,
         version = Comforts.MODVER,
-        dependencies = "required-after:forge@[14.21.1.2387,)",
+        dependencies = "required-after:forge@[14.23.0.2491,)",
         useMetadata = true,
         guiFactory = "c4." + Comforts.MODID + ".client.gui.GuiFactory",
-        acceptedMinecraftVersions = "[1.12, 1.13)")
+        acceptedMinecraftVersions = "[1.12.2, 1.13)")
 
 public class Comforts {
 
         public static final String MODID = "comforts";
         public static final String MODNAME = "Comforts";
-        public static final String MODVER = "0.0.4";
+        public static final String MODVER = "0.0.5";
 
         @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
         public static CommonProxy proxy;

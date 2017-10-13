@@ -1,0 +1,48 @@
+item.comforts.sleeping_bag.white.name=Weißer Schlafsack
+item.comforts.sleeping_bag.orange.name=Orangefarbener Schlafsack
+item.comforts.sleeping_bag.magenta.name=Magenta Schlafsack
+item.comforts.sleeping_bag.lightBlue.name=Hellblauer Schlafsack
+item.comforts.sleeping_bag.yellow.name=Gelber Schlafsack
+item.comforts.sleeping_bag.lime.name=Hellgrüner Schlafsack
+item.comforts.sleeping_bag.pink.name=Rosa Schlafsack
+item.comforts.sleeping_bag.gray.name=Grauer Schlafsack
+item.comforts.sleeping_bag.silver.name=Hellgrauer Schlafsack
+item.comforts.sleeping_bag.cyan.name=Türkiser Schlafsack
+item.comforts.sleeping_bag.purple.name=Violetter Schlafsack
+item.comforts.sleeping_bag.blue.name=Blauer Schlafsack
+item.comforts.sleeping_bag.brown.name=Brauner Schlafsack
+item.comforts.sleeping_bag.green.name=Grüner Schlafsack
+item.comforts.sleeping_bag.red.name=Roter Schlafsack
+item.comforts.sleeping_bag.black.name=Schwarzer Schlafsack
+ 
+item.comforts.hammock.white.name=Weißer Hängemattenstoff
+item.comforts.hammock.orange.name=Orangefarbener Hängemattenstoff
+item.comforts.hammock.magenta.name=Magenta Hängemattenstoff
+item.comforts.hammock.lightBlue.name=Hellblauer Hängemattenstoff
+item.comforts.hammock.yellow.name=Gelber Hängemattenstoff
+item.comforts.hammock.lime.name=Hellgrüner Hängemattenstoff
+item.comforts.hammock.pink.name=Rosa Hängemattenstoff
+item.comforts.hammock.gray.name=Grauer Hängemattenstoff
+item.comforts.hammock.silver.name=Hellgrauer Hängemattenstoff
+item.comforts.hammock.cyan.name=Zyan Hängemattenstoff
+item.comforts.hammock.purple.name=Violetter Hängemattenstoff
+item.comforts.hammock.blue.name=Blauer Hängemattenstoff
+item.comforts.hammock.brown.name=Brauner Hängemattenstoff
+item.comforts.hammock.green.name=Grüner Hängemattenstoff
+item.comforts.hammock.red.name=Roter Hängemattenstoff
+item.comforts.hammock.black.name=Schwarzer Hängemattenstoff
+ 
+tile.sleeping_bag.noSleep=Du kannst nur nachts schlafen
+tile.sleeping_bag.occupied=Dieser Schlafsack ist besetzt
+tile.sleeping_bag.notSafe=Du kannst nicht schlafen, es sind Monster in der Nähe
+tile.sleeping_bag.tooFarAway=Du kannst nicht schlafen, der Schlafsack ist zu weit entfernt
+tile.sleeping_bag.noSpace=Zu wenig Platz für den Schlafsack
+ 
+tile.hammock.noSleep=Du kannst nur am Tag ein Nickerchen halten
+tile.hammock.occupied=Diese Hängematte ist besetzt
+tile.hammock.notSafe=Du kannst nicht schlafen, es sind Monster in der Nähe
+tile.hammock.tooFarAway=Du kannst nicht schlafen, die Hängematte ist zu weit entfernt
+ 
+tile.comforts.rope.name=Seil und Nägel
+ 
+capability.comforts.notSleepy=Du kannst nicht schlafen, du fühlst dich noch nicht müde

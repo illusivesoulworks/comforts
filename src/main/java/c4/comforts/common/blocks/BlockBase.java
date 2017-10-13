@@ -143,11 +143,6 @@ public class BlockBase extends BlockHorizontal {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void initModel(Item item) {
-        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
-
     @Override
     public int damageDropped(IBlockState state)
     {
