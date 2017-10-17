@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2017. C4, MIT License
+ * Copyright (c) 2017 <C4>
+ *
+ * This Java class is distributed as a part of Comforts.
+ * Comforts is open source and licensed under the GNU General Public License v3.
+ * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
  */
 
 package c4.comforts.common.capability;
@@ -18,7 +22,6 @@ public class WellRested implements IWellRested {
     private long sleepTime = 0;
     private long wakeTime = 0;
     private long tiredTime = 0;
-    private long timeSlept = 0;
 
     public long getSleepTime() {
         return sleepTime;

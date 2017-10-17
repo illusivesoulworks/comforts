@@ -1,8 +1,18 @@
+/*
+ * Copyright (c) 2017 <C4>
+ *
+ * This Java class is distributed as a part of Comforts.
+ * Comforts is open source and licensed under the GNU General Public License v3.
+ * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
+ */
+
 package c4.comforts.common.items;
 
 import c4.comforts.common.ConfigHandler;
 import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.common.blocks.BlockSleepingBag;
+import c4.comforts.common.capability.IWellRested;
+import c4.comforts.common.capability.WellRested;
 import c4.comforts.common.util.SleepHelper;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;

@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2017. C4, MIT License
+ * Copyright (c) 2017 <C4>
+ *
+ * This Java class is distributed as a part of Comforts.
+ * Comforts is open source and licensed under the GNU General Public License v3.
+ * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
  */
 
 package c4.comforts;
@@ -24,7 +28,7 @@ public class Comforts {
 
         public static final String MODID = "comforts";
         public static final String MODNAME = "Comforts";
-        public static final String MODVER = "0.0.5";
+        public static final String MODVER = "0.0.6";
 
         @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
         public static CommonProxy proxy;
