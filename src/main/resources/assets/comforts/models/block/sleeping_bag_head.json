@@ -1,10 +1,11 @@
 {
   "textures": {
     "particle": "comforts:blocks/sleeping_bag/feet_top",
-    "bottom": "comforts:blocks/sleeping_bag/bottom",
+    "bottom": "comforts:blocks/sleeping_bag/head_bottom",
     "top": "comforts:blocks/sleeping_bag/head_top",
     "end": "comforts:blocks/sleeping_bag/head_end",
-    "side": "comforts:blocks/sleeping_bag/head_side"
+    "side": "comforts:blocks/sleeping_bag/head_side",
+    "top_c": "comforts:blocks/sleeping_bag/head_top_c"
   },
   "elements": [
     {

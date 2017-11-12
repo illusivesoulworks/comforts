@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 import java.util.Map;
 
-public class ComfortsLoadingPlugin implements IFMLLoadingPlugin {
+public class ComfortsCoreLoadingPlugin implements IFMLLoadingPlugin {
 
     public static boolean runtimeDeobf = false;
 

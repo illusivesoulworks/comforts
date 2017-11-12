@@ -8,13 +8,13 @@
 
 package c4.comforts.asm;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.Opcodes;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
@@ -37,10 +37,6 @@ import java.util.function.Predicate;
  */
 
 public class SleepTransformer implements IClassTransformer {
-
-    public static final ClassnameMap CLASS_MAPPINGS = new ClassnameMap(
-            "net/minecraft/entity/player/EntityPlayer", "aeb",
-            "net/minecraft/world/WorldServer", "om");
 
     private static final Map<String, Transformer> transformers = new HashMap<>();
 
@@ -68,7 +64,7 @@ public class SleepTransformer implements IClassTransformer {
                 (MethodNode method, AbstractInsnNode node) -> {
                     InsnList toInject = new InsnList();
 
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/common/util/SleepHelper", "notTimeToSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/asm/ASMHooks", "notTimeToSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
 
                     method.instructions.insert(node, toInject);
 
@@ -84,11 +80,11 @@ public class SleepTransformer implements IClassTransformer {
         MethodSignature sig = new MethodSignature("tick","func_72835_b","d", "()V");
 
         return transform(basicClass, Pair.of(sig, combine(
-                (AbstractInsnNode node) -> node.getOpcode() == Opcodes.INVOKEVIRTUAL && checkDesc(((MethodInsnNode) node).desc, "()J"),
+                (AbstractInsnNode node) -> node.getOpcode() == Opcodes.INVOKEVIRTUAL && ((MethodInsnNode) node).desc.equals("()J"),
                 (MethodNode method, AbstractInsnNode node) -> {
                     InsnList toInject = new InsnList();
 
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/common/util/SleepHelper", "advanceTime", "(Lnet/minecraft/world/World;)V"));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/asm/ASMHooks", "advanceTime", "(Lnet/minecraft/world/World;)V"));
 
                     method.instructions.insertBefore(node, toInject);
 
@@ -131,7 +127,7 @@ public class SleepTransformer implements IClassTransformer {
 
         String funcName = sig.funcName;
 
-        if (ComfortsLoadingPlugin.runtimeDeobf) {
+        if (ComfortsCoreLoadingPlugin.runtimeDeobf) {
             funcName = sig.srgName;
         }
 
@@ -185,23 +181,6 @@ public class SleepTransformer implements IClassTransformer {
         return sw.toString().replaceAll("\n","").trim();
     }
 
-    private static boolean checkDesc(String desc, String expected) {
-        return desc.equals(expected) || desc.equals(MethodSignature.obfuscate(expected));
-    }
-
-    public static class ClassnameMap extends HashMap<String, String> {
-
-        ClassnameMap(String... s) {
-            for(int i = 0; i < s.length / 2; i++)
-                put(s[i * 2], s[i * 2 + 1]);
-        }
-
-        @Override
-        public String put(String key, String value) {
-            return super.put("L" + key + ";", "L" + value + ";");
-        }
-    }
-
     private static class MethodSignature{
         String funcName, srgName, obfName, funcDesc, obfDesc;
 
@@ -210,22 +189,11 @@ public class SleepTransformer implements IClassTransformer {
             this.srgName = srgName;
             this.obfName = obfName;
             this.funcDesc = funcDesc;
-            this.obfDesc = obfuscate(funcDesc);
         }
 
         @Override
         public String toString() {
             return "Names [" + funcName + ", " + srgName + ", " + obfName + "] Descriptor " + funcDesc + " / " + obfDesc;
-        }
-
-        private static String obfuscate(String desc) {
-            for (String s : CLASS_MAPPINGS.keySet()) {
-                if (desc.contains(s)) {
-                    desc = desc.replaceAll(s, CLASS_MAPPINGS.get(s));
-                }
-            }
-
-            return desc;
         }
     }
 

@@ -1,7 +1,7 @@
 {
   "textures": {
     "particle": "comforts:blocks/sleeping_bag/feet_top",
-    "bottom": "comforts:blocks/sleeping_bag/bottom",
+    "bottom": "comforts:blocks/sleeping_bag/feet_bottom",
     "top": "comforts:blocks/sleeping_bag/feet_top",
     "end": "comforts:blocks/sleeping_bag/feet_end",
     "side": "comforts:blocks/sleeping_bag/feet_side"

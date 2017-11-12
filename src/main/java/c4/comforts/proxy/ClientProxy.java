@@ -13,7 +13,6 @@ import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.client.render.RenderHandler;
 import c4.comforts.common.items.ComfortsItems;
 import c4.comforts.common.blocks.BlockSleepingBag;
-import c4.comforts.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -54,7 +53,6 @@ public class ClientProxy extends CommonProxy {
         }
 
         MinecraftForge.EVENT_BUS.register(new RenderHandler());
-        NetworkHandler.init();
     }
 
     @Override

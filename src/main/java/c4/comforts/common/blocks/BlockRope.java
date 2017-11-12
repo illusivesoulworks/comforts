@@ -110,7 +110,7 @@ public class BlockRope extends Block {
         IBlockState iblockstate = worldIn.getBlockState(blockpos);
         Block block = iblockstate.getBlock();
 
-        return block instanceof BlockLog;
+        return block instanceof BlockLog || block instanceof BlockPlanks;
     }
 
     @Override

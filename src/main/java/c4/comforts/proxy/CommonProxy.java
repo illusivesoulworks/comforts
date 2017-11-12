@@ -20,6 +20,7 @@ import c4.comforts.common.capability.WellRested;
 import c4.comforts.compatibility.MorpheusDayHandler;
 import c4.comforts.common.items.ItemHammock;
 import c4.comforts.common.items.ItemSleepingBag;
+import c4.comforts.network.NetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -47,6 +48,7 @@ public class CommonProxy {
         config = new Configuration(new File(directory.getPath(), "comforts.cfg"));
         ConfigHandler.readConfig();
         ComfortsBlocks.preInit();
+        NetworkHandler.init();
     }
 
     public void init(FMLInitializationEvent e) {

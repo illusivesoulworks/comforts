@@ -46,14 +46,6 @@ public class SleepHelper {
         }
     }
 
-    public static boolean notTimeToSleep(EntityPlayer player) {
-
-        World world = player.world;
-        long worldTime = world.getWorldTime() % 24000L;
-
-        return world.isDaytime() && !(worldTime > 500L && worldTime < 11500L);
-    }
-
     public static boolean notAllowedToSleep(EntityPlayer player, BlockPos bedLocation) {
 
         Block bedBlock = player.world.getBlockState(bedLocation).getBlock();
