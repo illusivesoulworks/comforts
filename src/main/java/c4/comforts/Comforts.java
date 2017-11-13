@@ -32,7 +32,7 @@ public class Comforts {
 
         public static final String MODID = "comforts";
         public static final String MODNAME = "Comforts";
-        public static final String MODVER = "0.0.8-rc1";
+        public static final String MODVER = "0.0.8-rc2";
 
         @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
         public static CommonProxy proxy;
