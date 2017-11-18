@@ -54,10 +54,13 @@ public class EventHandler {
     public void onPlayerSetSpawn(PlayerSetSpawnEvent e) {
 
         World world = e.getEntityPlayer().getEntityWorld();
-        Block block = world.getBlockState(e.getNewSpawn()).getBlock();
 
-        if (!world.isRemote && (block instanceof BlockSleepingBag || block instanceof BlockHammock)) {
-            e.setCanceled(true);
+        if (e.getNewSpawn() != null) {
+            Block block = world.getBlockState(e.getNewSpawn()).getBlock();
+
+            if (!world.isRemote && (block instanceof BlockSleepingBag || block instanceof BlockHammock)) {
+                e.setCanceled(true);
+            }
         }
     }
 
