@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
         name = Comforts.MODNAME,
         version = Comforts.MODVER,
         dependencies = "required-after:forge@[14.21.1.2387,)",
-        useMetadata = true,
         guiFactory = "c4." + Comforts.MODID + ".client.gui.GuiFactory",
         acceptedMinecraftVersions = "[1.12, 1.13)",
         certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
@@ -32,7 +31,7 @@ public class Comforts {
 
         public static final String MODID = "comforts";
         public static final String MODNAME = "Comforts";
-        public static final String MODVER = "0.0.8-rc2";
+        public static final String MODVER = "1.0.0";
 
         @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
         public static CommonProxy proxy;

@@ -10,6 +10,5 @@
   "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": ["toughasnails","morpheus"],
-  "useDependencyInformation": true
+  "dependencies": []
 }]
