@@ -24,8 +24,9 @@ public class ConfigHandler {
     public static boolean autoPickUp = true;
     public static boolean autoUse = true;
     public static boolean warmBody = true;
-    public static boolean wellRested = true;
+    public static boolean wellRested = false;
     public static float sleepyRatio = 2.0F;
+    public static boolean restHammocks = false;
     public static Configuration cfg;
 
     public static void readConfig() {
@@ -48,6 +49,7 @@ public class ConfigHandler {
         autoUse = cfg.getBoolean("Auto Use Sleeping Bag", CATEGORY_GENERAL, autoUse, "Set to true to automatically use sleeping bags");
         wellRested = cfg.getBoolean("Well Rested", CATEGORY_GENERAL, wellRested, "Set to true to activate an effect that prevents sleeping depending on how long you previously slept");
         sleepyRatio = cfg.getFloat("Sleepy Factor", CATEGORY_GENERAL, sleepyRatio, 1.0F, 20.0F, "If well rested is true, this value is used to determine how long you need before being able to sleep again (larger numbers = can sleep sooner)");
+        restHammocks = cfg.getBoolean("Leisure Hammocks", CATEGORY_GENERAL, restHammocks, "Set to true to enable relaxing in hammocks without sleeping");
         if (Loader.isModLoaded("toughasnails")) {
             warmBody = cfg.getBoolean("Insulated Sleeping Bags", CATEGORY_GENERAL, warmBody, "Set to true to have sleeping bags slightly warm your body if you're cold");
         }

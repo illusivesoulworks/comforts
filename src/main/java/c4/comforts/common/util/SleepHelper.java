@@ -13,7 +13,6 @@ import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.BlockSleepingBag;
 import c4.comforts.network.NetworkHandler;
 import c4.comforts.network.SPacketSleep;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
@@ -21,12 +20,11 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.SPacketUseBed;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
@@ -132,7 +130,8 @@ public class SleepHelper {
             } catch (Exception e) {
                 Comforts.logger.log(Level.ERROR, "Failed to invoke method setRenderOffsetForSleep");
             }
-            player.setPosition((double)((float)bedLocation.getX() + f1), (double)((float)bedLocation.getY() + 0.6875F), (double)((float)bedLocation.getZ() + f));
+            float height = state.getBlock() instanceof BlockSleepingBag ? 0.1875F : 0.0625F;
+            player.setPosition((double)((float)bedLocation.getX() + f1), (double)((float)bedLocation.getY() + height + 0.125F), (double)((float)bedLocation.getZ() + f));
         }
         else
         {
