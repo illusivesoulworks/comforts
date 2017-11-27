@@ -169,4 +169,15 @@ public class BlockHammock extends BlockBase {
         return HAMMOCK_AABB;
     }
 
+    @Override
+    public boolean hasTileEntity(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state)
+    {
+        return new TileEntityHammock();
+    }
 }

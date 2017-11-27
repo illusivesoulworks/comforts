@@ -9,6 +9,7 @@
 package c4.comforts.common.blocks;
 
 import c4.comforts.Comforts;
+import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsHelper;
 import c4.comforts.common.util.SleepHelper;
 import net.minecraft.block.BlockHorizontal;
@@ -19,19 +20,18 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -81,6 +81,7 @@ public class BlockBase extends BlockHorizontal {
         }
         else
         {
+            BlockPos originalPos = pos;
 
             if (state.getValue(PART) != EnumPartType.HEAD)
             {
@@ -95,6 +96,18 @@ public class BlockBase extends BlockHorizontal {
 
             if (worldIn.provider.canRespawnHere() && worldIn.getBiome(pos) != Biomes.HELL)
             {
+
+                if (state.getBlock() instanceof BlockHammock) {
+                    TileEntity tileentity = worldIn.getTileEntity(originalPos);
+                    TileEntity tileentity2 = worldIn.getTileEntity(pos);
+                    if (tileentity instanceof TileEntityHammock && tileentity2 instanceof TileEntityHammock) {
+                        if (((TileEntityHammock) tileentity).isOccupied() || ((TileEntityHammock) tileentity2).isOccupied()) {
+                            playerIn.sendStatusMessage(new TextComponentTranslation(textOccupied), true);
+                            return true;
+                        }
+                    }
+                }
+
                 if (state.getValue(OCCUPIED))
                 {
                     EntityPlayer entityplayer = this.getPlayerInComfort(worldIn, pos);

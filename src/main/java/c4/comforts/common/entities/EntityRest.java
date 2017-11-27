@@ -13,32 +13,31 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 
 public class EntityRest extends Entity {
 
-    private EntityRest(World world){
+    public EntityRest(World world){
         super(world);
         this.noClip = true;
         this.width = 0.0001F;
-        this.height = 0.0001F;
+        this.height = 0.0625F;
     }
 
     public EntityRest(World world, BlockPos pos) {
         this(world);
-        this.setPosition(pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D);
+        this.setPosition(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
     }
 
     @Override
     public double getMountedYOffset()
     {
-        return super.getMountedYOffset() - 0.3875D;
+        return super.getMountedYOffset() - 0.1825D;
     }
 
     @Override
     public void onUpdate() {
 
-        if (this.world.getTileEntity(this.getPosition()) == null || !(this.world.getTileEntity(this.getPosition()) instanceof TileEntityHammock) || this.getPassengers().isEmpty()) {
+        if (this.world.getTileEntity(this.getPosition()) == null || !(this.world.getTileEntity(this.getPosition()) instanceof TileEntityHammock)) {
             this.setDead();
         }
 
