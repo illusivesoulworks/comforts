@@ -8,16 +8,23 @@
 
 package c4.comforts.common.blocks;
 
+import c4.comforts.common.ConfigHandler;
+import c4.comforts.common.entities.EntityRest;
 import c4.comforts.common.items.ComfortsItems;
+import c4.comforts.common.tileentities.TileEntityHammock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -33,6 +40,64 @@ public class BlockHammock extends BlockBase {
 
         super("hammock", color);
         this.setExplosivePower(1.0F);
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
+        if (ConfigHandler.restHammocks && !playerIn.isSneaking()) {
+
+            if (worldIn.isRemote)
+            {
+                return true;
+            }
+            else
+            {
+
+                if (state.getValue(PART) != EnumPartType.HEAD)
+                {
+                    BlockPos blockpos = pos.offset(state.getValue(FACING));
+                    IBlockState blockstate = worldIn.getBlockState(blockpos);
+
+                    if (blockstate.getBlock() != this)
+                    {
+                        return true;
+                    }
+
+                    if (blockstate.getValue(OCCUPIED)) {
+
+                        EntityPlayer entityplayer = this.getPlayerInComfort(worldIn, blockpos);
+
+                        if (entityplayer != null)
+                        {
+                            playerIn.sendStatusMessage(new TextComponentTranslation(textOccupied), true);
+                            return true;
+                        }
+
+                        blockstate = blockstate.withProperty(OCCUPIED, false);
+                        worldIn.setBlockState(blockpos, blockstate, 4);
+                    }
+                }
+
+                TileEntity tileentity = worldIn.getTileEntity(pos);
+
+                if (tileentity instanceof TileEntityHammock) {
+                    TileEntityHammock tileentityhammock = (TileEntityHammock) tileentity;
+                    if (tileentityhammock.isOccupied()) {
+                        playerIn.sendStatusMessage(new TextComponentTranslation(textOccupied), true);
+                        return true;
+                    } else {
+                        EntityRest rest = new EntityRest(worldIn, pos);
+                        worldIn.spawnEntity(rest);
+                        playerIn.startRiding(rest);
+                        tileentityhammock.setOccupied(true);
+                    }
+                }
+            }
+            return true;
+        } else {
+            return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        }
     }
 
     @Override

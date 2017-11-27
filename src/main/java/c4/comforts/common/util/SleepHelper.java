@@ -17,6 +17,8 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityTracker;
+import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Level;
 
 import java.util.List;
@@ -122,22 +125,15 @@ public class SleepHelper {
             Comforts.logger.log(Level.ERROR, "Failed to invoke methods spawnShoulderEntities and setSize");
         }
 
-        IBlockState state = null;
-        if (player.world.isBlockLoaded(bedLocation)) state = player.world.getBlockState(bedLocation);
-        if (state != null && state.getBlock().isBed(state, player.world, bedLocation, player)) {
-            float f1 = 0.5F + (float)enumfacing.getFrontOffsetX() * 0.4F;
-            float f = 0.5F + (float)enumfacing.getFrontOffsetZ() * 0.4F;
-            try {
-                EntityPlayerAccessor.setRenderOffsetForSleep(player, enumfacing);
-            } catch (Exception e) {
-                Comforts.logger.log(Level.ERROR, "Failed to invoke method setRenderOffsetForSleep");
-            }
-            player.setPosition((double)((float)bedLocation.getX() + f1), (double)((float)bedLocation.getY() + 0.6875F), (double)((float)bedLocation.getZ() + f));
+        float f1 = 0.5F + (float)enumfacing.getFrontOffsetX() * 0.4F;
+        float f = 0.5F + (float)enumfacing.getFrontOffsetZ() * 0.4F;
+        try {
+            EntityPlayerAccessor.setRenderOffsetForSleep(player, enumfacing);
+        } catch (Exception e) {
+            Comforts.logger.log(Level.ERROR, "Failed to invoke method setRenderOffsetForSleep");
         }
-        else
-        {
-            player.setPosition((double)((float)bedLocation.getX() + 0.5F), (double)((float)bedLocation.getY() + 0.6875F), (double)((float)bedLocation.getZ() + 0.5F));
-        }
+        float height = player.world.getBlockState(bedLocation).getBlock() instanceof BlockHammock ? 0.1875F : 0.3125F;
+        player.setPosition((double)((float)bedLocation.getX() + f1), (double)((float)bedLocation.getY() + height), (double)((float)bedLocation.getZ() + f));
 
         try {
             EntityPlayerAccessor.setSleeping(player, true);
@@ -156,7 +152,11 @@ public class SleepHelper {
             player.world.updateAllPlayersSleepingFlag();
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             playerMP.addStat(StatList.SLEEP_IN_BED);
-            SPacketSleep sleepPacket = new SPacketSleep(bedLocation, autoSleep);
+            SPacketSleep sleepPacket = new SPacketSleep(playerMP, bedLocation, autoSleep);
+            playerMP.connection.setPlayerLocation(playerMP.posX, playerMP.posY, playerMP.posZ, playerMP.rotationYaw, playerMP.rotationPitch);
+            for (EntityPlayer trackingPlayer : playerMP.getServerWorld().getEntityTracker().getTrackingPlayers(playerMP)) {
+                NetworkHandler.INSTANCE.sendTo(sleepPacket, (EntityPlayerMP) trackingPlayer);
+            }
             NetworkHandler.INSTANCE.sendTo(sleepPacket, playerMP);
         }
 

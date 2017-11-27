@@ -18,26 +18,31 @@ import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SPacketSleep implements IMessage {
 
+    private int playerID;
     /** Block location of the head part of the bed */
     private BlockPos bedPos;
     private boolean autoSleep;
 
     public SPacketSleep(){}
 
-    public SPacketSleep(BlockPos posIn, boolean autoSleep)
+    public SPacketSleep(EntityPlayer player, BlockPos posIn, boolean autoSleep)
     {
+        this.playerID = player.getEntityId();
         this.bedPos = posIn;
         this.autoSleep = autoSleep;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeInt(this.playerID);
         buf.writeInt(this.bedPos.getX());
         buf.writeInt(this.bedPos.getY());
         buf.writeInt(this.bedPos.getZ());
@@ -46,6 +51,7 @@ public class SPacketSleep implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        this.playerID = buf.readInt();
         int x = buf.readInt();
         int y = buf.readInt();
         int z = buf.readInt();
@@ -60,7 +66,7 @@ public class SPacketSleep implements IMessage {
         public IMessage onMessage(SPacketSleep message, MessageContext ctx) {
             IThreadListener mainThread = Minecraft.getMinecraft();
             mainThread.addScheduledTask(() -> {
-                EntityPlayerSP player = Minecraft.getMinecraft().player;
+                EntityPlayer player = (EntityPlayer) FMLClientHandler.instance().getWorldClient().getEntityByID(message.playerID);
                 SleepHelper.trySleep(player, message.bedPos, message.autoSleep);
             });
             // No response packet

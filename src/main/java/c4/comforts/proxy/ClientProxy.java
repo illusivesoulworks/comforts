@@ -10,7 +10,6 @@ package c4.comforts.proxy;
 
 import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.ComfortsBlocks;
-import c4.comforts.client.render.RenderHandler;
 import c4.comforts.common.items.ComfortsItems;
 import c4.comforts.common.blocks.BlockSleepingBag;
 import c4.comforts.network.NetworkHandler;
@@ -18,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -53,8 +51,6 @@ public class ClientProxy extends CommonProxy {
         for (BlockHammock hammock : ComfortsBlocks.HAMMOCKS) {
             blockColors.registerBlockColorHandler(hammock.colorMultiplier(), hammock);
         }
-
-        MinecraftForge.EVENT_BUS.register(new RenderHandler());
     }
 
     @Override
