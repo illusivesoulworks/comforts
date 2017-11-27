@@ -110,7 +110,7 @@ public class BlockRope extends Block {
         IBlockState iblockstate = worldIn.getBlockState(blockpos);
         Block block = iblockstate.getBlock();
 
-        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && (block instanceof BlockLog || block instanceof BlockPlanks);
+        return block instanceof BlockLog || block instanceof BlockPlanks;
     }
 
     @Override

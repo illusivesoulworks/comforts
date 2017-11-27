@@ -8,7 +8,6 @@
 
 package c4.comforts.proxy;
 
-import c4.comforts.Comforts;
 import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.BlockRope;
 import c4.comforts.common.ConfigHandler;
@@ -18,15 +17,12 @@ import c4.comforts.common.EventHandler;
 import c4.comforts.common.capability.CapabilityHandler;
 import c4.comforts.common.capability.IWellRested;
 import c4.comforts.common.capability.WellRested;
-import c4.comforts.common.entities.EntityRest;
-import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.compatibility.MorpheusDayHandler;
 import c4.comforts.common.items.ItemHammock;
 import c4.comforts.common.items.ItemSleepingBag;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
@@ -37,8 +33,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.quetzi.morpheus.Morpheus;
 
 import java.io.File;
@@ -53,8 +47,6 @@ public class CommonProxy {
         config = new Configuration(new File(directory.getPath(), "comforts.cfg"));
         ConfigHandler.readConfig();
         ComfortsBlocks.preInit();
-        EntityRegistry.registerModEntity(new ResourceLocation(Comforts.MODID, "entity_rest"), EntityRest.class, "Entity Rest", 0, Comforts.instance, 256, 20, false);
-        GameRegistry.registerTileEntity(TileEntityHammock.class, Comforts.MODID + ".tile_entity_hammock");
     }
 
     public void init(FMLInitializationEvent e) {

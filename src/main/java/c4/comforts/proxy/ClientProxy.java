@@ -54,7 +54,7 @@ public class ClientProxy extends CommonProxy {
             blockColors.registerBlockColorHandler(hammock.colorMultiplier(), hammock);
         }
 
-//        MinecraftForge.EVENT_BUS.register(new RenderHandler());
+        MinecraftForge.EVENT_BUS.register(new RenderHandler());
     }
 
     @Override
