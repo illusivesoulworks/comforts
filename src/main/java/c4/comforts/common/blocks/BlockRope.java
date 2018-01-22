@@ -10,6 +10,7 @@ package c4.comforts.common.blocks;
 
 import c4.comforts.Comforts;
 import c4.comforts.common.items.ComfortsItems;
+import c4.comforts.common.util.OreDictHelper;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -33,9 +34,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class BlockRope extends Block {
 
+    private static final String ORE_MATCH = "logWood";
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (apply) ->
             apply != EnumFacing.DOWN && apply != EnumFacing.UP
     );
@@ -110,7 +113,7 @@ public class BlockRope extends Block {
         IBlockState iblockstate = worldIn.getBlockState(blockpos);
         Block block = iblockstate.getBlock();
 
-        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && (block instanceof BlockLog || block instanceof BlockPlanks);
+        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && (block instanceof BlockLog || block instanceof BlockPlanks || OreDictHelper.oreDictMatches(ORE_MATCH, iblockstate));
     }
 
     @Override
