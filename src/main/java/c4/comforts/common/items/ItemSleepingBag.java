@@ -62,14 +62,14 @@ public class ItemSleepingBag extends ItemBase {
 
                     if (flag2 && flag3 && worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos, EnumFacing.UP) && worldIn.getBlockState(blockpos.down()).isSideSolid(worldIn, pos, EnumFacing.UP)) {
 
-                        EntityPlayer.SleepResult entityplayer$sleepresult = SleepHelper.trySleep(playerIn, blockpos, true);
+                        EntityPlayer.SleepResult entityplayer$sleepresult = SleepHelper.goToSleep(playerIn, blockpos, true);
 
                         if (entityplayer$sleepresult == EntityPlayer.SleepResult.OK)
                         {
                             IBlockState iblockstate2 = ComfortsBlocks.SLEEPING_BAGS[itemstack.getMetadata()].getDefaultState().withProperty(BlockSleepingBag.OCCUPIED, false).withProperty(BlockSleepingBag.FACING, enumfacing).withProperty(BlockSleepingBag.PART, BlockSleepingBag.EnumPartType.FOOT);
                             IBlockState iblockstate3 = iblockstate2.withProperty(BlockSleepingBag.PART, BlockSleepingBag.EnumPartType.HEAD).withProperty(BlockSleepingBag.OCCUPIED, true);
-                            worldIn.setBlockState(pos, iblockstate2, 10);
-                            worldIn.setBlockState(blockpos, iblockstate3, 10);
+                            worldIn.setBlockState(playerIn.getPosition().offset(enumfacing.getOpposite()), iblockstate2, 10);
+                            worldIn.setBlockState(playerIn.getPosition(), iblockstate3, 10);
                             SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, playerIn);
                             worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 

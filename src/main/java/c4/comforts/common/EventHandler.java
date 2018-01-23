@@ -38,8 +38,6 @@ import toughasnails.api.stat.capability.ITemperature;
 import toughasnails.api.temperature.Temperature;
 import toughasnails.api.temperature.TemperatureHelper;
 
-import javax.annotation.Nonnull;
-
 public class EventHandler {
 
     @SubscribeEvent

@@ -150,6 +150,17 @@ public class SleepHelper {
         if (!player.world.isRemote)
         {
             player.world.updateAllPlayersSleepingFlag();
+        }
+
+        return EntityPlayer.SleepResult.OK;
+    }
+
+    public static EntityPlayer.SleepResult goToSleep(EntityPlayer player, BlockPos bedLocation, boolean autoSleep) {
+
+        EntityPlayer.SleepResult entityplayer$sleepresult = trySleep(player, bedLocation, autoSleep);
+
+        if (entityplayer$sleepresult == EntityPlayer.SleepResult.OK)
+        {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             playerMP.addStat(StatList.SLEEP_IN_BED);
             SPacketSleep sleepPacket = new SPacketSleep(playerMP, bedLocation, autoSleep);
@@ -160,6 +171,6 @@ public class SleepHelper {
             NetworkHandler.INSTANCE.sendTo(sleepPacket, playerMP);
         }
 
-        return EntityPlayer.SleepResult.OK;
+        return entityplayer$sleepresult;
     }
 }
