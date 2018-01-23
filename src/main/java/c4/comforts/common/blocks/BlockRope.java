@@ -38,7 +38,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class BlockRope extends Block {
 
-    private static final String ORE_MATCH = "logWood";
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (apply) ->
             apply != EnumFacing.DOWN && apply != EnumFacing.UP
     );
@@ -111,9 +110,8 @@ public class BlockRope extends Block {
     {
         BlockPos blockpos = pos.offset(facing.getOpposite());
         IBlockState iblockstate = worldIn.getBlockState(blockpos);
-        Block block = iblockstate.getBlock();
 
-        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && (block instanceof BlockLog || block instanceof BlockPlanks || OreDictHelper.oreDictMatches(ORE_MATCH, iblockstate));
+        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && (OreDictHelper.oreDictMatches("plankWood", iblockstate) || OreDictHelper.oreDictMatches("logWood", iblockstate));
     }
 
     @Override
