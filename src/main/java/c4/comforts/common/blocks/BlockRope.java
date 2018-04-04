@@ -36,6 +36,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
+
 public class BlockRope extends Block {
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (apply) ->
@@ -62,6 +64,7 @@ public class BlockRope extends Block {
         this.setCreativeTab(CreativeTabs.TOOLS);
     }
 
+    @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
@@ -93,7 +96,7 @@ public class BlockRope extends Block {
     }
 
     @Override
-    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    public boolean canPlaceBlockAt(World worldIn, @Nonnull BlockPos pos)
     {
         for (EnumFacing enumfacing : FACING.getAllowedValues())
         {
@@ -111,9 +114,10 @@ public class BlockRope extends Block {
         BlockPos blockpos = pos.offset(facing.getOpposite());
         IBlockState iblockstate = worldIn.getBlockState(blockpos);
 
-        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && (OreDictHelper.oreDictMatches("plankWood", iblockstate) || OreDictHelper.oreDictMatches("logWood", iblockstate));
+        return facing != EnumFacing.UP && facing != EnumFacing.DOWN && !isExceptBlockForAttachWithPiston(iblockstate.getBlock()) && iblockstate.getBlockFaceShape(worldIn, pos, facing) == BlockFaceShape.SOLID && iblockstate.getMaterial().isOpaque();
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {

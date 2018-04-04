@@ -18,6 +18,7 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -35,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockBase extends BlockHorizontal {
@@ -203,7 +205,7 @@ public class BlockBase extends BlockHorizontal {
         return true;
     }
 
-    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+    public void dropBlockAsItemWithChance(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, float chance, int fortune)
     {
         if (state.getValue(PART) == BlockBase.EnumPartType.HEAD)
         {
@@ -211,12 +213,14 @@ public class BlockBase extends BlockHorizontal {
         }
     }
 
+    @Nonnull
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState state)
     {
         return EnumPushReaction.DESTROY;
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
@@ -238,8 +242,9 @@ public class BlockBase extends BlockHorizontal {
         }
     }
 
+    @Nonnull
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
         if (state.getValue(PART) == BlockBase.EnumPartType.FOOT)
         {
@@ -254,18 +259,21 @@ public class BlockBase extends BlockHorizontal {
         return state;
     }
 
+    @Nonnull
     @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot)
+    public IBlockState withRotation(@Nonnull IBlockState state, Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
+    @Nonnull
     @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
+    public IBlockState withMirror(@Nonnull IBlockState state, Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
@@ -292,6 +300,7 @@ public class BlockBase extends BlockHorizontal {
         return i;
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState()
     {
@@ -305,7 +314,7 @@ public class BlockBase extends BlockHorizontal {
     }
 
     @Override
-    public void setBedOccupied(IBlockAccess world, BlockPos pos, EntityPlayer player, boolean occupied)
+    public void setBedOccupied(IBlockAccess world, @Nonnull BlockPos pos, EntityPlayer player, boolean occupied)
     {
         if (world instanceof World)
         {
@@ -314,6 +323,13 @@ public class BlockBase extends BlockHorizontal {
             state = state.withProperty(BlockBase.OCCUPIED, occupied);
             ((World)world).setBlockState(pos, state, 4);
         }
+    }
+
+    @Nonnull
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+    {
+        return BlockFaceShape.UNDEFINED;
     }
 
     @SideOnly(Side.CLIENT)
@@ -338,6 +354,7 @@ public class BlockBase extends BlockHorizontal {
             return this.name;
         }
 
+        @Nonnull
         public String getName()
         {
             return this.name;
