@@ -10,12 +10,18 @@ package c4.comforts.common;
 
 import c4.comforts.Comforts;
 import c4.comforts.proxy.CommonProxy;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Level;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigHandler {
 
@@ -27,7 +33,10 @@ public class ConfigHandler {
     public static boolean wellRested = false;
     public static float sleepyRatio = 2.0F;
     public static boolean restHammocks = false;
+    public static String[] sleepingBagDebuffs = new String[]{};
     public static Configuration cfg;
+
+    private static List<PotionEffect> debuffs = new ArrayList<>();
 
     public static void readConfig() {
         try {
@@ -52,6 +61,31 @@ public class ConfigHandler {
         restHammocks = cfg.getBoolean("Leisure Hammocks", CATEGORY_GENERAL, restHammocks, "Set to true to enable relaxing in hammocks without sleeping");
         if (Loader.isModLoaded("toughasnails")) {
             warmBody = cfg.getBoolean("Insulated Sleeping Bags", CATEGORY_GENERAL, warmBody, "Set to true to have sleeping bags slightly warm your body if you're cold");
+        }
+        sleepingBagDebuffs = cfg.getStringList("Sleeping Bag Debuffs", CATEGORY_GENERAL, sleepingBagDebuffs, "List of debuffs to apply to players after using the sleeping bag\n" +"Format: [effect] [duration(secs)] [power]");
+        parseDebuffs();
+    }
+
+    public static List<PotionEffect> getDebuffs() {
+        return debuffs;
+    }
+
+    private static void parseDebuffs() {
+
+        for (String s : sleepingBagDebuffs) {
+
+            String[] elements = s.split("\\s+");
+            Potion potion = Potion.getPotionFromResourceLocation(elements[0]);
+            if (potion == null) continue;
+            int duration = 0;
+            int amp = 0;
+            try {
+                duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
+                amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
+            } catch (Exception e1) {
+                Comforts.logger.log(Level.ERROR, "Problem parsing sleeping bag debuffs in config!", e1);
+            }
+            debuffs.add(new PotionEffect(potion, duration * 20, amp - 1));
         }
     }
 

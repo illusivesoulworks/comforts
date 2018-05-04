@@ -8,11 +8,21 @@
 
 package c4.comforts.common.util;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemDye;
+import net.minecraft.potion.PotionEffect;
+
+import java.util.List;
 
 public class ComfortsHelper {
 
     public static int getColor(int metadata) {
         return ItemDye.DYE_COLORS[15 - metadata];
+    }
+
+    public static void applyDebuffs(EntityPlayer player, List<PotionEffect> effects) {
+        for (PotionEffect effect : effects) {
+            player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier()));
+        }
     }
 }

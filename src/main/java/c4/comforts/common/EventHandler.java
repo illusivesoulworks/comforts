@@ -15,6 +15,7 @@ import c4.comforts.common.capability.IWellRested;
 import c4.comforts.common.capability.WellRested;
 import c4.comforts.common.entities.EntityRest;
 import c4.comforts.common.tileentities.TileEntityHammock;
+import c4.comforts.common.util.ComfortsHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -149,6 +150,10 @@ public class EventHandler {
 
             if (!player.capabilities.isCreativeMode) {
                 ItemHandlerHelper.giveItemToPlayer(player, stack, player.inventory.currentItem);
+            }
+
+            if (!ConfigHandler.getDebuffs().isEmpty()) {
+                ComfortsHelper.applyDebuffs(player, ConfigHandler.getDebuffs());
             }
         }
     }
