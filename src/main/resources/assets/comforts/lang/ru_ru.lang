@@ -1,0 +1,48 @@
+item.comforts.sleeping_bag.white.name=Белый спальный мешок
+item.comforts.sleeping_bag.orange.name=Оранжевый спальный мешок
+item.comforts.sleeping_bag.magenta.name=Пурпурный спальный мешок
+item.comforts.sleeping_bag.lightBlue.name=Голубой спальный мешок
+item.comforts.sleeping_bag.yellow.name=Жёлтый спальный мешок
+item.comforts.sleeping_bag.lime.name=Лаймовый спальный мешок
+item.comforts.sleeping_bag.pink.name=Розовый спальный мешок
+item.comforts.sleeping_bag.gray.name=Серый спальный мешок
+item.comforts.sleeping_bag.silver.name=Светло-серый спальный мешок
+item.comforts.sleeping_bag.cyan.name=Бирюзовый спальный мешок
+item.comforts.sleeping_bag.purple.name=Фиолетовый спальный мешок
+item.comforts.sleeping_bag.blue.name=Синий спальный мешок
+item.comforts.sleeping_bag.brown.name=Коричневый спальный мешок
+item.comforts.sleeping_bag.green.name=Зелёный спальный мешок
+item.comforts.sleeping_bag.red.name=Красный спальный мешок
+item.comforts.sleeping_bag.black.name=Чёрный спальный мешок
+
+item.comforts.hammock.white.name=Белый гамак
+item.comforts.hammock.orange.name=Оранжевый гамак
+item.comforts.hammock.magenta.name=Пурпурный гамак
+item.comforts.hammock.lightBlue.name=Голубой гамак
+item.comforts.hammock.yellow.name=Жёлтый гамак
+item.comforts.hammock.lime.name=Лаймовый гамак
+item.comforts.hammock.pink.name=Розовый гамак
+item.comforts.hammock.gray.name=Серый гамак
+item.comforts.hammock.silver.name=Светло-серый гамак
+item.comforts.hammock.cyan.name=Бирюзовый гамак
+item.comforts.hammock.purple.name=Фиолетовый гамак
+item.comforts.hammock.blue.name=Синий гамак
+item.comforts.hammock.brown.name=Коричневый гамак
+item.comforts.hammock.green.name=Зелёный гамак
+item.comforts.hammock.red.name=Красный гамак
+item.comforts.hammock.black.name=Чёрный гамак
+
+tile.sleeping_bag.noSleep=Спать можно только ночью
+tile.sleeping_bag.occupied=Этот спальный мешок занят
+tile.sleeping_bag.notSafe=Вы не можете уснуть, пока рядом есть монстры
+tile.sleeping_bag.tooFarAway=Вы не можете уснуть, спальный мешок слишком далеко
+tile.sleeping_bag.noSpace=Недостаточно места для спального мешка
+
+tile.hammock.noSleep=Вздремнуть можно только днём
+tile.hammock.occupied=Этот гамак занят
+tile.hammock.notSafe=Вы не можете вздремнуть, пока рядом есть монстры
+tile.hammock.tooFarAway=Вы не можете вздремнуть, гамак слишком далеко
+
+tile.comforts.rope.name=Верёвка и гвоздь
+
+capability.comforts.notSleepy=Вы недостаточно устали для отдыха
