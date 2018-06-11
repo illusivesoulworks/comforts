@@ -28,12 +28,6 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ClientProxy extends CommonProxy {
 
     @Override
-    public void preInit(FMLPreInitializationEvent e) {
-        super.preInit(e);
-        NetworkHandler.init();
-    }
-
-    @Override
     public void init(FMLInitializationEvent e) {
 
         super.init(e);
@@ -51,11 +45,6 @@ public class ClientProxy extends CommonProxy {
         for (BlockHammock hammock : ComfortsBlocks.HAMMOCKS) {
             blockColors.registerBlockColorHandler(hammock.colorMultiplier(), hammock);
         }
-    }
-
-    @Override
-    public void postInit(FMLPostInitializationEvent e) {
-        super.postInit(e);
     }
 
     @SubscribeEvent
