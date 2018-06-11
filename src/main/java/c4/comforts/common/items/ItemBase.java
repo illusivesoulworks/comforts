@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemBase extends Item {
 
     public ItemBase(String name) {
-        this.setCreativeTab(CreativeTabs.DECORATIONS);
+        this.setCreativeTab(ComfortsHelper.comfortsTab);
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
         this.setRegistryName(name);

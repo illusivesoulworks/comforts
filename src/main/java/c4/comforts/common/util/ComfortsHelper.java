@@ -8,6 +8,8 @@
 
 package c4.comforts.common.util;
 
+import c4.comforts.client.gui.ComfortsTab;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemDye;
 import net.minecraft.potion.PotionEffect;
@@ -15,6 +17,8 @@ import net.minecraft.potion.PotionEffect;
 import java.util.List;
 
 public class ComfortsHelper {
+
+    public static final ComfortsTab comfortsTab = new ComfortsTab();
 
     public static int getColor(int metadata) {
         return ItemDye.DYE_COLORS[15 - metadata];

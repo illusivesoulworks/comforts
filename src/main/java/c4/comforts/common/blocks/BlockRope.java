@@ -10,6 +10,7 @@ package c4.comforts.common.blocks;
 
 import c4.comforts.Comforts;
 import c4.comforts.common.items.ComfortsItems;
+import c4.comforts.common.util.ComfortsHelper;
 import c4.comforts.common.util.OreDictHelper;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
@@ -61,7 +62,7 @@ public class BlockRope extends Block {
         this.setHardness(0.2F);
         this.setRegistryName("rope");
         this.setUnlocalizedName(Comforts.MODID + ".rope");
-        this.setCreativeTab(CreativeTabs.TOOLS);
+        this.setCreativeTab(ComfortsHelper.comfortsTab);
     }
 
     @Nonnull
