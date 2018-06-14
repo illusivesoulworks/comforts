@@ -31,27 +31,6 @@ public final class EntityPlayerAccessor {
     private static final Method SPAWN_SHOULDER_ENTITIES = ReflectionHelper.findMethod(EntityPlayer.class,"spawnShoulderEntities", "func_192030_dh");
     private static final Method SET_SIZE = ReflectionHelper.findMethod(Entity.class, "setSize", "func_70105_a", Float.TYPE, Float.TYPE);
     private static final Method BED_IN_RANGE = ReflectionHelper.findMethod(EntityPlayer.class, "bedInRange", "func_190774_a", BlockPos.class, EnumFacing.class);
-    private static final Constructor<?> SLEEP_ENEMY_PREDICATE;
-
-    static {
-
-        Constructor<?> temp = null;
-
-        try {
-            Class<?> sleepPredicate = Class.forName("net.minecraft.entity.player.EntityPlayer$SleepEnemyPredicate");
-            temp = sleepPredicate.getDeclaredConstructor(EntityPlayer.class);
-            temp.setAccessible(true);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            Comforts.logger.log(Level.ERROR, "Cannot find SleepEnemyPredicate");
-        }
-
-        SLEEP_ENEMY_PREDICATE = temp;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Predicate<EntityMob> newSleepEnemyPredicate(EntityPlayer player) throws InstantiationException, IllegalAccessException, InvocationTargetException {
-        return (Predicate<EntityMob>) SLEEP_ENEMY_PREDICATE.newInstance(player);
-    }
 
     public static void setSize(EntityPlayer player, float width, float height) throws IllegalAccessException, InvocationTargetException {
         SET_SIZE.invoke(player, width, height);

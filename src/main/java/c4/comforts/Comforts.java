@@ -8,14 +8,13 @@
 
 package c4.comforts;
 
+import c4.comforts.api.ComfortsRegistry;
 import c4.comforts.proxy.CommonProxy;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -58,7 +57,17 @@ public class Comforts {
         }
 
         @Mod.EventHandler
+        public void onMessageReceived(FMLInterModComms.IMCEvent evt) {
+            for (FMLInterModComms.IMCMessage message : evt.getMessages()) {
+                String key = message.key;
+                if (key.equalsIgnoreCase("mobSleepFilter")) {
+                    message.getFunctionValue(EntityMob.class, Boolean.class).ifPresent(ComfortsRegistry::addMobSleepFilter);
+                }
+            }
+        }
+
+        @Mod.EventHandler
         public void onFingerPrintViolation(FMLFingerprintViolationEvent evt) {
-                FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName() + " may have been tampered with. This version will NOT be supported by the author!");
+            FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName() + " may have been tampered with. This version will NOT be supported by the author!");
         }
 }

@@ -9,6 +9,7 @@
 package c4.comforts.proxy;
 
 import c4.comforts.Comforts;
+import c4.comforts.api.ComfortsRegistry;
 import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.BlockRope;
 import c4.comforts.common.ConfigHandler;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

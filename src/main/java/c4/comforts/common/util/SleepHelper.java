@@ -9,10 +9,12 @@
 package c4.comforts.common.util;
 
 import c4.comforts.Comforts;
+import c4.comforts.api.ComfortsRegistry;
 import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.BlockSleepingBag;
 import c4.comforts.network.NetworkHandler;
 import c4.comforts.network.SPacketSleep;
+import com.google.common.base.Predicate;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -33,7 +35,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
 
 public class SleepHelper {
 
@@ -102,14 +106,10 @@ public class SleepHelper {
 
             double d0 = 8.0D;
             double d1 = 5.0D;
-            try {
-                List<EntityMob> list = player.world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB((double)bedLocation.getX() - d0, (double)bedLocation.getY() - d1, (double)bedLocation.getZ() - d0, (double)bedLocation.getX() + d0, (double)bedLocation.getY() + d1, (double)bedLocation.getZ() + d0), EntityPlayerAccessor.newSleepEnemyPredicate(player));
-                if (!list.isEmpty())
-                {
-                    return EntityPlayer.SleepResult.NOT_SAFE;
-                }
-            } catch (Exception e) {
-                Comforts.logger.log(Level.ERROR, "Failed to invoke new SleepEnemyPredicate");
+            List<EntityMob> list = player.world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB((double) bedLocation.getX() - d0, (double) bedLocation.getY() - d1, (double) bedLocation.getZ() - d0, (double) bedLocation.getX() + d0, (double) bedLocation.getY() + d1, (double) bedLocation.getZ() + d0),
+                    mob -> mob != null && mob.isPreventingPlayerRest(player) && ComfortsRegistry.mobSleepFilters.stream().allMatch(filter -> filter.apply(mob)));
+            if (!list.isEmpty()) {
+                return EntityPlayer.SleepResult.NOT_SAFE;
             }
         }
 
