@@ -1,0 +1,50 @@
+item.comforts.sleeping_bag.white.name=하얀색 침낭
+item.comforts.sleeping_bag.orange.name=주황색 침낭
+item.comforts.sleeping_bag.magenta.name=자홍색 침낭
+item.comforts.sleeping_bag.lightBlue.name=하늘색 침낭
+item.comforts.sleeping_bag.yellow.name=노란색 침낭
+item.comforts.sleeping_bag.lime.name=연두색 침낭
+item.comforts.sleeping_bag.pink.name=분홍색 침낭
+item.comforts.sleeping_bag.gray.name=회색 침낭
+item.comforts.sleeping_bag.silver.name=회백색 침낭
+item.comforts.sleeping_bag.cyan.name=청록색 침낭
+item.comforts.sleeping_bag.purple.name=보라색 침낭
+item.comforts.sleeping_bag.blue.name=파란색 침낭
+item.comforts.sleeping_bag.brown.name=갈색 침낭
+item.comforts.sleeping_bag.green.name=초록색 침낭
+item.comforts.sleeping_bag.red.name=빨간색 침낭
+item.comforts.sleeping_bag.black.name=검은색 침낭
+
+item.comforts.hammock.white.name=하얀색 해먹
+item.comforts.hammock.orange.name=주황색 해먹
+item.comforts.hammock.magenta.name=자홍색 해먹
+item.comforts.hammock.lightBlue.name=하늘색 해먹
+item.comforts.hammock.yellow.name=노란색 해먹
+item.comforts.hammock.lime.name=연두색 해먹
+item.comforts.hammock.pink.name=분홍색 해먹
+item.comforts.hammock.gray.name=회색 해먹
+item.comforts.hammock.silver.name=회백색 해먹
+item.comforts.hammock.cyan.name=청록색 해먹
+item.comforts.hammock.purple.name=보라색 해먹
+item.comforts.hammock.blue.name=파란색 해먹
+item.comforts.hammock.brown.name=갈색 해먹
+item.comforts.hammock.green.name=초록색 해먹
+item.comforts.hammock.red.name=빨간색 해먹
+item.comforts.hammock.black.name=검은색 해먹
+
+tile.sleeping_bag.noSleep=밤에만 잘 수 있습니다.
+tile.sleeping_bag.occupied=누가 이미 침낭에 있습니다.
+tile.sleeping_bag.notSafe=몬스터가 주변에 있어 잘 수 없습니다.
+tile.sleeping_bag.tooFarAway=침낭이 너무 멀리 있어 잘 수 없습니다.
+tile.sleeping_bag.noSpace=침낭을 놓기에 너무 좁습니다.
+
+tile.hammock.noSleep=낮잠은 낮에만 잘 수 있습니다.
+tile.hammock.occupied=누가 이미 해먹에 있습니다.
+tile.hammock.notSafe=몬스터가 주변에 있어 잘 수 없습니다.
+tile.hammock.tooFarAway=해먹이 너무 멀리 있어 잘 수 없습니다.
+
+tile.comforts.rope.name=밧줄과 못
+
+capability.comforts.notSleepy=졸리지 않아 잘 수 없습니다.
+
+itemGroup.comforts=Comforts 탭
