@@ -14,6 +14,7 @@ import c4.comforts.common.blocks.BlockSleepingBag;
 import c4.comforts.common.capability.IWellRested;
 import c4.comforts.common.capability.WellRested;
 import c4.comforts.common.entities.EntityRest;
+import c4.comforts.common.items.ItemSleepingBag;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsHelper;
 import net.minecraft.block.Block;
@@ -25,21 +26,61 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.logging.log4j.Level;
 import toughasnails.api.stat.capability.ITemperature;
 import toughasnails.api.temperature.Temperature;
 import toughasnails.api.temperature.TemperatureHelper;
 
+import java.lang.reflect.Method;
+
 public class EventHandler {
+
+    public static final Method WAKE_ALL_PLAYERS = ReflectionHelper.findMethod(WorldServer.class, "wakeAllPlayers", "func_73056_e");
+
+    @SubscribeEvent
+    public void onPreWorldTick(TickEvent.WorldTickEvent evt) {
+
+        if (evt.phase == TickEvent.Phase.START && evt.world instanceof WorldServer) {
+            WorldServer world = (WorldServer) evt.world;
+            if (world.areAllPlayersAsleep())
+            {
+                boolean inHammock = false;
+                if (world.getGameRules().getBoolean("doDaylightCycle"))
+                {
+                    for (EntityPlayer entityplayer : world.playerEntities)
+                    {
+                        BlockPos bedLocation = entityplayer.bedLocation;
+                        if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock)
+                        {
+                            inHammock = true;
+                            long i = world.getWorldTime() + 24000L;
+                            world.setWorldTime((i - i % 24000L) - 12001L);
+                            break;
+                        }
+                    }
+                }
+
+                if (inHammock) {
+                    try {
+                        WAKE_ALL_PLAYERS.invoke(world);
+                    } catch (Exception e) {
+                        Comforts.logger.log(Level.ERROR, "Error trying to wake all players!" + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
 
     @SubscribeEvent
     public void stopResting(EntityMountEvent evt) {
@@ -112,7 +153,6 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onPlayerWakeUp(PlayerWakeUpEvent e) {
-
         EntityPlayer player = e.getEntityPlayer();
         World world = player.world;
         BlockPos pos = player.bedLocation;
