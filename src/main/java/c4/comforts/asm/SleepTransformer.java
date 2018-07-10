@@ -42,7 +42,6 @@ public class SleepTransformer implements IClassTransformer {
 
     static {
         transformers.put("net.minecraft.entity.player.EntityPlayer", SleepTransformer::transformPlayerSleep);
-        transformers.put("net.minecraft.world.WorldServer", SleepTransformer::transformWorldSleep);
     }
 
     @Override
@@ -62,39 +61,14 @@ public class SleepTransformer implements IClassTransformer {
         return transform(basicClass, Pair.of(sig, combine(
                 (AbstractInsnNode node) -> node.getOpcode() == Opcodes.INVOKEVIRTUAL && (((MethodInsnNode) node).name.equals("isDaytime") || ((MethodInsnNode) node).name.equals("D")),
                 (MethodNode method, AbstractInsnNode node) -> {
+
+                    JumpInsnNode targetNode = (JumpInsnNode) node.getNext();
                     InsnList toInject = new InsnList();
+                    toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/asm/ASMHooks", "cannotSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
+                    toInject.add(new JumpInsnNode(Opcodes.IFEQ, targetNode.label));
 
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/asm/ASMHooks", "notTimeToSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
-
-                    method.instructions.insert(node, toInject);
-
-                    method.instructions.remove(node.getPrevious());
-                    method.instructions.remove(node);
-
-                    return true;
-                })));
-    }
-
-    private static byte[] transformWorldSleep(byte[] basicClass) {
-        log("Preparing to transform World Server");
-        MethodSignature sig = new MethodSignature("tick","func_72835_b","d", "()V");
-
-        return transform(basicClass, Pair.of(sig, combine(
-                (AbstractInsnNode node) -> node.getOpcode() == Opcodes.INVOKEVIRTUAL && ((MethodInsnNode) node).desc.equals("()J"),
-                (MethodNode method, AbstractInsnNode node) -> {
-                    InsnList toInject = new InsnList();
-
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/asm/ASMHooks", "advanceTime", "(Lnet/minecraft/world/World;)V"));
-
-                    method.instructions.insertBefore(node, toInject);
-
-                    AbstractInsnNode nodeToRemove;
-
-                    for (int i = 0; i < 13; i++) {
-                        nodeToRemove = node;
-                        node = node.getNext();
-                        method.instructions.remove(nodeToRemove);
-                    }
+                    method.instructions.insert(targetNode, toInject);
 
                     return true;
                 })));
