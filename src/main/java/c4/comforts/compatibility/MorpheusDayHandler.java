@@ -8,7 +8,10 @@
 
 package c4.comforts.compatibility;
 
+import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.util.SleepHelper;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional;
@@ -20,6 +23,24 @@ public class MorpheusDayHandler implements INewDayHandler {
     @Override
     public void startNewDay() {
         World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
-        SleepHelper.advanceTime(world);
+        boolean inHammock = false;
+        for (EntityPlayer entityplayer : world.playerEntities)
+        {
+            BlockPos bedLocation = entityplayer.bedLocation;
+            if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock)
+            {
+                inHammock = true;
+                break;
+            }
+        }
+
+        long worldTime = world.getWorldTime();
+        long i = worldTime + 24000L;
+
+        if (inHammock) {
+            world.setWorldTime((i - i % 24000L) - 12001L);
+        } else {
+            world.setWorldTime(i - i % 24000L);
+        }
     }
 }
