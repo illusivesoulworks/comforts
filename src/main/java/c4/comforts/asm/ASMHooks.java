@@ -14,10 +14,8 @@ import net.minecraft.world.World;
 public class ASMHooks {
 
     public static boolean cannotSleep(EntityPlayer player) {
-
         World world = player.world;
         long worldTime = world.getWorldTime() % 24000L;
-
         return world.isDaytime() && !(worldTime > 500L && worldTime < 11500L);
     }
 }

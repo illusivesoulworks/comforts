@@ -36,6 +36,7 @@ import java.util.function.Predicate;
  * CC-BY-NC-SA 3.0 License: https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB
  */
 
+@SuppressWarnings("unchecked")
 public class SleepTransformer implements IClassTransformer {
 
     private static final Map<String, Transformer> transformers = new HashMap<>();

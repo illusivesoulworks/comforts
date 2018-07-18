@@ -8,9 +8,7 @@
 
 package c4.comforts.api;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 
 import java.util.ArrayList;
 import java.util.List;

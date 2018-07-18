@@ -8,18 +8,13 @@
 
 package c4.comforts.network;
 
-import c4.comforts.common.util.SleepHelper;
+import c4.comforts.common.util.ComfortsUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -29,15 +24,12 @@ public class SPacketSleep implements IMessage {
     private int playerID;
     /** Block location of the head part of the bed */
     private BlockPos bedPos;
-    private boolean autoSleep;
 
     public SPacketSleep(){}
 
-    public SPacketSleep(EntityPlayer player, BlockPos posIn, boolean autoSleep)
-    {
+    public SPacketSleep(EntityPlayer player, BlockPos posIn) {
         this.playerID = player.getEntityId();
         this.bedPos = posIn;
-        this.autoSleep = autoSleep;
     }
 
     @Override
@@ -46,7 +38,6 @@ public class SPacketSleep implements IMessage {
         buf.writeInt(this.bedPos.getX());
         buf.writeInt(this.bedPos.getY());
         buf.writeInt(this.bedPos.getZ());
-        buf.writeBoolean(this.autoSleep);
     }
 
     @Override
@@ -56,18 +47,16 @@ public class SPacketSleep implements IMessage {
         int y = buf.readInt();
         int z = buf.readInt();
         this.bedPos = new BlockPos(x, y, z);
-        this.autoSleep = buf.readBoolean();
     }
 
     public static class SPacketSleepHandler implements IMessageHandler<SPacketSleep, IMessage> {
         // Do note that the default constructor is required, but implicitly defined in this case
-
         @Override
         public IMessage onMessage(SPacketSleep message, MessageContext ctx) {
             IThreadListener mainThread = Minecraft.getMinecraft();
             mainThread.addScheduledTask(() -> {
                 EntityPlayer player = (EntityPlayer) FMLClientHandler.instance().getWorldClient().getEntityByID(message.playerID);
-                SleepHelper.trySleep(player, message.bedPos, message.autoSleep);
+                ComfortsUtil.trySleep(player, message.bedPos);
             });
             // No response packet
             return null;

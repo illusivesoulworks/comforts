@@ -35,7 +35,6 @@ public class ComfortsBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
-
         ROPE.initModel();
     }
 }

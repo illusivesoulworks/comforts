@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class NetworkHandler {
 
-
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Comforts.MODID);
 
     private static int id = 0;
@@ -24,6 +23,7 @@ public class NetworkHandler {
         NetworkHandler.registerMessage(SPacketSleep.SPacketSleepHandler.class, SPacketSleep.class, Side.CLIENT);
     }
 
+    @SuppressWarnings("unchecked")
     private static void registerMessage(Class messageHandler, Class requestMessageType, Side side) {
         INSTANCE.registerMessage(messageHandler, requestMessageType, id++, side);
     }

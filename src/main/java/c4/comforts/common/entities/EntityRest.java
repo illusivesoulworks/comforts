@@ -14,9 +14,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class EntityRest extends Entity {
 
-    public EntityRest(World world){
+    public EntityRest(World world) {
         super(world);
         this.noClip = true;
         this.width = 0.0001F;
@@ -29,27 +31,29 @@ public class EntityRest extends Entity {
     }
 
     @Override
-    public double getMountedYOffset()
-    {
+    public double getMountedYOffset() {
         return super.getMountedYOffset() - 0.1825D;
     }
 
     @Override
     public void onUpdate() {
 
-        if (this.world.getTileEntity(this.getPosition()) == null || !(this.world.getTileEntity(this.getPosition()) instanceof TileEntityHammock)) {
+        if (this.world.getTileEntity(this.getPosition()) == null
+                || !(this.world.getTileEntity(this.getPosition()) instanceof TileEntityHammock)) {
             this.setDead();
         }
-
         super.onUpdate();
     }
 
     @Override
-    protected void entityInit() {}
+    protected void entityInit() {
+    }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {}
+    protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
+    }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {}
+    protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
+    }
 }

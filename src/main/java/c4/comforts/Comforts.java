@@ -18,56 +18,56 @@ import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
-@Mod(   modid = Comforts.MODID,
+@Mod(modid = Comforts.MODID,
         name = Comforts.MODNAME,
         version = Comforts.MODVER,
-        dependencies = "required-after:forge@[14.21.1.2387,);after:morpheus;after:toughasnails",
-        guiFactory = "c4." + Comforts.MODID + ".client.gui.GuiFactory",
+        dependencies = "required-after:forge@[14.23.4.2705,);after:morpheus;after:toughasnails",
         acceptedMinecraftVersions = "[1.12, 1.13)",
         certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
-
 public class Comforts {
+    public static final String MODID = "comforts";
+    public static final String MODNAME = "Comforts";
+    public static final String MODVER = "1.2.0";
 
-        public static final String MODID = "comforts";
-        public static final String MODNAME = "Comforts";
-        public static final String MODVER = "1.1.3";
+    @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
+    public static CommonProxy proxy;
 
-        @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
-        public static CommonProxy proxy;
+    @Mod.Instance
+    public static Comforts instance;
 
-        @Mod.Instance
-        public static Comforts instance;
+    public static Logger logger;
 
-        public static Logger logger;
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent evt) {
+        logger = evt.getModLog();
+        proxy.preInit(evt);
+    }
 
-        @Mod.EventHandler
-        public void preInit(FMLPreInitializationEvent e) {
-            logger = e.getModLog();
-            proxy.preInit(e);
-        }
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent evt) {
+        proxy.init(evt);
+    }
 
-        @Mod.EventHandler
-        public void init(FMLInitializationEvent e) {
-            proxy.init(e);
-        }
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent evt) {
+        proxy.postInit(evt);
+    }
 
-        @Mod.EventHandler
-        public void postInit(FMLPostInitializationEvent e) {
-            proxy.postInit(e);
-        }
+    @Mod.EventHandler
+    public void onMessageReceived(FMLInterModComms.IMCEvent evt) {
 
-        @Mod.EventHandler
-        public void onMessageReceived(FMLInterModComms.IMCEvent evt) {
-            for (FMLInterModComms.IMCMessage message : evt.getMessages()) {
-                String key = message.key;
-                if (key.equalsIgnoreCase("mobSleepFilter")) {
-                    message.getFunctionValue(EntityMob.class, Boolean.class).ifPresent(ComfortsRegistry::addMobSleepFilter);
-                }
+        for (FMLInterModComms.IMCMessage message : evt.getMessages()) {
+            String key = message.key;
+
+            if (key.equalsIgnoreCase("mobSleepFilter")) {
+                message.getFunctionValue(EntityMob.class, Boolean.class).ifPresent(ComfortsRegistry::addMobSleepFilter);
             }
         }
+    }
 
-        @Mod.EventHandler
-        public void onFingerPrintViolation(FMLFingerprintViolationEvent evt) {
-            FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName() + " may have been tampered with. This version will NOT be supported by the author!");
-        }
+    @Mod.EventHandler
+    public void onFingerPrintViolation(FMLFingerprintViolationEvent evt) {
+        FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName() + " may "
+                + "have been tampered with. This version will NOT be supported by the author!");
+    }
 }

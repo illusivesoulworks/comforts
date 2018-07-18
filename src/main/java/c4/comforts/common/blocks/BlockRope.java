@@ -10,8 +10,7 @@ package c4.comforts.common.blocks;
 
 import c4.comforts.Comforts;
 import c4.comforts.common.items.ComfortsItems;
-import c4.comforts.common.util.ComfortsHelper;
-import c4.comforts.common.util.OreDictHelper;
+import c4.comforts.common.util.ComfortsUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -21,7 +20,6 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -35,7 +33,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 
@@ -62,17 +59,15 @@ public class BlockRope extends Block {
         this.setHardness(0.2F);
         this.setRegistryName("rope");
         this.setUnlocalizedName(Comforts.MODID + ".rope");
-        this.setCreativeTab(ComfortsHelper.comfortsTab);
+        this.setCreativeTab(ComfortsUtil.comfortsTab);
     }
 
     @Nonnull
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         boolean supporting = state.getValue(SUPPORTING);
 
-        switch (state.getValue(FACING))
-        {
+        switch (state.getValue(FACING)) {
             case EAST:
                 return supporting ? ROPE_EAST_S_AABB : ROPE_EAST_AABB;
             case WEST:
@@ -85,80 +80,68 @@ public class BlockRope extends Block {
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
-    {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean canPlaceBlockAt(World worldIn, @Nonnull BlockPos pos)
-    {
-        for (EnumFacing enumfacing : FACING.getAllowedValues())
-        {
-            if (this.canPlaceAt(worldIn, pos, enumfacing))
-            {
+    public boolean canPlaceBlockAt(World worldIn, @Nonnull BlockPos pos) {
+
+        for (EnumFacing enumfacing : FACING.getAllowedValues()) {
+
+            if (this.canPlaceAt(worldIn, pos, enumfacing)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    private boolean canPlaceAt(World worldIn, BlockPos pos, EnumFacing facing)
-    {
+    private boolean canPlaceAt(World worldIn, BlockPos pos, EnumFacing facing) {
         BlockPos blockpos = pos.offset(facing.getOpposite());
         IBlockState iblockstate = worldIn.getBlockState(blockpos);
-
         return facing != EnumFacing.UP && facing != EnumFacing.DOWN && !isExceptBlockForAttachWithPiston(iblockstate.getBlock()) && iblockstate.getBlockFaceShape(worldIn, pos, facing) == BlockFaceShape.SOLID && iblockstate.getMaterial().isOpaque();
     }
 
     @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
-    {
-        if (this.canPlaceAt(worldIn, pos, facing))
-        {
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+
+        if (this.canPlaceAt(worldIn, pos, facing)) {
             return this.getDefaultState().withProperty(FACING, facing);
-        }
-        else
-        {
-            for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-            {
-                if (this.canPlaceAt(worldIn, pos, enumfacing))
-                {
+        } else {
+
+            for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL) {
+
+                if (this.canPlaceAt(worldIn, pos, enumfacing)) {
                     return this.getDefaultState().withProperty(FACING, enumfacing);
                 }
             }
-
             return this.getDefaultState();
         }
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
-    {
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         IBlockState blockstate = worldIn.getBlockState(pos.offset(state.getValue(FACING)));
 
         if (!(blockstate.getBlock() instanceof BlockHammock)) {
             worldIn.setBlockState(pos, state.withProperty(SUPPORTING, false));
         }
-
         this.onNeighborChangeInternal(worldIn, pos, state);
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
         if (worldIn.isRemote) {
             return true;
-        }
-        else if (playerIn.getHeldItem(hand).getItem() != ComfortsItems.HAMMOCK || state.getValue(SUPPORTING) || !checkForPartnerRope(worldIn, pos, state)) {
+        } else if (playerIn.getHeldItem(hand).getItem() != ComfortsItems.HAMMOCK || state.getValue(SUPPORTING)
+                || !checkForPartnerRope(worldIn, pos, state)) {
             return true;
         } else {
             hangHammock(worldIn, pos.offset(state.getValue(FACING)), playerIn, hand, state.getValue(FACING));
@@ -167,11 +150,9 @@ public class BlockRope extends Block {
     }
 
     private void hangHammock(World worldIn, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing facing) {
-
         IBlockState iblockstate = worldIn.getBlockState(pos);
         Block block = iblockstate.getBlock();
         boolean flag = block.isReplaceable(worldIn, pos);
-
         BlockPos blockpos = pos.offset(facing);
         ItemStack itemstack = player.getHeldItem(hand);
 
@@ -182,13 +163,22 @@ public class BlockRope extends Block {
             boolean flag3 = flag1 || worldIn.isAirBlock(blockpos);
 
             if (flag2 && flag3) {
-                IBlockState iblockstate2 = ComfortsBlocks.HAMMOCKS[itemstack.getMetadata()].getDefaultState().withProperty(BlockHammock.OCCUPIED, false).withProperty(BlockHammock.FACING, facing).withProperty(BlockHammock.PART, BlockHammock.EnumPartType.FOOT);
-                worldIn.setBlockState(pos.offset(facing.getOpposite()), worldIn.getBlockState(pos.offset(facing.getOpposite())).withProperty(SUPPORTING, true));
-                worldIn.setBlockState(blockpos.offset(facing), worldIn.getBlockState(blockpos.offset(facing)).withProperty(SUPPORTING, true));
+                IBlockState iblockstate2 = ComfortsBlocks.HAMMOCKS[itemstack.getMetadata()].getDefaultState()
+                        .withProperty(BlockHammock.OCCUPIED, false)
+                        .withProperty(BlockHammock.FACING, facing)
+                        .withProperty(BlockHammock.PART, BlockHammock.EnumPartType.FOOT);
+
+                worldIn.setBlockState(pos.offset(facing.getOpposite()),
+                        worldIn.getBlockState(pos.offset(facing.getOpposite())).withProperty(SUPPORTING, true));
+                worldIn.setBlockState(blockpos.offset(facing),
+                        worldIn.getBlockState(blockpos.offset(facing)).withProperty(SUPPORTING, true));
                 worldIn.setBlockState(pos, iblockstate2, 10);
-                worldIn.setBlockState(blockpos, iblockstate2.withProperty(BlockHammock.PART, BlockHammock.EnumPartType.HEAD), 10);
+                worldIn.setBlockState(blockpos,
+                        iblockstate2.withProperty(BlockHammock.PART, BlockHammock.EnumPartType.HEAD), 10);
+
                 SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, player);
-                worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS,
+                        (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
                 worldIn.notifyNeighborsRespectDebug(pos, block, false);
                 worldIn.notifyNeighborsRespectDebug(blockpos, iblockstate1.getBlock(), false);
@@ -205,7 +195,6 @@ public class BlockRope extends Block {
     }
 
     private boolean checkForPartnerRope(World worldIn, BlockPos pos, IBlockState state) {
-
         BlockPos blockpos = pos.offset(state.getValue(FACING), 3);
         IBlockState blockstate = worldIn.getBlockState(blockpos);
 
@@ -218,58 +207,47 @@ public class BlockRope extends Block {
         return false;
     }
 
-    protected boolean onNeighborChangeInternal(World worldIn, BlockPos pos, IBlockState state)
-    {
-        if (!this.checkForDrop(worldIn, pos, state))
-        {
+    protected boolean onNeighborChangeInternal(World worldIn, BlockPos pos, IBlockState state) {
+
+        if (!this.checkForDrop(worldIn, pos, state)) {
             return true;
-        }
-        else
-        {
+        } else {
             EnumFacing enumfacing = state.getValue(FACING);
             EnumFacing enumfacing1 = enumfacing.getOpposite();
             BlockPos blockpos = pos.offset(enumfacing1);
             boolean flag = false;
 
-            if (worldIn.getBlockState(blockpos).getBlockFaceShape(worldIn, blockpos, enumfacing) != BlockFaceShape.SOLID)
-            {
+            if (worldIn.getBlockState(blockpos).getBlockFaceShape(worldIn, blockpos, enumfacing) != BlockFaceShape.SOLID) {
                 flag = true;
             }
 
-            if (flag)
-            {
+            if (flag) {
                 this.dropBlockAsItem(worldIn, pos, state, 0);
                 worldIn.setBlockToAir(pos);
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
     }
 
-    protected boolean checkForDrop(World worldIn, BlockPos pos, IBlockState state)
-    {
-        if (state.getBlock() == this && this.canPlaceAt(worldIn, pos, state.getValue(FACING)))
-        {
+    protected boolean checkForDrop(World worldIn, BlockPos pos, IBlockState state) {
+
+        if (state.getBlock() == this && this.canPlaceAt(worldIn, pos, state.getValue(FACING))) {
             return true;
-        }
-        else
-        {
-            if (worldIn.getBlockState(pos).getBlock() == this)
-            {
+        } else {
+
+            if (worldIn.getBlockState(pos).getBlock() == this) {
                 this.dropBlockAsItem(worldIn, pos, state, 0);
                 worldIn.setBlockToAir(pos);
             }
-
             return false;
         }
     }
 
+    @Nonnull
     @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
+    public IBlockState getStateFromMeta(int meta) {
         IBlockState iblockstate = this.getDefaultState();
 
         if (meta < 4) {
@@ -277,53 +255,50 @@ public class BlockRope extends Block {
         } else {
             iblockstate = iblockstate.withProperty(FACING, EnumFacing.getHorizontal(meta - 4)).withProperty(SUPPORTING, true);
         }
-
         return iblockstate;
     }
 
+    @Nonnull
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
-    {
+    public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public int getMetaFromState(IBlockState state)
-    {
+    public int getMetaFromState(IBlockState state) {
         int i = 0;
-
         i += (state.getValue(FACING)).getHorizontalIndex();
 
-        if (state.getValue(SUPPORTING))
-        {
+        if (state.getValue(SUPPORTING)) {
             i += 4;
         }
-
         return i;
     }
 
-    public IBlockState withRotation(IBlockState state, Rotation rot)
-    {
+    @Nonnull
+    public IBlockState withRotation(@Nonnull IBlockState state, Rotation rot) {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
+    @Nonnull
+    public IBlockState withMirror(@Nonnull IBlockState state, Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
-    protected BlockStateContainer createBlockState()
-    {
+    @Nonnull
+    protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING, SUPPORTING);
     }
 
-    public BlockFaceShape getBlockFaceShape(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
-    {
+    @Nonnull
+    public BlockFaceShape getBlockFaceShape(IBlockAccess access, IBlockState state, BlockPos pos, EnumFacing facing) {
         return BlockFaceShape.UNDEFINED;
     }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0,
+                new ModelResourceLocation(this.getRegistryName(), "inventory"));
     }
 }
