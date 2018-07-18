@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Config(modid = Comforts.MODID)
 public class ConfigHandler {
 
-    @Name("Auto Use Sleeping Bag")
+    @Name("Auto Use Sleeping Bags")
     @Comment("Set to true to automatically use sleeping bags when placed")
     @RequiresMcRestart
     public static boolean autoUse = true;
