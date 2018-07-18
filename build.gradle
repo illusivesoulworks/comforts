@@ -61,6 +61,14 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += 'docs'
+        }
+    }
+}
+
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
