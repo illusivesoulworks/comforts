@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Comforts.MODID,
         name = Comforts.MODNAME,
         version = Comforts.MODVER,
-        dependencies = "required-after:forge@[14.23.4.2705,);after:morpheus;after:toughasnails",
+        dependencies = "required-after:forge@[14.23.4.2705,14.23.4.2755);after:morpheus;after:toughasnails",
         acceptedMinecraftVersions = "[1.12, 1.13)",
         certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
 public class Comforts {
