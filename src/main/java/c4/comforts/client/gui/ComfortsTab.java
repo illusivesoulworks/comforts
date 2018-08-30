@@ -11,7 +11,6 @@ package c4.comforts.client.gui;
 import c4.comforts.Comforts;
 import c4.comforts.common.items.ComfortsItems;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;

@@ -15,7 +15,6 @@ import c4.comforts.common.entities.EntityRest;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -25,6 +24,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -70,6 +71,16 @@ public class EventHandlerCommon {
                     }
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void allowDaytimeNapping(SleepingTimeCheckEvent evt) {
+        World world = evt.getEntityPlayer().getEntityWorld();
+        long worldTime = world.getWorldTime() % 24000L;
+        if (world.getBlockState(evt.getSleepingLocation()).getBlock() instanceof BlockHammock
+                && (worldTime > 500L && worldTime < 11500L)) {
+            evt.setResult(Event.Result.ALLOW);
         }
     }
 

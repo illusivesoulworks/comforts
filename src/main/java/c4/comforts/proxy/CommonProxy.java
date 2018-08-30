@@ -10,22 +10,21 @@ package c4.comforts.proxy;
 
 import c4.comforts.Comforts;
 import c4.comforts.common.ConfigHandler;
+import c4.comforts.common.EventHandlerCommon;
 import c4.comforts.common.blocks.BlockHammock;
 import c4.comforts.common.blocks.BlockRope;
-import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.common.blocks.BlockSleepingBag;
-import c4.comforts.common.EventHandlerCommon;
+import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.common.capability.CapabilitySleepTime;
 import c4.comforts.common.capability.CapabilitySleeping;
 import c4.comforts.common.capability.CapabilityWellRested;
 import c4.comforts.common.entities.EntityRest;
+import c4.comforts.common.items.ItemHammock;
+import c4.comforts.common.items.ItemSleepingBag;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsUtil;
 import c4.comforts.integrations.morpheus.MorpheusDayHandler;
-import c4.comforts.common.items.ItemHammock;
-import c4.comforts.common.items.ItemSleepingBag;
 import c4.comforts.integrations.toughasnails.EventHandlerTAN;
-import c4.comforts.network.NetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -52,7 +51,6 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent evt) {
         ComfortsBlocks.preInit();
-        NetworkHandler.init();
         ComfortsUtil.parseDebuffs();
     }
 

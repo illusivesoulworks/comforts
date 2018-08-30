@@ -8,7 +8,6 @@
 
 package c4.comforts.common.blocks;
 
-import c4.comforts.common.items.ComfortsItems;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;

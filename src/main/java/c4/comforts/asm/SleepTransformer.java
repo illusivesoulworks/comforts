@@ -55,21 +55,29 @@ public class SleepTransformer implements IClassTransformer {
         return basicClass;
     }
 
+    private static int invokeStatic = 0;
+
     private static byte[] transformPlayerSleep(byte[] basicClass) {
         log("Preparing to transform Entity Player");
-        MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "B_", "()V");
+        MethodSignature sig = new MethodSignature("trySleep", "func_180469_a", "a", "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/entity/player/EntityPlayer$SleepResult;");
 
+        invokeStatic = 0;
         return transform(basicClass, Pair.of(sig, combine(
-                (AbstractInsnNode node) -> node.getOpcode() == Opcodes.INVOKEVIRTUAL && (((MethodInsnNode) node).name.equals("isDaytime") || ((MethodInsnNode) node).name.equals("D")),
+                (AbstractInsnNode node) -> node.getOpcode() == Opcodes.INVOKESTATIC,
+
                 (MethodNode method, AbstractInsnNode node) -> {
+                    invokeStatic++;
 
-                    JumpInsnNode targetNode = (JumpInsnNode) node.getNext();
+                    if (invokeStatic != 2) {
+                        return false;
+                    }
+
                     InsnList toInject = new InsnList();
-                    toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/comforts/asm/ASMHooks", "cannotSleep", "(Lnet/minecraft/entity/player/EntityPlayer;)Z"));
-                    toInject.add(new JumpInsnNode(Opcodes.IFEQ, targetNode.label));
+                    toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 
-                    method.instructions.insert(targetNode, toInject);
+                    method.instructions.remove(node.getPrevious().getPrevious());
+                    method.instructions.remove(node.getPrevious());
+                    method.instructions.insertBefore(node, toInject);
 
                     return true;
                 })));

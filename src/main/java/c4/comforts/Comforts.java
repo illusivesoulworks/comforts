@@ -8,26 +8,27 @@
 
 package c4.comforts;
 
-import c4.comforts.api.ComfortsRegistry;
 import c4.comforts.proxy.CommonProxy;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Comforts.MODID,
         name = Comforts.MODNAME,
         version = Comforts.MODVER,
-        dependencies = "required-after:forge@[14.23.4.2705,14.23.4.2755);after:morpheus;after:toughasnails",
+        dependencies = "required-after:forge@[14.23.4.2755,);after:morpheus;after:toughasnails",
         acceptedMinecraftVersions = "[1.12, 1.13)",
         certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
 public class Comforts {
     public static final String MODID = "comforts";
     public static final String MODNAME = "Comforts";
-    public static final String MODVER = "1.2.0.1";
+    public static final String MODVER = "1.3.0";
 
     @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
     public static CommonProxy proxy;
@@ -51,18 +52,6 @@ public class Comforts {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         proxy.postInit(evt);
-    }
-
-    @Mod.EventHandler
-    public void onMessageReceived(FMLInterModComms.IMCEvent evt) {
-
-        for (FMLInterModComms.IMCMessage message : evt.getMessages()) {
-            String key = message.key;
-
-            if (key.equalsIgnoreCase("mobSleepFilter")) {
-                message.getFunctionValue(EntityMob.class, Boolean.class).ifPresent(ComfortsRegistry::addMobSleepFilter);
-            }
-        }
     }
 
     @Mod.EventHandler

@@ -125,13 +125,7 @@ public class BlockBase extends BlockHorizontal {
                 worldIn.setBlockState(pos, state, 4);
             }
 
-            EntityPlayer.SleepResult entityplayer$sleepresult;
-
-            if (state.getBlock() instanceof BlockSleepingBag) {
-                entityplayer$sleepresult = playerIn.trySleep(pos);
-            } else {
-                entityplayer$sleepresult = ComfortsUtil.goToSleep(playerIn, pos);
-            }
+            EntityPlayer.SleepResult entityplayer$sleepresult = playerIn.trySleep(pos);
 
             if (entityplayer$sleepresult == EntityPlayer.SleepResult.OK) {
                 state = state.withProperty(OCCUPIED, true);
