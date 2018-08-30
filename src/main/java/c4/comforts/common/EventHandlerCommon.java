@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
 public class EventHandlerCommon {
 
     public static final Method WAKE_ALL_PLAYERS = ReflectionHelper.findMethod(WorldServer.class, "wakeAllPlayers",
-            "func_73056_e");
+            "func_73053_d");
 
     @SubscribeEvent
     public void onPreWorldTick(TickEvent.WorldTickEvent evt) {
