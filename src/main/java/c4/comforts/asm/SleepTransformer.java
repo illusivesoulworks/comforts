@@ -59,7 +59,9 @@ public class SleepTransformer implements IClassTransformer {
 
     private static byte[] transformPlayerSleep(byte[] basicClass) {
         log("Preparing to transform Entity Player");
-        MethodSignature sig = new MethodSignature("trySleep", "func_180469_a", "a", "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/entity/player/EntityPlayer$SleepResult;");
+        MethodSignature sig = new MethodSignature("trySleep", "func_180469_a", "a",
+                "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/entity/player/EntityPlayer$SleepResult;",
+                "(Let;)Laed$a;");
 
         invokeStatic = 0;
         return transform(basicClass, Pair.of(sig, combine(
@@ -167,11 +169,12 @@ public class SleepTransformer implements IClassTransformer {
     private static class MethodSignature{
         String funcName, srgName, obfName, funcDesc, obfDesc;
 
-        MethodSignature(String funcName, String srgName, String obfName, String funcDesc) {
+        MethodSignature(String funcName, String srgName, String obfName, String funcDesc, String obfDesc) {
             this.funcName = funcName;
             this.srgName = srgName;
             this.obfName = obfName;
             this.funcDesc = funcDesc;
+            this.obfDesc = obfDesc;
         }
 
         @Override

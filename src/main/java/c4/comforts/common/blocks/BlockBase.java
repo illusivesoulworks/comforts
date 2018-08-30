@@ -54,7 +54,7 @@ public class BlockBase extends BlockHorizontal {
         this.setHardness(0.2F);
         this.color = color.getMetadata();
         this.setRegistryName(name + "_" + color.getName());
-        this.setUnlocalizedName(Comforts.MODID + "." + name + "." + color.getName());
+        this.setTranslationKey(Comforts.MODID + "." + name + "." + color.getName());
         this.setTextComponents(name);
         this.disableStats();
     }
@@ -194,14 +194,14 @@ public class BlockBase extends BlockHorizontal {
 
     @Nonnull
     @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state) {
+    public EnumPushReaction getPushReaction(IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
@@ -245,7 +245,7 @@ public class BlockBase extends BlockHorizontal {
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        EnumFacing enumfacing = EnumFacing.getHorizontal(meta);
+        EnumFacing enumfacing = EnumFacing.byHorizontalIndex(meta);
         return (meta & 8) > 0 ? this.getDefaultState().withProperty(PART, BlockBase.EnumPartType.HEAD).withProperty(FACING, enumfacing).withProperty(OCCUPIED, (meta & 4) > 0) : this.getDefaultState().withProperty(PART, BlockBase.EnumPartType.FOOT).withProperty(FACING, enumfacing);
     }
 

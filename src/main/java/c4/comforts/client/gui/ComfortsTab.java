@@ -23,7 +23,7 @@ public class ComfortsTab extends CreativeTabs {
 
     @Nonnull
     @Override
-    public ItemStack getTabIconItem() {
+    public ItemStack createIcon() {
         return new ItemStack(ComfortsItems.SLEEPING_BAG, 1, 14);
     }
 }

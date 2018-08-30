@@ -30,13 +30,13 @@ public class ItemBase extends Item {
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
         this.setRegistryName(name);
-        this.setUnlocalizedName(Comforts.MODID + "." + name);
+        this.setTranslationKey(Comforts.MODID + "." + name);
     }
 
     @Nonnull
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return super.getUnlocalizedName() + "." + EnumDyeColor.byMetadata(stack.getMetadata()).getUnlocalizedName();
+    public String getTranslationKey(ItemStack stack) {
+        return super.getTranslationKey() + "." + EnumDyeColor.byMetadata(stack.getMetadata()).getTranslationKey();
     }
 
     @Override

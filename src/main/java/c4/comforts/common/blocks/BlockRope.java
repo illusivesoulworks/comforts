@@ -59,7 +59,7 @@ public class BlockRope extends Block {
         this.setSoundType(SoundType.METAL);
         this.setHardness(0.2F);
         this.setRegistryName("rope");
-        this.setUnlocalizedName(Comforts.MODID + ".rope");
+        this.setTranslationKey(Comforts.MODID + ".rope");
         this.setCreativeTab(ComfortsUtil.comfortsTab);
     }
 
@@ -252,16 +252,17 @@ public class BlockRope extends Block {
         IBlockState iblockstate = this.getDefaultState();
 
         if (meta < 4) {
-            iblockstate = iblockstate.withProperty(FACING, EnumFacing.getHorizontal(meta));
+            iblockstate = iblockstate.withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
         } else {
-            iblockstate = iblockstate.withProperty(FACING, EnumFacing.getHorizontal(meta - 4)).withProperty(SUPPORTING, true);
+            iblockstate = iblockstate.withProperty(FACING, EnumFacing.byHorizontalIndex(meta - 4)).withProperty(SUPPORTING, true);
         }
         return iblockstate;
     }
 
     @Nonnull
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
+    @Override
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
@@ -277,22 +278,26 @@ public class BlockRope extends Block {
     }
 
     @Nonnull
+    @Override
     public IBlockState withRotation(@Nonnull IBlockState state, Rotation rot) {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @Nonnull
+    @Override
     public IBlockState withMirror(@Nonnull IBlockState state, Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
     @Nonnull
+    @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING, SUPPORTING);
     }
 
     @Nonnull
+    @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess access, IBlockState state, BlockPos pos, EnumFacing facing) {
         return BlockFaceShape.UNDEFINED;
     }
