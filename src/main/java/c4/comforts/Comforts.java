@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 public class Comforts {
     public static final String MODID = "comforts";
     public static final String MODNAME = "Comforts";
-    public static final String MODVER = "1.3.0";
+    public static final String MODVER = "1.3.1";
 
     @SidedProxy(clientSide = "c4.comforts.proxy.ClientProxy", serverSide = "c4.comforts.proxy.CommonProxy")
     public static CommonProxy proxy;
