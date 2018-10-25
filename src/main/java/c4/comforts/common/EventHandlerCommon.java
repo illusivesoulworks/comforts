@@ -15,10 +15,14 @@ import c4.comforts.common.entities.EntityRest;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -26,6 +30,7 @@ import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -115,15 +120,25 @@ public class EventHandlerCommon {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onPlayerWakeUp(PlayerWakeUpEvent evt) {
         EntityPlayer player = evt.getEntityPlayer();
+        World world = player.world;
+        BlockPos pos = player.bedLocation;
+        IBlockState state = player.world.getBlockState(pos);
 
-        if (!player.world.isRemote
-                && player.world.getBlockState(player.bedLocation).getBlock() instanceof BlockSleepingBag) {
+        if (!world.isRemote && state.getBlock() instanceof BlockSleepingBag) {
 
             if (!ComfortsUtil.getDebuffs().isEmpty()) {
                 ComfortsUtil.applyDebuffs(player);
+            }
+
+            if (ConfigHandler.bagBreakPerc > world.rand.nextDouble()) {
+                BlockPos pos1 = pos.offset(state.getValue(BlockSleepingBag.FACING).getOpposite());
+                world.setBlockToAir(pos);
+                world.setBlockToAir(pos1);
+                player.sendStatusMessage(new TextComponentTranslation("tile.sleeping_bag.broke"), true);
+                world.playSound(null, pos, SoundEvents.BLOCK_CLOTH_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
         }
     }

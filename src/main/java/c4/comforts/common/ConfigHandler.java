@@ -47,6 +47,11 @@ public class ConfigHandler {
             "Format: [effect] [duration(secs)] [power]"})
     public static String[] sleepingBagDebuffs = new String[]{};
 
+    @Name("Sleeping Bag Break Chance")
+    @Comment("The chance that a sleeping bag will break upon usage")
+    @RangeDouble(min = 0.0D, max = 1.0D)
+    public static double bagBreakPerc = 0.0D;
+
     public static final ToughAsNails toughasnails = new ToughAsNails();
 
     public static class ToughAsNails {

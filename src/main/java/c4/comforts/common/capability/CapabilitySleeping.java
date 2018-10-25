@@ -193,6 +193,9 @@ public class CapabilitySleeping {
                             sleeping.setSleeping(false);
                             sleeping.setPos(BlockPos.ORIGIN);
                         }
+                    } else {
+                        sleeping.setSleeping(false);
+                        sleeping.setPos(BlockPos.ORIGIN);
                     }
                 }
             }
