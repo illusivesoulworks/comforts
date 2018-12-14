@@ -50,7 +50,7 @@ public class EventHandlerCommon {
             WorldServer world = (WorldServer) evt.world;
 
             if (world.areAllPlayersAsleep()) {
-                boolean inHammock = false;
+                boolean skipToNight = false;
 
                 if (world.getGameRules().getBoolean("doDaylightCycle")) {
 
@@ -59,15 +59,19 @@ public class EventHandlerCommon {
 
                         if (entityplayer.isPlayerFullyAsleep() && bedLocation != null
                                 && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock) {
-                            inHammock = true;
                             long i = world.getWorldTime() + 24000L;
-                            world.setWorldTime((i - i % 24000L) - 12001L);
+                            long worldTime = world.getWorldTime() % 24000L;
+
+                            if (worldTime > 500L && worldTime < 11500L) {
+                                skipToNight = true;
+                                world.setWorldTime((i - i % 24000L) - 12001L);
+                            }
                             break;
                         }
                     }
                 }
 
-                if (inHammock) {
+                if (skipToNight) {
 
                     try {
                         WAKE_ALL_PLAYERS.invoke(world);
@@ -83,9 +87,18 @@ public class EventHandlerCommon {
     public void allowDaytimeNapping(SleepingTimeCheckEvent evt) {
         World world = evt.getEntityPlayer().getEntityWorld();
         long worldTime = world.getWorldTime() % 24000L;
-        if (world.getBlockState(evt.getSleepingLocation()).getBlock() instanceof BlockHammock
-                && (worldTime > 500L && worldTime < 11500L)) {
-            evt.setResult(Event.Result.ALLOW);
+        if (world.getBlockState(evt.getSleepingLocation()).getBlock() instanceof BlockHammock) {
+
+            if (worldTime > 500L && worldTime < 11500L) {
+                evt.setResult(Event.Result.ALLOW);
+            } else {
+
+                if (ConfigHandler.nightHammocks) {
+                    evt.setResult(Event.Result.DEFAULT);
+                } else {
+                    evt.setResult(Event.Result.DENY);
+                }
+            }
         }
     }
 

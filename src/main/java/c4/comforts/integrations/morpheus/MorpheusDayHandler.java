@@ -22,13 +22,17 @@ public class MorpheusDayHandler implements INewDayHandler {
     @Override
     public void startNewDay() {
         World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
-        boolean inHammock = false;
-        for (EntityPlayer entityplayer : world.playerEntities)
-        {
+        boolean skipToNight = false;
+
+        for (EntityPlayer entityplayer : world.playerEntities) {
             BlockPos bedLocation = entityplayer.bedLocation;
-            if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock)
-            {
-                inHammock = true;
+
+            if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock) {
+                long worldTime = world.getWorldTime() % 24000L;
+
+                if (worldTime > 500L && worldTime < 11500L) {
+                    skipToNight = true;
+                }
                 break;
             }
         }
@@ -36,7 +40,7 @@ public class MorpheusDayHandler implements INewDayHandler {
         long worldTime = world.getWorldTime();
         long i = worldTime + 24000L;
 
-        if (inHammock) {
+        if (skipToNight) {
             world.setWorldTime((i - i % 24000L) - 12001L);
         } else {
             world.setWorldTime(i - i % 24000L);

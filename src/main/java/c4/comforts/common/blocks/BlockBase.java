@@ -9,6 +9,7 @@
 package c4.comforts.common.blocks;
 
 import c4.comforts.Comforts;
+import c4.comforts.common.ConfigHandler;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsUtil;
 import net.minecraft.block.BlockBed;
@@ -132,7 +133,12 @@ public class BlockBase extends BlockHorizontal {
                 worldIn.setBlockState(pos, state, 4);
             } else {
                 if (entityplayer$sleepresult == EntityPlayer.SleepResult.NOT_POSSIBLE_NOW) {
-                    playerIn.sendStatusMessage(new TextComponentTranslation(textNoSleep), true);
+
+                    if (this instanceof BlockHammock && ConfigHandler.nightHammocks) {
+                        playerIn.sendStatusMessage(new TextComponentTranslation(textNoSleep + "Custom"), true);
+                    } else {
+                        playerIn.sendStatusMessage(new TextComponentTranslation(textNoSleep), true);
+                    }
                 } else if (entityplayer$sleepresult == EntityPlayer.SleepResult.NOT_SAFE) {
                     playerIn.sendStatusMessage(new TextComponentTranslation(textNotSafe), true);
                 } else if (entityplayer$sleepresult == EntityPlayer.SleepResult.TOO_FAR_AWAY) {

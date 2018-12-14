@@ -42,6 +42,10 @@ public class ConfigHandler {
     @Comment("Set to true to enable relaxing in hammocks without sleeping")
     public static boolean restHammocks = false;
 
+    @Name("Nighttime Hammocks")
+    @Comment("Set to true to enable sleeping in hammocks at night")
+    public static boolean nightHammocks = false;
+
     @Name("Sleeping Bag Debuffs")
     @Comment({"List of debuffs to apply to players after using the sleeping bag",
             "Format: [effect] [duration(secs)] [power]"})
