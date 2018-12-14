@@ -13,6 +13,7 @@ import c4.comforts.common.entities.EntityRest;
 import c4.comforts.common.items.ComfortsItems;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -53,7 +54,7 @@ public class BlockHammock extends BlockBase {
                 return true;
             } else {
 
-                if (state.getValue(PART) != EnumPartType.HEAD) {
+                if (state.getValue(BlockBed.PART) != BlockBed.EnumPartType.HEAD) {
                     BlockPos blockpos = pos.offset(state.getValue(FACING));
                     IBlockState blockstate = worldIn.getBlockState(blockpos);
 
@@ -100,7 +101,7 @@ public class BlockHammock extends BlockBase {
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         EnumFacing enumfacing = state.getValue(FACING);
 
-        if (state.getValue(PART) == EnumPartType.FOOT) {
+        if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT) {
             IBlockState blockstate = worldIn.getBlockState(pos.offset(enumfacing.getOpposite()));
 
             if (worldIn.getBlockState(pos.offset(enumfacing)).getBlock() != this) {
@@ -150,7 +151,7 @@ public class BlockHammock extends BlockBase {
     @Nonnull
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return state.getValue(PART) == EnumPartType.FOOT ? Items.AIR : ComfortsItems.HAMMOCK;
+        return state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT ? Items.AIR : ComfortsItems.HAMMOCK;
     }
 
     @Nonnull

@@ -14,6 +14,7 @@ import c4.comforts.common.blocks.ComfortsBlocks;
 import c4.comforts.common.capability.CapabilitySleeping;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,11 +70,11 @@ public class ItemSleepingBag extends ItemBase {
                             ComfortsBlocks.SLEEPING_BAGS[itemstack.getMetadata()].getDefaultState()
                             .withProperty(BlockSleepingBag.OCCUPIED, false)
                             .withProperty(BlockSleepingBag.FACING, enumfacing)
-                            .withProperty(BlockSleepingBag.PART, BlockSleepingBag.EnumPartType.FOOT);
+                            .withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT);
 
                     worldIn.setBlockState(pos, iblockstate2, 10);
                     worldIn.setBlockState(blockpos,
-                            iblockstate2.withProperty(BlockSleepingBag.PART, BlockSleepingBag.EnumPartType.HEAD), 10);
+                            iblockstate2.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 10);
 
                     SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, player);
                     worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS,

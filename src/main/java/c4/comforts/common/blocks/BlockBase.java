@@ -11,6 +11,7 @@ package c4.comforts.common.blocks;
 import c4.comforts.Comforts;
 import c4.comforts.common.tileentities.TileEntityHammock;
 import c4.comforts.common.util.ComfortsUtil;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -38,7 +39,6 @@ import javax.annotation.Nullable;
 
 public class BlockBase extends BlockHorizontal {
 
-    public static final PropertyEnum<BlockBase.EnumPartType> PART = PropertyEnum.create("part", BlockBase.EnumPartType.class);
     public static final PropertyBool OCCUPIED = PropertyBool.create("occupied");
     protected float explosivePower = 5.0F;
     protected String textOccupied;
@@ -49,7 +49,7 @@ public class BlockBase extends BlockHorizontal {
 
     public BlockBase(String name, EnumDyeColor color) {
         super(Material.CLOTH);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(PART, BlockBase.EnumPartType.FOOT).withProperty(OCCUPIED, false));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT).withProperty(OCCUPIED, false));
         this.setSoundType(SoundType.CLOTH);
         this.setHardness(0.2F);
         this.color = color.getMetadata();
@@ -82,7 +82,7 @@ public class BlockBase extends BlockHorizontal {
     public EntityPlayer.SleepResult doSleep(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn) {
         BlockPos originalPos = pos;
 
-        if (state.getValue(PART) != EnumPartType.HEAD) {
+        if (state.getValue(BlockBed.PART) != BlockBed.EnumPartType.HEAD) {
             pos = pos.offset(state.getValue(FACING));
             state = worldIn.getBlockState(pos);
 
@@ -187,7 +187,7 @@ public class BlockBase extends BlockHorizontal {
 
     public void dropBlockAsItemWithChance(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, float chance, int fortune) {
 
-        if (state.getValue(PART) == BlockBase.EnumPartType.HEAD) {
+        if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD) {
             super.dropBlockAsItemWithChance(worldIn, pos, state, chance, 0);
         }
     }
@@ -208,7 +208,7 @@ public class BlockBase extends BlockHorizontal {
     @Override
     public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
 
-        if (player.capabilities.isCreativeMode && state.getValue(PART) == BlockBase.EnumPartType.FOOT) {
+        if (player.capabilities.isCreativeMode && state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT) {
             BlockPos blockpos = pos.offset(state.getValue(FACING));
 
             if (worldIn.getBlockState(blockpos).getBlock() == this) {
@@ -220,7 +220,7 @@ public class BlockBase extends BlockHorizontal {
     @Nonnull
     @Override
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        if (state.getValue(PART) == BlockBase.EnumPartType.FOOT) {
+        if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT) {
             IBlockState iblockstate = worldIn.getBlockState(pos.offset(state.getValue(FACING)));
 
             if (iblockstate.getBlock() == this) {
@@ -246,7 +246,7 @@ public class BlockBase extends BlockHorizontal {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         EnumFacing enumfacing = EnumFacing.byHorizontalIndex(meta);
-        return (meta & 8) > 0 ? this.getDefaultState().withProperty(PART, BlockBase.EnumPartType.HEAD).withProperty(FACING, enumfacing).withProperty(OCCUPIED, (meta & 4) > 0) : this.getDefaultState().withProperty(PART, BlockBase.EnumPartType.FOOT).withProperty(FACING, enumfacing);
+        return (meta & 8) > 0 ? this.getDefaultState().withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD).withProperty(FACING, enumfacing).withProperty(OCCUPIED, (meta & 4) > 0) : this.getDefaultState().withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT).withProperty(FACING, enumfacing);
     }
 
     @Override
@@ -254,7 +254,7 @@ public class BlockBase extends BlockHorizontal {
         int i = 0;
         i = i | (state.getValue(FACING)).getHorizontalIndex();
 
-        if (state.getValue(PART) == BlockBase.EnumPartType.HEAD) {
+        if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD) {
             i |= 8;
 
             if (state.getValue(OCCUPIED)) {
@@ -267,7 +267,7 @@ public class BlockBase extends BlockHorizontal {
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, PART, OCCUPIED);
+        return new BlockStateContainer(this, FACING, BlockBed.PART, OCCUPIED);
     }
 
     @Override
@@ -295,25 +295,5 @@ public class BlockBase extends BlockHorizontal {
     @SideOnly(Side.CLIENT)
     public IBlockColor colorMultiplier() {
         return (state, worldIn, pos, tintIndex) -> ComfortsUtil.getColor(color);
-    }
-
-    public enum EnumPartType implements IStringSerializable {
-        HEAD("head"),
-        FOOT("foot");
-
-        private final String name;
-
-        EnumPartType(String name) {
-            this.name = name;
-        }
-
-        public String toString() {
-            return this.name;
-        }
-
-        @Nonnull
-        public String getName() {
-            return this.name;
-        }
     }
 }

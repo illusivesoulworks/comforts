@@ -13,6 +13,7 @@ import c4.comforts.common.items.ComfortsItems;
 import c4.comforts.common.util.ComfortsUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -167,7 +168,7 @@ public class BlockRope extends Block {
                 IBlockState iblockstate2 = ComfortsBlocks.HAMMOCKS[itemstack.getMetadata()].getDefaultState()
                         .withProperty(BlockHammock.OCCUPIED, false)
                         .withProperty(BlockHammock.FACING, facing)
-                        .withProperty(BlockHammock.PART, BlockHammock.EnumPartType.FOOT);
+                        .withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT);
 
                 worldIn.setBlockState(pos.offset(facing.getOpposite()),
                         worldIn.getBlockState(pos.offset(facing.getOpposite())).withProperty(SUPPORTING, true));
@@ -175,7 +176,7 @@ public class BlockRope extends Block {
                         worldIn.getBlockState(blockpos.offset(facing)).withProperty(SUPPORTING, true));
                 worldIn.setBlockState(pos, iblockstate2, 10);
                 worldIn.setBlockState(blockpos,
-                        iblockstate2.withProperty(BlockHammock.PART, BlockHammock.EnumPartType.HEAD), 10);
+                        iblockstate2.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 10);
 
                 SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, player);
                 worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS,

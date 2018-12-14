@@ -10,6 +10,7 @@ package c4.comforts.common.blocks;
 
 import c4.comforts.common.items.ComfortsItems;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -42,7 +43,7 @@ public class BlockSleepingBag extends BlockBase {
     {
         EnumFacing enumfacing = state.getValue(FACING);
 
-        if (state.getValue(PART) == EnumPartType.FOOT)
+        if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
         {
             if (worldIn.getBlockState(pos.offset(enumfacing)).getBlock() != this)
             {
@@ -72,7 +73,7 @@ public class BlockSleepingBag extends BlockBase {
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
-        return state.getValue(PART) == EnumPartType.FOOT ? Items.AIR : ComfortsItems.SLEEPING_BAG;
+        return state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT ? Items.AIR : ComfortsItems.SLEEPING_BAG;
     }
 
     @Nonnull
