@@ -137,21 +137,24 @@ public class EventHandlerCommon {
     public void onPlayerWakeUp(PlayerWakeUpEvent evt) {
         EntityPlayer player = evt.getEntityPlayer();
         World world = player.world;
-        BlockPos pos = player.bedLocation;
-        IBlockState state = player.world.getBlockState(pos);
 
-        if (!world.isRemote && state.getBlock() instanceof BlockSleepingBag) {
+        if (!world.isRemote && player.bedLocation != null) {
+            BlockPos pos = player.bedLocation;
+            IBlockState state = player.world.getBlockState(pos);
 
-            if (!ComfortsUtil.getDebuffs().isEmpty()) {
-                ComfortsUtil.applyDebuffs(player);
-            }
+            if (state.getBlock() instanceof BlockSleepingBag) {
 
-            if (ConfigHandler.bagBreakPerc > world.rand.nextDouble()) {
-                BlockPos pos1 = pos.offset(state.getValue(BlockSleepingBag.FACING).getOpposite());
-                world.setBlockToAir(pos);
-                world.setBlockToAir(pos1);
-                player.sendStatusMessage(new TextComponentTranslation("tile.sleeping_bag.broke"), true);
-                world.playSound(null, pos, SoundEvents.BLOCK_CLOTH_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (!ComfortsUtil.getDebuffs().isEmpty()) {
+                    ComfortsUtil.applyDebuffs(player);
+                }
+
+                if (ConfigHandler.bagBreakPerc > world.rand.nextDouble()) {
+                    BlockPos pos1 = pos.offset(state.getValue(BlockSleepingBag.FACING).getOpposite());
+                    world.setBlockToAir(pos);
+                    world.setBlockToAir(pos1);
+                    player.sendStatusMessage(new TextComponentTranslation("tile.sleeping_bag.broke"), true);
+                    world.playSound(null, pos, SoundEvents.BLOCK_CLOTH_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                }
             }
         }
     }

@@ -28,7 +28,7 @@ public class EventHandlerTAN {
         World world = player.world;
         BlockPos pos = player.bedLocation;
 
-        if (!world.isRemote && world.getBlockState(pos).getBlock() instanceof BlockSleepingBag) {
+        if (!world.isRemote && pos != null && world.getBlockState(pos).getBlock() instanceof BlockSleepingBag) {
             CapabilitySleepTime.ISleepTime sleepTime = CapabilitySleepTime.getSleepTime(player);
 
             if (sleepTime != null) {

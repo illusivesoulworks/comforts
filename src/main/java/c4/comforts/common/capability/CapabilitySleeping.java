@@ -206,7 +206,7 @@ public class CapabilitySleeping {
             EntityPlayer player = evt.getEntityPlayer();
             World world = player.world;
 
-            if (!world.isRemote) {
+            if (!world.isRemote && player.bedLocation != null) {
                 BlockPos pos = player.bedLocation;
                 IBlockState state = world.getBlockState(pos);
 

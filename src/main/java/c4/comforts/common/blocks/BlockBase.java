@@ -168,7 +168,7 @@ public class BlockBase extends BlockHorizontal {
 
         for (EntityPlayer entityplayer : worldIn.playerEntities) {
 
-            if (entityplayer.isPlayerSleeping() && entityplayer.bedLocation.equals(pos)) {
+            if (entityplayer.isPlayerSleeping() && entityplayer.bedLocation != null && entityplayer.bedLocation.equals(pos)) {
                 return entityplayer;
             }
         }

@@ -21,7 +21,7 @@ public class EventHandlerClient {
     @SubscribeEvent
     public void onPlayerRender(RenderPlayerEvent.Pre evt) {
         final EntityPlayer player = evt.getEntityPlayer();
-        if (player instanceof EntityOtherPlayerMP && player.isPlayerSleeping()) {
+        if (player instanceof EntityOtherPlayerMP && player.isPlayerSleeping() && player.bedLocation != null) {
             Block bed = player.world.getBlockState(player.bedLocation).getBlock();
             if (bed instanceof BlockSleepingBag) {
                 player.renderOffsetY = -0.375F;
