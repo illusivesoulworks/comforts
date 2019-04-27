@@ -1,3 +1,21 @@
+comforts.general.autouse=Utiliser auto. les sacs de couchage
+comforts.general.autouse.tooltip=Activer pour utiliser automatiquement les sacs de couchage lorsqu'ils sont posés
+comforts.general.wellrested=Bien reposé
+comforts.general.wellrested.tooltip=Activer pour empêcher de dormir en fonction de la durée de votre sommeil précédent
+comforts.general.sleepyratio=Facteur de sommeil
+comforts.general.sleepyratio.tooltip=Si Bien reposé est activé, cette valeur est utilisée pour déterminer combien de avant de pouvoir dormir à nouveau (grands nombres = possibilité de dormir plus tôt)
+comforts.general.resthammocks=Hamacs de loisir
+comforts.general.resthammocks.tooltip=Activer pour activer la relaxation dans les hamacs sans dormir
+comforts.general.nighthammocks=Hamacs de nuit
+comforts.general.nighthammocks.tooltip=Activer pour permettre de dormir la nuit dans les hamacsin
+comforts.general.sleepingbagdebuffs=Effets de sac de couchage
+comforts.general.sleepingbagdebuffs.tooltip=Liste de effets à appliquer aux joueurs après utilisation de sac de couchage - Format : [effet] [durée(secs)] [puissance]
+comforts.general.bagbreakperc=Chances de casser un sac de couchage
+comforts.general.bagbreakperc.tooltip=Les chances qu'aura un sac de couchage de casser après utilisation
+comforts.general.toughasnails.tooltip=Intégrations avec Tough as Nails
+comforts.general.toughasnails.warmbody=Corps chaud
+comforts.general.toughasnails.warmbody.tooltip=Activer pour empêcher de dormir en fonction de la durée de votre sommeil précédent
+
 item.comforts.sleeping_bag.white.name=Sac de couchage blanc
 item.comforts.sleeping_bag.orange.name=Sac de couchage orange
 item.comforts.sleeping_bag.magenta.name=Sac de couchage magenta
@@ -36,9 +54,10 @@ tile.sleeping_bag.noSleep=Vous ne pouvez dormir que durant la nuit
 tile.sleeping_bag.occupied=Ce sac de couchage est occupé
 tile.sleeping_bag.notSafe=Vous ne pouvez pas dormir pour l'instant, il y a des monstres à proximité
 tile.sleeping_bag.tooFarAway=Vous ne pouvez pas dormir pour l'instant, le sac de couchage est trop loin
-tile.sleeping_bag.noSpace=Il n'y a pas assez d'espace pour le sac de couchage
+tile.sleeping_bag.broke=Le sac de couchage a cassé
 
 tile.hammock.noSleep=Vous ne pouvez faire la sieste que durant le jour
+tile.hammock.noSleepCustom=Vous ne pouvez pas encore dormir dans le hamac
 tile.hammock.occupied=Ce hamac est occupé
 tile.hammock.notSafe=Vous ne pouvez pas faire la sieste pour l'instant, il y a des monstres à proximité
 tile.hammock.tooFarAway=Vous ne pouvez pas faire la sieste pour l'instant, le hamac est trop loin
@@ -46,3 +65,5 @@ tile.hammock.tooFarAway=Vous ne pouvez pas faire la sieste pour l'instant, le ha
 tile.comforts.rope.name=Corde et clou
 
 capability.comforts.notSleepy=Vous ne pouvez pas dormir pour l'instant, vous n'avez pas encore sommeil
+
+itemGroup.comforts=Comforts
