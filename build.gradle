@@ -33,6 +33,20 @@ sourceSets {
     }
 }
 
+repositories {
+
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+}
+
+dependencies {
+
+    deobfCompile "tough-as-nails:ToughAsNails-1.12.2:3.1.0.140:universal"
+    deobfCompile "morpheus:Morpheus:1.12:3.3.2"
+}
+
 processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
