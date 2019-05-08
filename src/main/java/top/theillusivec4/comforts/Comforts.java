@@ -15,6 +15,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.client.renderer.TileEntityHammockRenderer;
 import top.theillusivec4.comforts.client.renderer.TileEntitySleepingBagRenderer;
 import top.theillusivec4.comforts.common.EventHandlerCommon;
@@ -42,6 +44,8 @@ public class Comforts {
             return new ItemStack(ComfortsBlocks.SLEEPING_BAGS.get(EnumDyeColor.RED));
         }
     };
+
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public Comforts() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
