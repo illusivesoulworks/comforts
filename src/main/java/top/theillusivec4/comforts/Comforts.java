@@ -17,6 +17,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.comforts.client.EventHandlerClient;
 import top.theillusivec4.comforts.client.renderer.TileEntityHammockRenderer;
 import top.theillusivec4.comforts.client.renderer.TileEntitySleepingBagRenderer;
 import top.theillusivec4.comforts.common.EventHandlerCommon;
@@ -59,6 +60,7 @@ public class Comforts {
     }
 
     private void setupClient(FMLClientSetupEvent evt) {
+        MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySleepingBag.class, new TileEntitySleepingBagRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHammock.class, new TileEntityHammockRenderer());
     }
