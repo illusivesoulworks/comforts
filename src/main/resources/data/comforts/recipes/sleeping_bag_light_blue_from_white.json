@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "dyed_sleeping_bag",
+  "ingredients": [
+    {
+      "item": "comforts:sleeping_bag_white"
+    },
+    {
+      "tag": "forge:dyes/light_blue"
+    }
+  ],
+  "result": {
+    "item": "comforts:sleeping_bag_light_blue"
+  }
+}

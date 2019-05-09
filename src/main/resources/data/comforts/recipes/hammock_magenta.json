@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "hammock",
+  "pattern": [
+    "sws",
+    "sas",
+    "sws"
+  ],
+  "key": {
+    "a": {
+      "item": "minecraft:magenta_wool"
+    },
+    "s": {
+      "item": "minecraft:string"
+    },
+    "w": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "result": {
+    "item": "comforts:hammock_magenta"
+  }
+}
