@@ -11,7 +11,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.ComfortsConfig;
-import top.theillusivec4.comforts.common.block.BlockSleepingBag;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 import javax.annotation.Nonnull;

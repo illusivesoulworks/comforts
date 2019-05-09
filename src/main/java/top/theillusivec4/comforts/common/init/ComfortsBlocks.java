@@ -3,7 +3,6 @@ package top.theillusivec4.comforts.common.init;
 import net.minecraft.block.Block;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.registries.ObjectHolder;
-import top.theillusivec4.comforts.Comforts;
 
 import java.util.EnumMap;
 
