@@ -6,13 +6,21 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.state.properties.BedPart;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -22,16 +30,21 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.block.BlockHammock;
 import top.theillusivec4.comforts.common.block.BlockSleepingBag;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventHandlerCommon {
 
     private static final Method WAKE_ALL_PLAYERS = ObfuscationReflectionHelper.findMethod(WorldServer.class, "func_73053_d");
+
+    public static List<PotionEffect> debuffs = new ArrayList<>();
 
     @SubscribeEvent
     public void onPlayerSetSpawn(PlayerSetSpawnEvent evt) {
@@ -42,7 +55,7 @@ public class EventHandlerCommon {
         if (pos != null) {
             Block block = world.getBlockState(pos).getBlock();
 
-            if (!world.isRemote && block instanceof BlockSleepingBag) {
+            if (!world.isRemote && (block instanceof BlockSleepingBag || block instanceof BlockHammock)) {
                 player.bedLocation = ObfuscationReflectionHelper.getPrivateValue(EntityPlayer.class, player, "field_71077_c");
                 evt.setCanceled(true);
             }
@@ -59,7 +72,12 @@ public class EventHandlerCommon {
             if (worldTime > 500L && worldTime < 11500L) {
                 evt.setResult(Event.Result.ALLOW);
             } else {
-                evt.setResult(Event.Result.DENY);
+
+                if (ComfortsConfig.SERVER.nightHammocks.get()) {
+                    evt.setResult(Event.Result.DEFAULT);
+                } else {
+                    evt.setResult(Event.Result.DENY);
+                }
             }
         }
     }
@@ -139,22 +157,104 @@ public class EventHandlerCommon {
 
         if (!world.isRemote) {
             CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+                BlockPos pos = sleepdata.getSleepingPos();
+                IBlockState state = world.getBlockState(pos);
 
-                if (sleepdata.isSleeping()) {
-                    BlockPos pos = sleepdata.getSleepingPos();
-                    IBlockState state = world.getBlockState(pos);
-                    sleepdata.setSleeping(false);
-                    sleepdata.setSleepingPos(null);
-                    ItemStack stack = new ItemStack(state.getBlock().getItemDropped(state, world, pos, 0));
-                    BlockPos blockpos = pos.offset(state.get(BlockHorizontal.HORIZONTAL_FACING).getOpposite());
-                    world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                    world.setBlockState(pos, Blocks.AIR.getDefaultState(), 35);
+                if (state.getBlock() instanceof BlockSleepingBag) {
+                    boolean broke = false;
+                    List<PotionEffect> debuffs = getDebuffs();
 
-                    if (!player.abilities.isCreativeMode) {
-                        ItemHandlerHelper.giveItemToPlayer(player, stack, player.inventory.currentItem);
+                    if (!debuffs.isEmpty()) {
+
+                        for (PotionEffect effect : debuffs) {
+                            player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier()));
+                        }
                     }
+
+                    if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
+                        broke = true;
+                        BlockPos blockpos = pos.offset(state.get(BlockHorizontal.HORIZONTAL_FACING).getOpposite());
+                        world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                        world.setBlockState(pos, Blocks.AIR.getDefaultState(), 35);
+                        player.sendStatusMessage(new TextComponentTranslation("block.comforts.sleeping_bag.broke"), true);
+                        world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    }
+
+                    if (sleepdata.isSleeping()) {
+                        sleepdata.setSleeping(false);
+                        sleepdata.setSleepingPos(null);
+
+                        if (!broke) {
+                            ItemStack stack = new ItemStack(state.getBlock().getItemDropped(state, world, pos, 0));
+                            BlockPos blockpos = pos.offset(state.get(BlockHorizontal.HORIZONTAL_FACING).getOpposite());
+                            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 35);
+
+                            if (!player.abilities.isCreativeMode) {
+                                ItemHandlerHelper.giveItemToPlayer(player, stack, player.inventory.currentItem);
+                            }
+                        }
+                    }
+                }
+                long wakeTime = world.getDayTime();
+                long timeSlept = wakeTime - sleepdata.getSleepTime();
+
+                if (timeSlept > 500L) {
+                    sleepdata.setWakeTime(wakeTime);
+                    sleepdata.setTiredTime(wakeTime + (long)(timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
                 }
             });
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerSleep(PlayerSleepInBedEvent evt) {
+        EntityPlayer player = evt.getEntityPlayer();
+
+        if (!player.world.isRemote && ComfortsConfig.SERVER.wellRested.get()) {
+            long dayTime = player.getEntityWorld().getDayTime();
+            CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+
+                if (sleepdata.getWakeTime() > dayTime) {
+                    sleepdata.setWakeTime(0);
+                    sleepdata.setTiredTime(0);
+                }
+
+                if (sleepdata.getTiredTime() > dayTime) {
+                    player.sendStatusMessage(new TextComponentTranslation("capability.comforts.not_sleepy"), true);
+                    evt.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
+                }
+            });
+        }
+    }
+
+    private static List<PotionEffect> getDebuffs() {
+        List<String> configDebuffs = ComfortsConfig.SERVER.sleepingBagDebuffs.get();
+
+        if (!configDebuffs.isEmpty()) {
+
+            if (debuffs.isEmpty()) {
+
+                for (String s : configDebuffs) {
+                    String[] elements = s.split("\\s+");
+                    Potion potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(elements[0]));
+
+                    if (potion == null) {
+                        continue;
+                    }
+                    int duration = 0;
+                    int amp = 0;
+                    try {
+                        duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
+                        amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
+                    } catch (Exception e) {
+                        Comforts.LOGGER.error("Problem parsing sleeping bag debuffs in config!", e);
+                    }
+                    debuffs.add(new PotionEffect(potion, duration * 20, amp - 1));
+                }
+            }
+            return debuffs;
+        }
+        return new ArrayList<>();
     }
 }

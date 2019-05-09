@@ -31,7 +31,6 @@ public class CapabilitySleepData {
     private static final String SLEEP_TAG = "sleepTime";
     private static final String SLEEPING_TAG = "sleeping";
     private static final String LOC_TAG = "sleepingLocation";
-    private static final String BED_TAG = "bedLocation";
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
@@ -49,11 +48,6 @@ public class CapabilitySleepData {
                 if (pos != null) {
                     compound.put(LOC_TAG, NBTUtil.writeBlockPos(pos));
                 }
-                BlockPos pos2 = instance.getBedPos();
-
-                if (pos2 != null) {
-                    compound.put(BED_TAG, NBTUtil.writeBlockPos(pos2));
-                }
                 return compound;
             }
 
@@ -67,10 +61,6 @@ public class CapabilitySleepData {
 
                 if (compound.hasUniqueId(LOC_TAG)) {
                     instance.setSleepingPos(NBTUtil.readBlockPos(compound.getCompound(LOC_TAG)));
-                }
-
-                if (compound.hasUniqueId(BED_TAG)) {
-                    instance.setBedPos(NBTUtil.readBlockPos(compound.getCompound(BED_TAG)));
                 }
             }
         }, SleepDataWrapper::new);
@@ -101,10 +91,6 @@ public class CapabilitySleepData {
         BlockPos getSleepingPos();
 
         void setSleepingPos(BlockPos pos);
-
-        BlockPos getBedPos();
-
-        void setBedPos(BlockPos pos);
     }
 
     public static class SleepDataWrapper implements ISleepData {
@@ -165,16 +151,6 @@ public class CapabilitySleepData {
         public void setSleepingPos(BlockPos pos) {
             sleepLocation = pos;
         }
-
-        @Override
-        public BlockPos getBedPos() {
-            return bedLocation;
-        }
-
-        @Override
-        public void setBedPos(BlockPos pos) {
-            bedLocation = pos;
-        }
     }
 
     public static class Provider implements ICapabilitySerializable<INBTBase> {
@@ -226,7 +202,6 @@ public class CapabilitySleepData {
                 EntityPlayer original = evt.getOriginal();
                 CapabilitySleepData.getCapability(player).ifPresent(sleepdata ->
                         CapabilitySleepData.getCapability(original).ifPresent(originaldata -> {
-                            sleepdata.setBedPos(originaldata.getBedPos());
                             sleepdata.setSleepingPos(originaldata.getSleepingPos());
                             sleepdata.setSleeping(originaldata.isSleeping());
                             sleepdata.setSleepTime(originaldata.getSleepTime());

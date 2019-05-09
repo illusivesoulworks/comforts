@@ -12,6 +12,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,6 +63,12 @@ public class BlockComfortsBase extends BlockBed {
                 if (entityplayer$sleepresult == EntityPlayer.SleepResult.OK) {
                     state = state.with(OCCUPIED, true);
                     worldIn.setBlockState(pos, state, 4);
+                    CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+
+                        if (sleepdata.getSleepingPos() == null) {
+                            sleepdata.setSleepingPos(player.bedLocation);
+                        }
+                    });
                     return true;
                 } else {
 
