@@ -15,13 +15,13 @@ import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
 
 import javax.annotation.Nonnull;
 
-public class BlockSleepingBag extends BlockBed {
+public class BlockSleepingBag extends BlockComfortsBase {
 
     private static final VoxelShape SLEEPING_BAG_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
     private final EnumDyeColor color;
 
     public BlockSleepingBag(EnumDyeColor color) {
-        super(color, Block.Properties.create(Material.CLOTH).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
+        super(BedType.SLEEPING_BAG, color, Block.Properties.create(Material.CLOTH).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
         this.color = color;
         this.setRegistryName(Comforts.MODID, "sleeping_bag_" + color.getTranslationKey());
     }
