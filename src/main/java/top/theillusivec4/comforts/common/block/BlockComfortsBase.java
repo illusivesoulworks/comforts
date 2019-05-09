@@ -51,7 +51,7 @@ public class BlockComfortsBase extends BlockBed {
                     EntityPlayer entityplayer = this.getPlayerInBed(worldIn, pos);
 
                     if (entityplayer != null) {
-                        player.sendStatusMessage(new TextComponentTranslation("block.comforts.%s.occupied", type.name), true);
+                        player.sendStatusMessage(new TextComponentTranslation("block.comforts." + type.name + "occupied"), true);
                         return true;
                     }
                     state = state.with(OCCUPIED, false);
@@ -66,11 +66,12 @@ public class BlockComfortsBase extends BlockBed {
                 } else {
 
                     if (entityplayer$sleepresult == EntityPlayer.SleepResult.NOT_POSSIBLE_NOW) {
-                        player.sendStatusMessage(new TextComponentTranslation("block.comforts.%s.no_sleep", type.name), true);
+                        TextComponentTranslation text = type == BedType.HAMMOCK ? new TextComponentTranslation("block.comforts." + type.name + ".no_sleep") : new TextComponentTranslation("block.minecraft.bed.no_sleep");
+                        player.sendStatusMessage(text, true);
                     } else if (entityplayer$sleepresult == EntityPlayer.SleepResult.NOT_SAFE) {
                         player.sendStatusMessage(new TextComponentTranslation("block.minecraft.bed.not_safe"), true);
                     } else if (entityplayer$sleepresult == EntityPlayer.SleepResult.TOO_FAR_AWAY) {
-                        player.sendStatusMessage(new TextComponentTranslation("block.comforts.%s.too_far_away", type.name), true);
+                        player.sendStatusMessage(new TextComponentTranslation("block.comforts." + type.name + "too_far_away"), true);
                     }
                     return true;
                 }

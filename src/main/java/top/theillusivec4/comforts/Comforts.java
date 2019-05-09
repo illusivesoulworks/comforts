@@ -9,8 +9,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -20,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.client.EventHandlerClient;
 import top.theillusivec4.comforts.client.renderer.TileEntityHammockRenderer;
 import top.theillusivec4.comforts.client.renderer.TileEntitySleepingBagRenderer;
+import top.theillusivec4.comforts.common.ComfortsConfig;
 import top.theillusivec4.comforts.common.EventHandlerCommon;
 import top.theillusivec4.comforts.common.block.BlockHammock;
 import top.theillusivec4.comforts.common.block.BlockRopeAndNail;
@@ -29,6 +32,7 @@ import top.theillusivec4.comforts.common.init.ComfortsBlocks;
 import top.theillusivec4.comforts.common.init.ComfortsTileEntities;
 import top.theillusivec4.comforts.common.item.ItemComfortsBase;
 import top.theillusivec4.comforts.common.item.ItemHammock;
+import top.theillusivec4.comforts.common.item.ItemSleepingBag;
 import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
 import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
 
@@ -52,6 +56,7 @@ public class Comforts {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
         eventBus.addListener(this::setupClient);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.serverSpec);
     }
 
     private void setup(FMLCommonSetupEvent evt) {
@@ -84,7 +89,7 @@ public class Comforts {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> evt) {
             IForgeRegistry<Item> registry = evt.getRegistry();
-            ComfortsBlocks.SLEEPING_BAGS.values().forEach(block -> registry.register(new ItemComfortsBase(block)));
+            ComfortsBlocks.SLEEPING_BAGS.values().forEach(block -> registry.register(new ItemSleepingBag(block)));
             ComfortsBlocks.HAMMOCKS.values().forEach(block -> registry.register(new ItemHammock(block)));
             registry.register(new ItemComfortsBase(ComfortsBlocks.ROPE_AND_NAIL));
         }
