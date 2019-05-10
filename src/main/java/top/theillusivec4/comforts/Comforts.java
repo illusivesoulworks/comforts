@@ -31,6 +31,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -39,6 +40,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.quetzi.morpheus.Morpheus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.client.EventHandlerClient;
@@ -57,6 +59,7 @@ import top.theillusivec4.comforts.common.item.ItemHammock;
 import top.theillusivec4.comforts.common.item.ItemSleepingBag;
 import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
 import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
+import top.theillusivec4.comforts.integration.morpheus.MorpheusDayHandler;
 
 import java.util.Arrays;
 
@@ -84,6 +87,10 @@ public class Comforts {
     private void setup(FMLCommonSetupEvent evt) {
         MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
         CapabilitySleepData.register();
+
+        if (ModList.get().isLoaded("morpheus")) {
+            Morpheus.register.registerHandler(new MorpheusDayHandler(), 0);
+        }
     }
 
     private void setupClient(FMLClientSetupEvent evt) {

@@ -51,8 +51,16 @@ minecraft {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
+
+    compile fg.deobf("net.quetzi.morpheus:Morpheus:1.13.2-4.0.115")
 }
 
 sourceSets {
