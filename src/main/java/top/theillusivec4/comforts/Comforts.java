@@ -20,11 +20,15 @@
 package top.theillusivec4.comforts;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,6 +43,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.quetzi.morpheus.Morpheus;
 import org.apache.logging.log4j.LogManager;
@@ -89,7 +94,31 @@ public class Comforts {
         CapabilitySleepData.register();
 
         if (ModList.get().isLoaded("morpheus")) {
-            Morpheus.register.registerHandler(new MorpheusDayHandler(), 0);
+            Morpheus.register.registerHandler(() -> {
+                World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
+                boolean skipToNight = false;
+
+                for (EntityPlayer entityplayer : world.playerEntities) {
+                    BlockPos bedLocation = entityplayer.bedLocation;
+
+                    if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock) {
+                        long worldTime = world.getDayTime() % 24000L;
+
+                        if (worldTime > 500L && worldTime < 11500L) {
+                            skipToNight = true;
+                        }
+                        break;
+                    }
+                }
+                long worldTime = world.getDayTime();
+                long i = worldTime + 24000L;
+
+                if (skipToNight) {
+                    world.setDayTime((i - i % 24000L) - 12001L);
+                } else {
+                    world.setDayTime(i - i % 24000L);
+                }
+            }, 0);
         }
     }
 
