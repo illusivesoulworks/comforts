@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "comforts:sleeping_bag_magenta_from_white"
+    ]
+  },
+  "criteria": {
+    "has_sleeping_bag": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "comforts:sleeping_bag_white"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "comforts:sleeping_bag_magenta_from_white"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_sleeping_bag",
+      "has_the_recipe"
+    ]
+  ]
+}
