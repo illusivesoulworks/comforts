@@ -8,10 +8,12 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.2.0'
+        classpath "com.wynprice.cursemaven:CurseMaven:1.1.0"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.matthewprenger.cursegradle'
+apply plugin: "com.wynprice.cursemaven"
 
 version = "${version_minecraft}-${mod_version}"
 group = "${mod_group}"
@@ -20,7 +22,7 @@ archivesBaseName = "${mod_id}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: "${version_mcp}".toString()
+    mappings channel: 'stable', version: "${version_mcp}".toString()
 
     runs {
         client {
@@ -51,16 +53,9 @@ minecraft {
     }
 }
 
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
-}
-
 dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
-
-    compile fg.deobf("net.quetzi.morpheus:Morpheus:1.13.2-4.0.115")
+    compileOnly fg.deobf(curse.resolve('morpheus', '2675812'))
 }
 
 sourceSets {
