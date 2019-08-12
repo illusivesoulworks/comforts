@@ -64,7 +64,6 @@ import top.theillusivec4.comforts.common.item.ItemHammock;
 import top.theillusivec4.comforts.common.item.ItemSleepingBag;
 import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
 import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
-import top.theillusivec4.comforts.integration.morpheus.MorpheusDayHandler;
 
 import java.util.Arrays;
 
@@ -85,7 +84,6 @@ public class Comforts {
     public Comforts() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
-        eventBus.addListener(this::setupClient);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.serverSpec);
     }
 
@@ -122,10 +120,16 @@ public class Comforts {
         }
     }
 
-    private void setupClient(FMLClientSetupEvent evt) {
-        MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySleepingBag.class, new TileEntitySleepingBagRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHammock.class, new TileEntityHammockRenderer());
+    @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ClientProxy {
+
+        @SubscribeEvent
+        public static void setupClient(FMLClientSetupEvent evt) {
+            MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySleepingBag.class, new TileEntitySleepingBagRenderer());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHammock.class, new TileEntityHammockRenderer());
+        }
+
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
