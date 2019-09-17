@@ -21,6 +21,7 @@ package top.theillusivec4.comforts;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -49,11 +50,11 @@ import net.quetzi.morpheus.Morpheus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.client.EventHandlerClient;
-import top.theillusivec4.comforts.client.renderer.TileEntityHammockRenderer;
-import top.theillusivec4.comforts.client.renderer.TileEntitySleepingBagRenderer;
+import top.theillusivec4.comforts.client.renderer.HammockTileEntityRenderer;
+import top.theillusivec4.comforts.client.renderer.SleepingBagTileEntityRenderer;
 import top.theillusivec4.comforts.common.ComfortsConfig;
 import top.theillusivec4.comforts.common.EventHandlerCommon;
-import top.theillusivec4.comforts.common.block.BlockHammock;
+import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.BlockRopeAndNail;
 import top.theillusivec4.comforts.common.block.BlockSleepingBag;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
@@ -75,7 +76,7 @@ public class Comforts {
     public static final ItemGroup CREATIVE_TAB = new ItemGroup(-1, "comforts") {
         @OnlyIn(Dist.CLIENT)
         public ItemStack createIcon() {
-            return new ItemStack(ComfortsBlocks.SLEEPING_BAGS.get(EnumDyeColor.RED));
+            return new ItemStack(ComfortsBlocks.SLEEPING_BAGS.get(DyeColor.RED));
         }
     };
 
@@ -99,7 +100,7 @@ public class Comforts {
                 for (EntityPlayer entityplayer : world.playerEntities) {
                     BlockPos bedLocation = entityplayer.bedLocation;
 
-                    if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock) {
+                    if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof HammockBlock) {
                         long worldTime = world.getDayTime() % 24000L;
 
                         if (worldTime > 500L && worldTime < 11500L) {
@@ -126,8 +127,8 @@ public class Comforts {
         @SubscribeEvent
         public static void setupClient(FMLClientSetupEvent evt) {
             MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySleepingBag.class, new TileEntitySleepingBagRenderer());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHammock.class, new TileEntityHammockRenderer());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySleepingBag.class, new SleepingBagTileEntityRenderer());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHammock.class, new HammockTileEntityRenderer());
         }
 
     }
@@ -141,7 +142,7 @@ public class Comforts {
             Arrays.stream(EnumDyeColor.values()).forEach(color -> {
                 BlockSleepingBag sleepingBag = new BlockSleepingBag(color);
                 ComfortsBlocks.SLEEPING_BAGS.put(color, sleepingBag);
-                BlockHammock hammock = new BlockHammock(color);
+                HammockBlock hammock = new HammockBlock(color);
                 ComfortsBlocks.HAMMOCKS.put(color, hammock);
                 registry.registerAll(sleepingBag, hammock);
             });

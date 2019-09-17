@@ -46,7 +46,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
-import top.theillusivec4.comforts.common.block.BlockHammock;
+import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.BlockSleepingBag;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
@@ -69,7 +69,7 @@ public class EventHandlerCommon {
         if (pos != null) {
             Block block = world.getBlockState(pos).getBlock();
 
-            if (!world.isRemote && (block instanceof BlockSleepingBag || block instanceof BlockHammock)) {
+            if (!world.isRemote && (block instanceof BlockSleepingBag || block instanceof HammockBlock)) {
                 player.bedLocation = ObfuscationReflectionHelper.getPrivateValue(EntityPlayer.class, player, "field_71077_c");
                 evt.setCanceled(true);
             }
@@ -81,7 +81,7 @@ public class EventHandlerCommon {
         World world = evt.getEntityPlayer().getEntityWorld();
         long worldTime = world.getDayTime() % 24000L;
 
-        if (world.getBlockState(evt.getSleepingLocation()).getBlock() instanceof BlockHammock) {
+        if (world.getBlockState(evt.getSleepingLocation()).getBlock() instanceof HammockBlock) {
 
             if (worldTime > 500L && worldTime < 11500L) {
                 evt.setResult(Event.Result.ALLOW);
@@ -111,7 +111,7 @@ public class EventHandlerCommon {
                         BlockPos bedLocation = entityplayer.bedLocation;
 
                         if (entityplayer.isPlayerFullyAsleep() && bedLocation != null
-                                && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock) {
+                                && world.getBlockState(bedLocation).getBlock() instanceof HammockBlock) {
                             long i = world.getDayTime() + 24000L;
                             long worldTime = world.getDayTime() % 24000L;
 

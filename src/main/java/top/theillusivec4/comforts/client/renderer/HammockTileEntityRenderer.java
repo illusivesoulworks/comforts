@@ -19,12 +19,12 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import top.theillusivec4.comforts.client.model.ModelSleepingBag;
-import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
+import top.theillusivec4.comforts.client.model.HammockModel;
+import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
 
-public class TileEntitySleepingBagRenderer extends TileEntityComfortsRendererBase<TileEntitySleepingBag> {
+public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<TileEntityHammock> {
 
-    public TileEntitySleepingBagRenderer() {
-        super("sleeping_bag",new ModelSleepingBag(), 0.1875F);
+    public HammockTileEntityRenderer() {
+        super("hammock", new HammockModel(), 0.0625F);
     }
 }

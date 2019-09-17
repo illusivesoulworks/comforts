@@ -33,7 +33,7 @@ import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
 
 import javax.annotation.Nonnull;
 
-public class BlockSleepingBag extends BlockComfortsBase {
+public class BlockSleepingBag extends ComfortsBaseBlock {
 
     private static final VoxelShape SLEEPING_BAG_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
     private final EnumDyeColor color;

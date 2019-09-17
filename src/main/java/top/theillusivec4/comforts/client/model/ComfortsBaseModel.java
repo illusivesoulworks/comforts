@@ -19,11 +19,11 @@
 
 package top.theillusivec4.comforts.client.model;
 
-import net.minecraft.client.renderer.entity.model.ModelBase;
+import net.minecraft.client.renderer.model.Model;
 
-public abstract class ModelComfortsBase extends ModelBase {
+public abstract class ComfortsBaseModel extends Model {
 
-    public ModelComfortsBase() {
+    public ComfortsBaseModel() {
         this.textureWidth = 64;
         this.textureHeight = 64;
     }

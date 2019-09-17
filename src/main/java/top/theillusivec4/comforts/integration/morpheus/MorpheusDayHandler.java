@@ -20,12 +20,13 @@
 package top.theillusivec4.comforts.integration.morpheus;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.quetzi.morpheus.api.INewDayHandler;
-import top.theillusivec4.comforts.common.block.BlockHammock;
+import top.theillusivec4.comforts.common.block.HammockBlock;
 
 public class MorpheusDayHandler implements INewDayHandler {
 
@@ -34,10 +35,10 @@ public class MorpheusDayHandler implements INewDayHandler {
         World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
         boolean skipToNight = false;
 
-        for (EntityPlayer entityplayer : world.playerEntities) {
-            BlockPos bedLocation = entityplayer.bedLocation;
+        for (PlayerEntity player : world.getPlayers()) {
+            BlockPos bedLocation = player.getBedLocation(world.getDimension().getType());
 
-            if (entityplayer.isPlayerFullyAsleep() && bedLocation != null && world.getBlockState(bedLocation).getBlock() instanceof BlockHammock) {
+            if (player.isPlayerFullyAsleep() && world.getBlockState(bedLocation).getBlock() instanceof HammockBlock) {
                 long worldTime = world.getDayTime() % 24000L;
 
                 if (worldTime > 500L && worldTime < 11500L) {

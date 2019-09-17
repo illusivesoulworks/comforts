@@ -100,16 +100,16 @@ public class BlockRopeAndNail extends Block {
         BlockPos frontpos = pos.offset(state.get(HORIZONTAL_FACING));
         IBlockState frontstate = worldIn.getBlockState(frontpos);
 
-        if (state.get(SUPPORTING) && frontstate.getBlock() instanceof BlockHammock) {
+        if (state.get(SUPPORTING) && frontstate.getBlock() instanceof HammockBlock) {
             BedPart bedpart = frontstate.get(PART);
             boolean flag = bedpart == BedPart.HEAD;
             EnumFacing facing = frontstate.get(HORIZONTAL_FACING);
-            BlockPos blockpos = frontpos.offset(BlockHammock.getDirectionToOther(bedpart, facing));
+            BlockPos blockpos = frontpos.offset(HammockBlock.getDirectionToOther(bedpart, facing));
             IBlockState iblockstate = worldIn.getBlockState(blockpos);
             worldIn.setBlockState(frontpos, Blocks.AIR.getDefaultState(), 35);
             worldIn.playEvent(player, 2001, frontpos, Block.getStateId(frontstate));
 
-            if (iblockstate.getBlock() instanceof BlockHammock && iblockstate.get(PART) != bedpart) {
+            if (iblockstate.getBlock() instanceof HammockBlock && iblockstate.get(PART) != bedpart) {
                 worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
                 worldIn.playEvent(player, 2001, blockpos, Block.getStateId(iblockstate));
                 BlockPos posotherrope = flag ? frontpos.offset(facing.getOpposite(), 2) : frontpos.offset(facing, 2);

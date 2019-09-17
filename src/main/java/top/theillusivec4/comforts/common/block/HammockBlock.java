@@ -42,12 +42,12 @@ import javax.annotation.Nonnull;
 
 import static top.theillusivec4.comforts.common.block.BlockRopeAndNail.SUPPORTING;
 
-public class BlockHammock extends BlockComfortsBase {
+public class HammockBlock extends ComfortsBaseBlock {
 
     private static final VoxelShape HAMMOCK_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
     private final EnumDyeColor color;
 
-    public BlockHammock(EnumDyeColor color) {
+    public HammockBlock(EnumDyeColor color) {
         super(BedType.HAMMOCK, color, Block.Properties.create(Material.CLOTH).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
         this.color = color;
         this.setRegistryName(Comforts.MODID, "hammock_" + color.getTranslationKey());
