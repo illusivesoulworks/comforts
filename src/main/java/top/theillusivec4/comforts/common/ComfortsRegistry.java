@@ -17,23 +17,28 @@
  * License along with Comforts.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package top.theillusivec4.comforts.common.init;
+package top.theillusivec4.comforts.common;
 
+import java.util.EnumMap;
+import net.minecraft.block.Block;
+import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
 import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
 
-public class ComfortsTileEntities {
+public class ComfortsRegistry {
 
-    public static final TileEntityType<TileEntitySleepingBag> SLEEPING_BAG_TE;
+  public static final EnumMap<DyeColor, Block> SLEEPING_BAGS = new EnumMap<>(DyeColor.class);
 
-    public static final TileEntityType<TileEntityHammock> HAMMOCK_TE;
+  public static final EnumMap<DyeColor, Block> HAMMOCKS = new EnumMap<>(DyeColor.class);
 
-    static {
-        SLEEPING_BAG_TE = TileEntityType.Builder.create(TileEntitySleepingBag::new).build(null);
-        SLEEPING_BAG_TE.setRegistryName("sleeping_bag");
+  @ObjectHolder("comforts:rope_and_nail")
+  public static final Block ROPE_AND_NAIL = null;
 
-        HAMMOCK_TE = TileEntityType.Builder.create(TileEntityHammock::new).build(null);
-        HAMMOCK_TE.setRegistryName("hammock");
-    }
+  @ObjectHolder("comforts:sleeping_bag")
+  public static final TileEntityType<TileEntitySleepingBag> SLEEPING_BAG_TE = null;
+
+  @ObjectHolder("comforts:hammock")
+  public static final TileEntityType<TileEntityHammock> HAMMOCK_TE = null;
 }

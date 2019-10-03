@@ -47,7 +47,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.block.HammockBlock;
-import top.theillusivec4.comforts.common.block.BlockSleepingBag;
+import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 import java.lang.reflect.Method;
@@ -69,7 +69,7 @@ public class EventHandlerCommon {
         if (pos != null) {
             Block block = world.getBlockState(pos).getBlock();
 
-            if (!world.isRemote && (block instanceof BlockSleepingBag || block instanceof HammockBlock)) {
+            if (!world.isRemote && (block instanceof SleepingBagBlock || block instanceof HammockBlock)) {
                 player.bedLocation = ObfuscationReflectionHelper.getPrivateValue(EntityPlayer.class, player, "field_71077_c");
                 evt.setCanceled(true);
             }
@@ -148,7 +148,7 @@ public class EventHandlerCommon {
                     BlockPos pos = sleepdata.getSleepingPos();
                     IBlockState state = world.getBlockState(pos);
 
-                    if (world.isBlockLoaded(pos) && state.getBlock() instanceof BlockSleepingBag) {
+                    if (world.isBlockLoaded(pos) && state.getBlock() instanceof SleepingBagBlock) {
                         EntityPlayer.SleepResult sleepResult = player.trySleep(pos);
 
                         if (sleepResult != EntityPlayer.SleepResult.OK) {
@@ -174,7 +174,7 @@ public class EventHandlerCommon {
                 BlockPos pos = sleepdata.getSleepingPos();
                 IBlockState state = world.getBlockState(pos);
 
-                if (state.getBlock() instanceof BlockSleepingBag) {
+                if (state.getBlock() instanceof SleepingBagBlock) {
                     boolean broke = false;
                     List<PotionEffect> debuffs = getDebuffs();
 

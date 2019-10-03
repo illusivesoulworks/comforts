@@ -64,8 +64,8 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends TileEntityComfort
         }
 
         if (tileEntityIn.hasWorld()) {
-            BlockState iblockstate = tileEntityIn.getBlockState();
-            this.renderPiece(iblockstate.get(BedBlock.PART) == BedPart.HEAD, x, y, z, iblockstate.get(BedBlock.HORIZONTAL_FACING));
+            BlockState blockstate = tileEntityIn.getBlockState();
+            this.renderPiece(blockstate.get(BedBlock.PART) == BedPart.HEAD, x, y, z, blockstate.get(BedBlock.HORIZONTAL_FACING));
         } else {
             this.renderPiece(true, x, y, z, Direction.SOUTH);
             this.renderPiece(false, x, y, z - 1.0D, Direction.SOUTH);

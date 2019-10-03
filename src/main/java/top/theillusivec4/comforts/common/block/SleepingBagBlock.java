@@ -19,39 +19,42 @@
 
 package top.theillusivec4.comforts.common.block;
 
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
 
-import javax.annotation.Nonnull;
+public class SleepingBagBlock extends ComfortsBaseBlock {
 
-public class BlockSleepingBag extends ComfortsBaseBlock {
+  private static final VoxelShape SLEEPING_BAG_SHAPE = Block
+      .makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
+  private final DyeColor color;
 
-    private static final VoxelShape SLEEPING_BAG_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
-    private final EnumDyeColor color;
+  public SleepingBagBlock(DyeColor color) {
+    super(BedType.SLEEPING_BAG, color,
+        Block.Properties.create(Material.WOOL).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
+    this.color = color;
+    this.setRegistryName(Comforts.MODID, "sleeping_bag_" + color.getTranslationKey());
+  }
 
-    public BlockSleepingBag(EnumDyeColor color) {
-        super(BedType.SLEEPING_BAG, color, Block.Properties.create(Material.CLOTH).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
-        this.color = color;
-        this.setRegistryName(Comforts.MODID, "sleeping_bag_" + color.getTranslationKey());
-    }
+  @Nonnull
+  @Override
+  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
+      ISelectionContext context) {
+    return SLEEPING_BAG_SHAPE;
+  }
 
-    @Nonnull
-    @Override
-    public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
-        return SLEEPING_BAG_SHAPE;
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return new TileEntitySleepingBag(this.color);
-    }
+  @Override
+  public TileEntity createNewTileEntity(IBlockReader worldIn) {
+    return new TileEntitySleepingBag(this.color);
+  }
 }

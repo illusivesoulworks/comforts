@@ -20,7 +20,6 @@
 package top.theillusivec4.comforts.common.tileentity;
 
 import net.minecraft.item.EnumDyeColor;
-import top.theillusivec4.comforts.common.init.ComfortsTileEntities;
 
 public class TileEntitySleepingBag extends TileEntityComfortsBase {
 

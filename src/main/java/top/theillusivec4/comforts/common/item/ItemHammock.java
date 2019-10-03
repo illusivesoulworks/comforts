@@ -27,12 +27,12 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import top.theillusivec4.comforts.common.block.BlockRopeAndNail;
+import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 
 import javax.annotation.Nonnull;
 
-import static top.theillusivec4.comforts.common.block.BlockRopeAndNail.HORIZONTAL_FACING;
-import static top.theillusivec4.comforts.common.block.BlockRopeAndNail.SUPPORTING;
+import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.HORIZONTAL_FACING;
+import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
 public class ItemHammock extends ItemComfortsBase {
 
@@ -47,7 +47,7 @@ public class ItemHammock extends ItemComfortsBase {
         BlockPos pos = context.getPos();
         IBlockState state = world.getBlockState(pos);
 
-        if (state.getBlock() instanceof BlockRopeAndNail) {
+        if (state.getBlock() instanceof RopeAndNailBlock) {
             BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING), 3);
             IBlockState blockstate = world.getBlockState(blockpos);
 
@@ -66,7 +66,7 @@ public class ItemHammock extends ItemComfortsBase {
     }
 
     private boolean hasPartneredRopes(IBlockState state, IBlockState blockstate) {
-        return blockstate.getBlock() instanceof BlockRopeAndNail
+        return blockstate.getBlock() instanceof RopeAndNailBlock
                 && blockstate.get(HORIZONTAL_FACING) == state.get(HORIZONTAL_FACING).getOpposite()
                 && !state.get(SUPPORTING)
                 && !blockstate.get(SUPPORTING);

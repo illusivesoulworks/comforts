@@ -19,12 +19,14 @@
 
 package top.theillusivec4.comforts.common.capability;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,199 +40,204 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import top.theillusivec4.comforts.Comforts;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class CapabilitySleepData {
 
-    @CapabilityInject(ISleepData.class)
-    public static final Capability<ISleepData> SLEEP_DATA_CAP = null;
+  @CapabilityInject(ISleepData.class)
+  public static final Capability<ISleepData> SLEEP_DATA_CAP = null;
 
-    public static final ResourceLocation ID = new ResourceLocation(Comforts.MODID, "sleep_data");
+  public static final ResourceLocation ID = new ResourceLocation(Comforts.MODID, "sleep_data");
 
-    private static final String WAKE_TAG = "wakeTime";
-    private static final String TIRED_TAG = "tiredTime";
-    private static final String SLEEP_TAG = "sleepTime";
-    private static final String SLEEPING_TAG = "sleeping";
-    private static final String LOC_TAG = "sleepingLocation";
+  private static final String WAKE_TAG = "wakeTime";
+  private static final String TIRED_TAG = "tiredTime";
+  private static final String SLEEP_TAG = "sleepTime";
+  private static final String SLEEPING_TAG = "sleeping";
+  private static final String LOC_TAG = "sleepingLocation";
 
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
-        CapabilityManager.INSTANCE.register(ISleepData.class, new Capability.IStorage<ISleepData>() {
+  public static void register() {
+    MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
+    CapabilityManager.INSTANCE.register(ISleepData.class, new Capability.IStorage<ISleepData>() {
 
-            @Override
-            public INBTBase writeNBT(Capability<ISleepData> capability, ISleepData instance, EnumFacing side) {
-                NBTTagCompound compound = new NBTTagCompound();
-                compound.putLong(WAKE_TAG, instance.getWakeTime());
-                compound.putLong(TIRED_TAG, instance.getTiredTime());
-                compound.putLong(SLEEP_TAG, instance.getSleepTime());
-                compound.putBoolean(SLEEPING_TAG, instance.isSleeping());
-                BlockPos pos = instance.getSleepingPos();
+      @Override
+      public INBT writeNBT(Capability<ISleepData> capability, ISleepData instance, Direction side) {
+        CompoundNBT compound = new CompoundNBT();
+        compound.putLong(WAKE_TAG, instance.getWakeTime());
+        compound.putLong(TIRED_TAG, instance.getTiredTime());
+        compound.putLong(SLEEP_TAG, instance.getSleepTime());
+        compound.putBoolean(SLEEPING_TAG, instance.isSleeping());
+        BlockPos pos = instance.getSleepingPos();
 
-                if (pos != null) {
-                    compound.put(LOC_TAG, NBTUtil.writeBlockPos(pos));
-                }
-                return compound;
-            }
+        if (pos != null) {
+          compound.put(LOC_TAG, NBTUtil.writeBlockPos(pos));
+        }
 
-            @Override
-            public void readNBT(Capability<ISleepData> capability, ISleepData instance, EnumFacing side, INBTBase nbt) {
-                NBTTagCompound compound = (NBTTagCompound) nbt;
-                instance.setWakeTime(compound.getLong(WAKE_TAG));
-                instance.setTiredTime(compound.getLong(TIRED_TAG));
-                instance.setSleepTime(compound.getLong(SLEEP_TAG));
-                instance.setSleeping(compound.getBoolean(SLEEPING_TAG));
+        return compound;
+      }
 
-                if (compound.hasUniqueId(LOC_TAG)) {
-                    instance.setSleepingPos(NBTUtil.readBlockPos(compound.getCompound(LOC_TAG)));
-                }
-            }
-        }, SleepDataWrapper::new);
+      @Override
+      public void readNBT(Capability<ISleepData> capability, ISleepData instance, Direction side,
+          INBT nbt) {
+        CompoundNBT compound = (CompoundNBT) nbt;
+        instance.setWakeTime(compound.getLong(WAKE_TAG));
+        instance.setTiredTime(compound.getLong(TIRED_TAG));
+        instance.setSleepTime(compound.getLong(SLEEP_TAG));
+        instance.setSleeping(compound.getBoolean(SLEEPING_TAG));
+
+        if (compound.hasUniqueId(LOC_TAG)) {
+          instance.setSleepingPos(NBTUtil.readBlockPos(compound.getCompound(LOC_TAG)));
+        }
+      }
+    }, SleepDataWrapper::new);
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  public static LazyOptional<ISleepData> getCapability(final PlayerEntity player) {
+    return player.getCapability(SLEEP_DATA_CAP);
+  }
+
+  public interface ISleepData {
+
+    long getSleepTime();
+
+    void setSleepTime(long time);
+
+    long getWakeTime();
+
+    void setWakeTime(long wakeTime);
+
+    long getTiredTime();
+
+    void setTiredTime(long tiredTime);
+
+    boolean isSleeping();
+
+    void setSleeping(boolean value);
+
+    BlockPos getSleepingPos();
+
+    void setSleepingPos(BlockPos pos);
+
+    void copyFrom(ISleepData other);
+  }
+
+  public static class SleepDataWrapper implements ISleepData {
+
+    long sleepTime = 0;
+    long wakeTime = 0;
+    long tiredTime = 0;
+    boolean isSleeping = false;
+    BlockPos sleepLocation = null;
+
+    @Override
+    public long getSleepTime() {
+      return sleepTime;
     }
 
-    public static LazyOptional<ISleepData> getCapability(final EntityPlayer player) {
-        return player.getCapability(SLEEP_DATA_CAP);
+    @Override
+    public void setSleepTime(long time) {
+      sleepTime = time;
     }
 
-    public interface ISleepData {
-
-        long getSleepTime();
-
-        void setSleepTime(long time);
-
-        long getWakeTime();
-
-        void setWakeTime(long wakeTime);
-
-        long getTiredTime();
-
-        void setTiredTime(long tiredTime);
-
-        boolean isSleeping();
-
-        void setSleeping(boolean value);
-
-        BlockPos getSleepingPos();
-
-        void setSleepingPos(BlockPos pos);
+    @Override
+    public long getWakeTime() {
+      return wakeTime;
     }
 
-    public static class SleepDataWrapper implements ISleepData {
-
-        long sleepTime = 0;
-        long wakeTime = 0;
-        long tiredTime = 0;
-        boolean isSleeping = false;
-        BlockPos sleepLocation = null;
-        BlockPos bedLocation = null;
-
-        @Override
-        public long getSleepTime() {
-            return sleepTime;
-        }
-
-        @Override
-        public void setSleepTime(long time) {
-            sleepTime = time;
-        }
-
-        @Override
-        public long getWakeTime() {
-            return wakeTime;
-        }
-
-        @Override
-        public void setWakeTime(long time) {
-            wakeTime = time;
-        }
-
-        @Override
-        public long getTiredTime() {
-            return tiredTime;
-        }
-
-        @Override
-        public void setTiredTime(long time) {
-            tiredTime = time;
-        }
-
-        @Override
-        public boolean isSleeping() {
-            return isSleeping;
-        }
-
-        @Override
-        public void setSleeping(boolean value) {
-            isSleeping = value;
-        }
-
-        @Override
-        public BlockPos getSleepingPos() {
-            return sleepLocation;
-        }
-
-        @Override
-        public void setSleepingPos(BlockPos pos) {
-            sleepLocation = pos;
-        }
+    @Override
+    public void setWakeTime(long time) {
+      wakeTime = time;
     }
 
-    public static class Provider implements ICapabilitySerializable<INBTBase> {
-
-        final LazyOptional<ISleepData> optional;
-        final ISleepData data;
-
-        Provider() {
-            this.data = new SleepDataWrapper();
-            this.optional = LazyOptional.of(() -> data);
-        }
-
-        @SuppressWarnings("ConstantConditions")
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nullable Capability<T> capability, EnumFacing facing) {
-            return SLEEP_DATA_CAP.orEmpty(capability, optional);
-        }
-
-        @SuppressWarnings("ConstantConditions")
-        @Override
-        public INBTBase serializeNBT() {
-            return SLEEP_DATA_CAP.writeNBT(data, null);
-        }
-
-        @SuppressWarnings("ConstantConditions")
-        @Override
-        public void deserializeNBT(INBTBase nbt) {
-            SLEEP_DATA_CAP.readNBT(data, null, nbt);
-        }
+    @Override
+    public long getTiredTime() {
+      return tiredTime;
     }
 
-    public static class CapabilityEvents {
-
-        @SubscribeEvent
-        public void attachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
-            Entity entity = evt.getObject();
-
-            if (entity instanceof EntityPlayer) {
-                evt.addCapability(CapabilitySleepData.ID, new Provider());
-            }
-        }
-
-        @SubscribeEvent
-        public void onPlayerDeath(final PlayerEvent.Clone evt) {
-
-            if (evt.isWasDeath()) {
-                EntityPlayer player = evt.getEntityPlayer();
-                EntityPlayer original = evt.getOriginal();
-                CapabilitySleepData.getCapability(player).ifPresent(sleepdata ->
-                        CapabilitySleepData.getCapability(original).ifPresent(originaldata -> {
-                            sleepdata.setSleepingPos(originaldata.getSleepingPos());
-                            sleepdata.setSleeping(originaldata.isSleeping());
-                            sleepdata.setSleepTime(originaldata.getSleepTime());
-                            sleepdata.setTiredTime(originaldata.getTiredTime());
-                            sleepdata.setWakeTime(originaldata.getWakeTime());
-                    }));
-            }
-        }
+    @Override
+    public void setTiredTime(long time) {
+      tiredTime = time;
     }
+
+    @Override
+    public boolean isSleeping() {
+      return isSleeping;
+    }
+
+    @Override
+    public void setSleeping(boolean value) {
+      isSleeping = value;
+    }
+
+    @Override
+    public BlockPos getSleepingPos() {
+      return sleepLocation;
+    }
+
+    @Override
+    public void setSleepingPos(BlockPos pos) {
+      sleepLocation = pos;
+    }
+
+    @Override
+    public void copyFrom(ISleepData other) {
+      this.setSleepingPos(other.getSleepingPos());
+      this.setSleeping(other.isSleeping());
+      this.setSleepTime(other.getSleepTime());
+      this.setTiredTime(other.getTiredTime());
+      this.setWakeTime(other.getWakeTime());
+    }
+  }
+
+  public static class Provider implements ICapabilitySerializable<INBT> {
+
+    final LazyOptional<ISleepData> optional;
+    final ISleepData data;
+
+    Provider() {
+      this.data = new SleepDataWrapper();
+      this.optional = LazyOptional.of(() -> data);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nullable Capability<T> capability, Direction side) {
+      return SLEEP_DATA_CAP.orEmpty(capability, optional);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public INBT serializeNBT() {
+      return SLEEP_DATA_CAP.writeNBT(data, null);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public void deserializeNBT(INBT nbt) {
+      SLEEP_DATA_CAP.readNBT(data, null, nbt);
+    }
+  }
+
+  public static class CapabilityEvents {
+
+    @SubscribeEvent
+    public void attachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
+      Entity entity = evt.getObject();
+
+      if (entity instanceof PlayerEntity) {
+        evt.addCapability(CapabilitySleepData.ID, new Provider());
+      }
+    }
+
+    @SubscribeEvent
+    public void onPlayerDeath(final PlayerEvent.Clone evt) {
+
+      if (evt.isWasDeath()) {
+        PlayerEntity player = evt.getPlayer();
+        PlayerEntity original = evt.getOriginal();
+        CapabilitySleepData.getCapability(player).ifPresent(
+            sleepdata -> CapabilitySleepData.getCapability(original)
+                .ifPresent(sleepdata::copyFrom));
+      }
+    }
+  }
 }
