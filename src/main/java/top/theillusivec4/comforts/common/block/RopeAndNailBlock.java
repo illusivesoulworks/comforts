@@ -19,33 +19,27 @@
 
 package top.theillusivec4.comforts.common.block;
 
-import static net.minecraft.block.BlockBed.PART;
-
 import com.google.common.collect.ImmutableMap;
 import java.util.EnumMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BedPart;
-import net.minecraft.stats.StatList;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -54,9 +48,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.IWorldReaderBase;
 import net.minecraft.world.World;
-import org.lwjgl.system.CallbackI.D;
 import top.theillusivec4.comforts.Comforts;
 
 public class RopeAndNailBlock extends Block {
@@ -86,7 +78,8 @@ public class RopeAndNailBlock extends Block {
 
   @Nonnull
   @Override
-  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
+      ISelectionContext context) {
     return state.get(SUPPORTING) ? SHAPES_S.get(state.get(HORIZONTAL_FACING))
         : SHAPES_R.get(state.get(HORIZONTAL_FACING));
   }
@@ -95,46 +88,33 @@ public class RopeAndNailBlock extends Block {
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
     Direction direction = state.get(HORIZONTAL_FACING);
     BlockPos blockpos = pos.offset(direction.getOpposite());
-    BlockState iblockstate = worldIn.getBlockState(blockpos);
-    return iblockstate.getShape(worldIn, blockpos) == BlockFaceShape.SOLID
-        && !isExceptBlockForAttachWithPiston(iblockstate.getBlock());
+    BlockState blockstate = worldIn.getBlockState(blockpos);
+    return blockstate.func_224755_d(worldIn, blockpos, direction);
   }
 
   @Override
-  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, IBlockState state,
-      @Nonnull EntityPlayer player) {
-    BlockPos frontpos = pos.offset(state.get(HORIZONTAL_FACING));
-    IBlockState frontstate = worldIn.getBlockState(frontpos);
+  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, BlockState state,
+      @Nonnull PlayerEntity player) {
+    BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
+    BlockState frontState = worldIn.getBlockState(frontPos);
 
-    if (state.get(SUPPORTING) && frontstate.getBlock() instanceof HammockBlock) {
-      BedPart bedpart = frontstate.get(PART);
-      boolean flag = bedpart == BedPart.HEAD;
-      EnumFacing facing = frontstate.get(HORIZONTAL_FACING);
-      BlockPos blockpos = frontpos.offset(HammockBlock.getDirectionToOther(bedpart, facing));
-      IBlockState iblockstate = worldIn.getBlockState(blockpos);
-      worldIn.setBlockState(frontpos, Blocks.AIR.getDefaultState(), 35);
-      worldIn.playEvent(player, 2001, frontpos, Block.getStateId(frontstate));
+    if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
+      BedPart bedpart = frontState.get(BedBlock.PART);
+      boolean isHead = bedpart == BedPart.HEAD;
+      Direction direction = frontState.get(HORIZONTAL_FACING);
+      BlockPos otherPos = frontPos.offset(HammockBlock.getDirectionToOther(bedpart, direction));
+      BlockState otherState = worldIn.getBlockState(otherPos);
 
-      if (iblockstate.getBlock() instanceof HammockBlock && iblockstate.get(PART) != bedpart) {
-        worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-        worldIn.playEvent(player, 2001, blockpos, Block.getStateId(iblockstate));
-        BlockPos posotherrope =
-            flag ? frontpos.offset(facing.getOpposite(), 2) : frontpos.offset(facing, 2);
-        IBlockState otherrope = worldIn.getBlockState(posotherrope);
+      worldIn.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
+      worldIn.playEvent(player, 2001, frontPos, Block.getStateId(frontState));
 
-        if (otherrope.getBlock() instanceof RopeAndNailBlock) {
-          worldIn.setBlockState(posotherrope, otherrope.with(SUPPORTING, false));
-        }
-
-        if (!worldIn.isRemote && !player.isCreative()) {
-
-          if (flag) {
-            frontstate.dropBlockAsItem(worldIn, frontpos, 0);
-          } else {
-            iblockstate.dropBlockAsItem(worldIn, blockpos, 0);
-          }
-        }
-        player.addStat(StatList.BLOCK_MINED.get(frontstate.getBlock()));
+      if (otherState.getBlock() instanceof HammockBlock
+          && otherState.get(BedBlock.PART) != bedpart) {
+        HammockBlock
+            .finishHammockDrops(state, pos, otherState, otherPos, direction, isHead, worldIn,
+                player);
+        HammockBlock.dropRopeSupport(pos, direction, isHead, worldIn);
+        player.addStat(Stats.BLOCK_MINED.get(frontState.getBlock()));
       }
     }
     super.onBlockHarvested(worldIn, pos, state, player);
@@ -142,20 +122,20 @@ public class RopeAndNailBlock extends Block {
 
   @Nullable
   @Override
-  public IBlockState getStateForPlacement(BlockItemUseContext context) {
-    IBlockState iblockstate = this.getDefaultState();
-    IWorldReaderBase iworldreaderbase = context.getWorld();
+  public BlockState getStateForPlacement(BlockItemUseContext context) {
+    BlockState blockstate = this.getDefaultState();
+    IWorldReader worldreader = context.getWorld();
     BlockPos blockpos = context.getPos();
-    EnumFacing[] aenumfacing = context.getNearestLookingDirections();
+    Direction[] directions = context.getNearestLookingDirections();
 
-    for (EnumFacing enumfacing : aenumfacing) {
+    for (Direction direction : directions) {
 
-      if (enumfacing.getAxis().isHorizontal()) {
-        EnumFacing enumfacing1 = enumfacing.getOpposite();
-        iblockstate = iblockstate.with(HORIZONTAL_FACING, enumfacing1);
+      if (direction.getAxis().isHorizontal()) {
+        Direction direction1 = direction.getOpposite();
+        blockstate = blockstate.with(HORIZONTAL_FACING, direction1);
 
-        if (iblockstate.isValidPosition(iworldreaderbase, blockpos)) {
-          return iblockstate;
+        if (blockstate.isValidPosition(worldreader, blockpos)) {
+          return blockstate;
         }
       }
     }
@@ -192,12 +172,5 @@ public class RopeAndNailBlock extends Block {
   @Override
   public BlockRenderLayer getRenderLayer() {
     return BlockRenderLayer.CUTOUT;
-  }
-
-  @Nonnull
-  @Override
-  public BlockFaceShape getBlockFaceShape(IBlockReader worldIn, BlockState state, BlockPos pos,
-      Direction face) {
-    return BlockFaceShape.UNDEFINED;
   }
 }
