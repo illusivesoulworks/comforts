@@ -52,9 +52,9 @@ import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
-import top.theillusivec4.comforts.common.item.ItemComfortsBase;
-import top.theillusivec4.comforts.common.item.ItemHammock;
-import top.theillusivec4.comforts.common.item.ItemSleepingBag;
+import top.theillusivec4.comforts.common.item.ComfortsBaseItem;
+import top.theillusivec4.comforts.common.item.HammockItem;
+import top.theillusivec4.comforts.common.item.SleepingBagItem;
 import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
 import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
 import top.theillusivec4.comforts.integration.MorpheusIntegration;
@@ -121,10 +121,10 @@ public class Comforts {
     public static void onItemsRegistry(final RegistryEvent.Register<Item> evt) {
       IForgeRegistry<Item> registry = evt.getRegistry();
       ComfortsRegistry.SLEEPING_BAGS.values()
-          .forEach(block -> registry.register(new ItemSleepingBag(block)));
+          .forEach(block -> registry.register(new SleepingBagItem(block)));
       ComfortsRegistry.HAMMOCKS.values()
-          .forEach(block -> registry.register(new ItemHammock(block)));
-      registry.register(new ItemComfortsBase(ComfortsRegistry.ROPE_AND_NAIL));
+          .forEach(block -> registry.register(new HammockItem(block)));
+      registry.register(new ComfortsBaseItem(ComfortsRegistry.ROPE_AND_NAIL));
     }
 
     @SubscribeEvent
