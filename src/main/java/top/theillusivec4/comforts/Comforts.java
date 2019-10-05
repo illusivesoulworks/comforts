@@ -21,6 +21,7 @@ package top.theillusivec4.comforts;
 
 import java.util.Arrays;
 import net.minecraft.block.Block;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -30,6 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -38,6 +40,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
@@ -57,6 +60,7 @@ import top.theillusivec4.comforts.common.item.HammockItem;
 import top.theillusivec4.comforts.common.item.SleepingBagItem;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
+import top.theillusivec4.comforts.data.ComfortsLootProvider;
 import top.theillusivec4.comforts.integration.MorpheusIntegration;
 
 @Mod(Comforts.MODID)
@@ -74,8 +78,18 @@ public class Comforts {
   public static final Logger LOGGER = LogManager.getLogger();
 
   public Comforts() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    eventBus.addListener(this::setup);
+    eventBus.addListener(this::gatherData);
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.serverSpec);
+  }
+
+  private void gatherData(GatherDataEvent evt) {
+    DataGenerator generator = evt.getGenerator();
+
+    if (evt.includeServer()) {
+      generator.addProvider(new ComfortsLootProvider(generator));
+    }
   }
 
   private void setup(FMLCommonSetupEvent evt) {
