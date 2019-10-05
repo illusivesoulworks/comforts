@@ -22,6 +22,7 @@ package top.theillusivec4.comforts.common.block;
 import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
 import javax.annotation.Nonnull;
+import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -71,7 +72,9 @@ public class HammockBlock extends ComfortsBaseBlock {
   }
 
   public static void finishHammockDrops(BlockState state, BlockPos pos, BlockState otherState,
-      BlockPos otherPos, Direction direction, boolean isHead, World worldIn, PlayerEntity player) {
+      BlockPos otherPos, Direction direction, World worldIn, PlayerEntity player) {
+    BedPart bedpart = otherState.get(BedBlock.PART);
+    boolean isHead = bedpart == BedPart.HEAD;
     worldIn.setBlockState(otherPos, Blocks.AIR.getDefaultState(), 35);
     worldIn.playEvent(player, 2001, otherPos, Block.getStateId(otherState));
     dropRopeSupport(otherPos, direction, isHead, worldIn);
@@ -100,7 +103,7 @@ public class HammockBlock extends ComfortsBaseBlock {
     BlockState otherState = worldIn.getBlockState(otherPos);
 
     if (otherState.getBlock() == this && otherState.get(PART) != bedpart) {
-      finishHammockDrops(state, pos, otherState, otherPos, direction, isHead, worldIn, player);
+      finishHammockDrops(state, pos, otherState, otherPos, direction, worldIn, player);
       dropRopeSupport(pos, direction, isHead, worldIn);
       player.addStat(Stats.BLOCK_MINED.get(this));
     }

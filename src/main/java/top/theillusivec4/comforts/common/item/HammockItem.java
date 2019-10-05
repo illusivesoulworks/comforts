@@ -28,6 +28,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
@@ -46,11 +47,14 @@ public class HammockItem extends ComfortsBaseItem {
     BlockState state = world.getBlockState(pos);
 
     if (state.getBlock() instanceof RopeAndNailBlock) {
-      BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING), 3);
+      Direction direction = state.get(HORIZONTAL_FACING);
+      BlockPos blockpos = pos.offset(direction, 3);
       BlockState blockstate = world.getBlockState(blockpos);
 
       if (hasPartneredRopes(state, blockstate)) {
-        ActionResultType result = this.tryPlace(new BlockItemUseContext(context));
+        ActionResultType result = this.tryPlace(BlockItemUseContext
+            .func_221536_a(new BlockItemUseContext(context), context.getPos().offset(direction),
+                direction));
 
         if (result == ActionResultType.SUCCESS) {
           world.setBlockState(pos, state.with(SUPPORTING, true));

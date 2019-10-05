@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "comforts:rope_and_nail"
+    "model": "comforts:block/rope_and_nail"
   },
   "variants": {
     "facing": {
@@ -12,7 +12,7 @@
     },
     "supporting": {
       "true": {
-        "model": "comforts:rope_and_nail_s"
+        "model": "comforts:block/rope_and_nail_s"
       },
       "false": {}
     }

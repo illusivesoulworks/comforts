@@ -189,18 +189,23 @@ public class EventHandlerCommon {
         if (!player.isSleeping() && sleepdata.isSleeping()) {
           World world = player.world;
           BlockPos pos = sleepdata.getSleepingPos();
-          BlockState state = world.getBlockState(pos);
 
-          if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-            Either<SleepResult, Unit> sleepResult = player.trySleep(pos);
+          if (pos != null) {
+            BlockState state = world.getBlockState(pos);
 
-            sleepResult.ifRight(unit -> {
+            if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
+              Either<SleepResult, Unit> sleepResult = player.trySleep(pos);
+
+              sleepResult.ifRight(unit -> {
+                sleepdata.setSleeping(false);
+                sleepdata.setSleepingPos(null);
+              });
+            } else {
               sleepdata.setSleeping(false);
               sleepdata.setSleepingPos(null);
-            });
+            }
           } else {
             sleepdata.setSleeping(false);
-            sleepdata.setSleepingPos(null);
           }
         }
       });
