@@ -31,65 +31,72 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.client.model.ComfortsBaseModel;
-import top.theillusivec4.comforts.common.tileentity.TileEntityComfortsBase;
+import top.theillusivec4.comforts.common.tileentity.ComfortsBaseTileEntity;
 
-public abstract class ComfortsBaseTileEntityRenderer<T extends TileEntityComfortsBase> extends TileEntityRenderer<T> {
+public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileEntity> extends
+    TileEntityRenderer<T> {
 
-    private final ResourceLocation[] textures;
-    private final ComfortsBaseModel model;
-    private final float height;
+  private final ResourceLocation[] textures;
+  private final ComfortsBaseModel model;
+  private final float height;
 
-    public ComfortsBaseTileEntityRenderer(String textureName, ComfortsBaseModel model, float height) {
-        this.textures = Arrays.stream(DyeColor.values()).sorted(Comparator.comparingInt(DyeColor::getId)).map((color) -> new ResourceLocation(Comforts.MODID, "textures/entity/" + textureName + "/" + color.getTranslationKey() + ".png")).toArray(ResourceLocation[]::new);
-        this.model = model;
-        this.height = height;
+  public ComfortsBaseTileEntityRenderer(String textureName, ComfortsBaseModel model, float height) {
+    this.textures = Arrays.stream(DyeColor.values())
+        .sorted(Comparator.comparingInt(DyeColor::getId)).map(
+            (color) -> new ResourceLocation(Comforts.MODID,
+                "textures/entity/" + textureName + "/" + color.getTranslationKey() + ".png"))
+        .toArray(ResourceLocation[]::new);
+    this.model = model;
+    this.height = height;
+  }
+
+  @Override
+  public void render(T tileEntityIn, double x, double y, double z, float partialTicks,
+      int destroyStage) {
+
+    if (destroyStage >= 0) {
+      this.bindTexture(DESTROY_STAGES[destroyStage]);
+      GlStateManager.matrixMode(5890);
+      GlStateManager.pushMatrix();
+      GlStateManager.scalef(4.0F, 4.0F, 1.0F);
+      GlStateManager.translatef(0.0625F, 0.0625F, 0.0625F);
+      GlStateManager.matrixMode(5888);
+    } else {
+      ResourceLocation resourcelocation = textures[tileEntityIn.getColor().getId()];
+
+      if (resourcelocation != null) {
+        this.bindTexture(resourcelocation);
+      }
     }
 
-    @Override
-    public void render(T tileEntityIn, double x, double y, double z, float partialTicks, int destroyStage) {
-
-        if (destroyStage >= 0) {
-            this.bindTexture(DESTROY_STAGES[destroyStage]);
-            GlStateManager.matrixMode(5890);
-            GlStateManager.pushMatrix();
-            GlStateManager.scalef(4.0F, 4.0F, 1.0F);
-            GlStateManager.translatef(0.0625F, 0.0625F, 0.0625F);
-            GlStateManager.matrixMode(5888);
-        } else {
-            ResourceLocation resourcelocation = textures[tileEntityIn.getColor().getId()];
-
-            if (resourcelocation != null) {
-                this.bindTexture(resourcelocation);
-            }
-        }
-
-        if (tileEntityIn.hasWorld()) {
-            BlockState blockstate = tileEntityIn.getBlockState();
-            this.renderPiece(blockstate.get(BedBlock.PART) == BedPart.HEAD, x, y, z, blockstate.get(BedBlock.HORIZONTAL_FACING));
-        } else {
-            this.renderPiece(true, x, y, z, Direction.SOUTH);
-            this.renderPiece(false, x, y, z - 1.0D, Direction.SOUTH);
-        }
-
-        if (destroyStage >= 0) {
-            GlStateManager.matrixMode(5890);
-            GlStateManager.popMatrix();
-            GlStateManager.matrixMode(5888);
-        }
-
+    if (tileEntityIn.hasWorld()) {
+      BlockState blockstate = tileEntityIn.getBlockState();
+      this.renderPiece(blockstate.get(BedBlock.PART) == BedPart.HEAD, x, y, z,
+          blockstate.get(BedBlock.HORIZONTAL_FACING));
+    } else {
+      this.renderPiece(true, x, y, z, Direction.SOUTH);
+      this.renderPiece(false, x, y, z - 1.0D, Direction.SOUTH);
     }
 
-    private void renderPiece(boolean isHead, double x, double y, double z, Direction direction) {
-        this.model.preparePiece(isHead);
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef((float)x, (float)y + height, (float)z);
-        GlStateManager.rotatef(90.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.translatef(0.5F, 0.5F, 0.5F);
-        GlStateManager.rotatef(180.0F + direction.getHorizontalAngle(), 0.0F, 0.0F, 1.0F);
-        GlStateManager.translatef(-0.5F, -0.5F, -0.5F);
-        GlStateManager.enableRescaleNormal();
-        this.model.render();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.popMatrix();
+    if (destroyStage >= 0) {
+      GlStateManager.matrixMode(5890);
+      GlStateManager.popMatrix();
+      GlStateManager.matrixMode(5888);
     }
+
+  }
+
+  private void renderPiece(boolean isHead, double x, double y, double z, Direction direction) {
+    this.model.preparePiece(isHead);
+    GlStateManager.pushMatrix();
+    GlStateManager.translatef((float) x, (float) y + height, (float) z);
+    GlStateManager.rotatef(90.0F, 1.0F, 0.0F, 0.0F);
+    GlStateManager.translatef(0.5F, 0.5F, 0.5F);
+    GlStateManager.rotatef(180.0F + direction.getHorizontalAngle(), 0.0F, 0.0F, 1.0F);
+    GlStateManager.translatef(-0.5F, -0.5F, -0.5F);
+    GlStateManager.enableRescaleNormal();
+    this.model.render();
+    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    GlStateManager.popMatrix();
+  }
 }

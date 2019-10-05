@@ -64,8 +64,7 @@ public class HammockItem extends ComfortsBaseItem {
 
   private boolean hasPartneredRopes(BlockState state, BlockState otherState) {
     return otherState.getBlock() instanceof RopeAndNailBlock
-        && otherState.get(HORIZONTAL_FACING) == state.get(HORIZONTAL_FACING).getOpposite()
-        && !state.get(SUPPORTING)
-        && !otherState.get(SUPPORTING);
+        && otherState.get(HORIZONTAL_FACING) == state.get(HORIZONTAL_FACING).getOpposite() && !state
+        .get(SUPPORTING) && !otherState.get(SUPPORTING);
   }
 }

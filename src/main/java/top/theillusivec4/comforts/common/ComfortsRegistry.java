@@ -24,8 +24,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
-import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
-import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
+import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
+import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 
 public class ComfortsRegistry {
 
@@ -37,8 +37,8 @@ public class ComfortsRegistry {
   public static final Block ROPE_AND_NAIL = null;
 
   @ObjectHolder("comforts:sleeping_bag")
-  public static final TileEntityType<TileEntitySleepingBag> SLEEPING_BAG_TE = null;
+  public static final TileEntityType<SleepingBagTileEntity> SLEEPING_BAG_TE = null;
 
   @ObjectHolder("comforts:hammock")
-  public static final TileEntityType<TileEntityHammock> HAMMOCK_TE = null;
+  public static final TileEntityType<HammockTileEntity> HAMMOCK_TE = null;
 }

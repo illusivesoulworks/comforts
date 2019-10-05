@@ -31,7 +31,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import top.theillusivec4.comforts.Comforts;
-import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
+import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 
 public class SleepingBagBlock extends ComfortsBaseBlock {
 
@@ -55,6 +55,6 @@ public class SleepingBagBlock extends ComfortsBaseBlock {
 
   @Override
   public TileEntity createNewTileEntity(IBlockReader worldIn) {
-    return new TileEntitySleepingBag(this.color);
+    return new SleepingBagTileEntity(this.color);
   }
 }

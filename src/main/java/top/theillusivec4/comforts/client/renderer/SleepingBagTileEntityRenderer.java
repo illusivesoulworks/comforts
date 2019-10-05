@@ -20,11 +20,12 @@
 package top.theillusivec4.comforts.client.renderer;
 
 import top.theillusivec4.comforts.client.model.SleepingBagModel;
-import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
+import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 
-public class SleepingBagTileEntityRenderer extends ComfortsBaseTileEntityRenderer<TileEntitySleepingBag> {
+public class SleepingBagTileEntityRenderer extends
+    ComfortsBaseTileEntityRenderer<SleepingBagTileEntity> {
 
-    public SleepingBagTileEntityRenderer() {
-        super("sleeping_bag",new SleepingBagModel(), 0.1875F);
-    }
+  public SleepingBagTileEntityRenderer() {
+    super("sleeping_bag", new SleepingBagModel(), 0.1875F);
+  }
 }

@@ -23,12 +23,12 @@ import net.minecraft.client.renderer.model.Model;
 
 public abstract class ComfortsBaseModel extends Model {
 
-    public ComfortsBaseModel() {
-        this.textureWidth = 64;
-        this.textureHeight = 64;
-    }
+  public ComfortsBaseModel() {
+    this.textureWidth = 64;
+    this.textureHeight = 64;
+  }
 
-    public abstract void render();
+  public abstract void render();
 
-    public abstract void preparePiece(boolean isHead);
+  public abstract void preparePiece(boolean isHead);
 }

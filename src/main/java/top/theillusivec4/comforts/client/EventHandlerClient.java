@@ -27,18 +27,19 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class EventHandlerClient {
 
-    @SubscribeEvent
-    public void onPlayerRender(RenderPlayerEvent.Pre evt) {
-        final PlayerEntity player = evt.getPlayer();
+  @SubscribeEvent
+  public void onPlayerRender(RenderPlayerEvent.Pre evt) {
+    final PlayerEntity player = evt.getPlayer();
 
-        if (player instanceof RemoteClientPlayerEntity && player.isSleeping()) {
-            Block bed = player.world.getBlockState(player.getBedLocation(player.world.getDimension().getType())).getBlock();
+    if (player instanceof RemoteClientPlayerEntity && player.isSleeping()) {
+      Block bed = player.world
+          .getBlockState(player.getBedLocation(player.world.getDimension().getType())).getBlock();
 
-//            if (bed instanceof BlockSleepingBag) {
-//                player.getYOffset() = -0.375F;
-//            } else if (bed instanceof BlockHammock) {
-//                player.renderOffsetY = -0.5F;
-//            }
-        }
+      //            if (bed instanceof BlockSleepingBag) {
+      //                player.getYOffset() = -0.375F;
+      //            } else if (bed instanceof BlockHammock) {
+      //                player.renderOffsetY = -0.5F;
+      //            }
     }
+  }
 }

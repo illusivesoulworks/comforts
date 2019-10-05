@@ -55,8 +55,8 @@ import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 import top.theillusivec4.comforts.common.item.ComfortsBaseItem;
 import top.theillusivec4.comforts.common.item.HammockItem;
 import top.theillusivec4.comforts.common.item.SleepingBagItem;
-import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
-import top.theillusivec4.comforts.common.tileentity.TileEntitySleepingBag;
+import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
+import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 import top.theillusivec4.comforts.integration.MorpheusIntegration;
 
 @Mod(Comforts.MODID)
@@ -93,10 +93,10 @@ public class Comforts {
     @SubscribeEvent
     public static void setupClient(FMLClientSetupEvent evt) {
       MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
-      ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySleepingBag.class,
+      ClientRegistry.bindTileEntitySpecialRenderer(SleepingBagTileEntity.class,
           new SleepingBagTileEntityRenderer());
       ClientRegistry
-          .bindTileEntitySpecialRenderer(TileEntityHammock.class, new HammockTileEntityRenderer());
+          .bindTileEntitySpecialRenderer(HammockTileEntity.class, new HammockTileEntityRenderer());
     }
 
   }
@@ -129,8 +129,13 @@ public class Comforts {
 
     @SubscribeEvent
     public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> evt) {
-      evt.getRegistry()
-          .registerAll(ComfortsTileEntities.SLEEPING_BAG_TE, ComfortsTileEntities.HAMMOCK_TE);
+      TileEntityType<?> sleepingBag = TileEntityType.Builder.create(SleepingBagTileEntity::new,
+          ComfortsRegistry.SLEEPING_BAGS.values().toArray(new Block[0])).build(null)
+          .setRegistryName(Comforts.MODID, "sleeping_bag");
+      TileEntityType<?> hammock = TileEntityType.Builder
+          .create(HammockTileEntity::new, ComfortsRegistry.HAMMOCKS.values().toArray(new Block[0]))
+          .build(null).setRegistryName(Comforts.MODID, "hammock");
+      evt.getRegistry().registerAll(sleepingBag, hammock);
     }
   }
 }

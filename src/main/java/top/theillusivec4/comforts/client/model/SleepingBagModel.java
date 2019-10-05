@@ -23,26 +23,26 @@ import net.minecraft.client.renderer.entity.model.RendererModel;
 
 public class SleepingBagModel extends ComfortsBaseModel {
 
-    private final RendererModel headPiece;
-    private final RendererModel footPiece;
+  private final RendererModel headPiece;
+  private final RendererModel footPiece;
 
-    public SleepingBagModel() {
-        super();
-        this.headPiece = new RendererModel(this, 0, 0);
-        this.headPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
-        this.footPiece = new RendererModel(this, 0, 19);
-        this.footPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
-    }
+  public SleepingBagModel() {
+    super();
+    this.headPiece = new RendererModel(this, 0, 0);
+    this.headPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
+    this.footPiece = new RendererModel(this, 0, 19);
+    this.footPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
+  }
 
-    @Override
-    public void render() {
-        this.headPiece.render(0.0625F);
-        this.footPiece.render(0.0625F);
-    }
+  @Override
+  public void render() {
+    this.headPiece.render(0.0625F);
+    this.footPiece.render(0.0625F);
+  }
 
-    @Override
-    public void preparePiece(boolean isHead) {
-        this.headPiece.showModel = isHead;
-        this.footPiece.showModel = !isHead;
-    }
+  @Override
+  public void preparePiece(boolean isHead) {
+    this.headPiece.showModel = isHead;
+    this.footPiece.showModel = !isHead;
+  }
 }

@@ -19,15 +19,16 @@
 
 package top.theillusivec4.comforts.common.tileentity;
 
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.DyeColor;
+import top.theillusivec4.comforts.common.ComfortsRegistry;
 
-public class TileEntityHammock extends TileEntityComfortsBase {
+public class SleepingBagTileEntity extends ComfortsBaseTileEntity {
 
-    public TileEntityHammock() {
-        super(ComfortsTileEntities.HAMMOCK_TE);
-    }
+  public SleepingBagTileEntity() {
+    super(ComfortsRegistry.SLEEPING_BAG_TE);
+  }
 
-    public TileEntityHammock(EnumDyeColor colorIn) {
-        super(ComfortsTileEntities.HAMMOCK_TE, colorIn);
-    }
+  public SleepingBagTileEntity(DyeColor colorIn) {
+    super(ComfortsRegistry.SLEEPING_BAG_TE, colorIn);
+  }
 }

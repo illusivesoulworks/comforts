@@ -41,7 +41,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.Comforts;
-import top.theillusivec4.comforts.common.tileentity.TileEntityHammock;
+import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 
 public class HammockBlock extends ComfortsBaseBlock {
 
@@ -54,30 +54,6 @@ public class HammockBlock extends ComfortsBaseBlock {
         Block.Properties.create(Material.WOOL).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
     this.color = color;
     this.setRegistryName(Comforts.MODID, "hammock_" + color.getTranslationKey());
-  }
-
-  @Nonnull
-  @Override
-  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
-      ISelectionContext context) {
-    return HAMMOCK_SHAPE;
-  }
-
-  @Override
-  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state,
-      @Nonnull PlayerEntity player) {
-    BedPart bedpart = state.get(PART);
-    boolean isHead = bedpart == BedPart.HEAD;
-    Direction direction = state.get(HORIZONTAL_FACING);
-    BlockPos otherPos = pos.offset(getDirectionToOther(bedpart, direction));
-    BlockState otherState = worldIn.getBlockState(otherPos);
-
-    if (otherState.getBlock() == this && otherState.get(PART) != bedpart) {
-      finishHammockDrops(state, pos, otherState, otherPos, direction, isHead, worldIn, player);
-      dropRopeSupport(pos, direction, isHead, worldIn);
-      player.addStat(Stats.BLOCK_MINED.get(this));
-    }
-    worldIn.playEvent(player, 2001, pos, Block.getStateId(state));
   }
 
   public static Direction getDirectionToOther(BedPart part, Direction facing) {
@@ -107,6 +83,30 @@ public class HammockBlock extends ComfortsBaseBlock {
     }
   }
 
+  @Nonnull
+  @Override
+  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
+      ISelectionContext context) {
+    return HAMMOCK_SHAPE;
+  }
+
+  @Override
+  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state,
+      @Nonnull PlayerEntity player) {
+    BedPart bedpart = state.get(PART);
+    boolean isHead = bedpart == BedPart.HEAD;
+    Direction direction = state.get(HORIZONTAL_FACING);
+    BlockPos otherPos = pos.offset(getDirectionToOther(bedpart, direction));
+    BlockState otherState = worldIn.getBlockState(otherPos);
+
+    if (otherState.getBlock() == this && otherState.get(PART) != bedpart) {
+      finishHammockDrops(state, pos, otherState, otherPos, direction, isHead, worldIn, player);
+      dropRopeSupport(pos, direction, isHead, worldIn);
+      player.addStat(Stats.BLOCK_MINED.get(this));
+    }
+    worldIn.playEvent(player, 2001, pos, Block.getStateId(state));
+  }
+
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
     Direction direction = context.getFace();
@@ -118,6 +118,6 @@ public class HammockBlock extends ComfortsBaseBlock {
 
   @Override
   public TileEntity createNewTileEntity(IBlockReader worldIn) {
-    return new TileEntityHammock(this.color);
+    return new HammockTileEntity(this.color);
   }
 }
