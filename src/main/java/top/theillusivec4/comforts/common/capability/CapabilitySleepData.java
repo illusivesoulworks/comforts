@@ -94,13 +94,9 @@ public class CapabilitySleepData {
 
     void setTiredTime(long tiredTime);
 
-    boolean isAutoSleeping();
+    BlockPos getAutoSleepingPos();
 
-    void setAutoSleeping(boolean value);
-
-    BlockPos getSleepingPos();
-
-    void setSleepingPos(BlockPos pos);
+    void setAutoSleepingPos(BlockPos pos);
 
     void copyFrom(ISleepData other);
   }
@@ -111,7 +107,7 @@ public class CapabilitySleepData {
     long wakeTime = 0;
     long tiredTime = 0;
     boolean autoSleeping = false;
-    BlockPos sleepLocation = null;
+    BlockPos autoSleepingPos = null;
 
     @Override
     public long getSleepTime() {
@@ -144,23 +140,13 @@ public class CapabilitySleepData {
     }
 
     @Override
-    public boolean isAutoSleeping() {
-      return autoSleeping;
+    public BlockPos getAutoSleepingPos() {
+      return autoSleepingPos;
     }
 
     @Override
-    public void setAutoSleeping(boolean value) {
-      autoSleeping = value;
-    }
-
-    @Override
-    public BlockPos getSleepingPos() {
-      return sleepLocation;
-    }
-
-    @Override
-    public void setSleepingPos(BlockPos pos) {
-      sleepLocation = pos;
+    public void setAutoSleepingPos(BlockPos pos) {
+      autoSleepingPos = pos;
     }
 
     @Override

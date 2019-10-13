@@ -143,9 +143,8 @@ public class EventHandlerCommon {
         boolean[] skipToNight = { false };
 
         for (PlayerEntity player : world.getPlayers()) {
-          CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-            BlockPos pos = sleepdata.getSleepingPos();
-            if (player.isPlayerFullyAsleep() && pos != null && world.getBlockState(pos)
+          player.getBedPosition().ifPresent(bedPos -> {
+            if (player.isPlayerFullyAsleep() && world.getBlockState(bedPos)
                 .getBlock() instanceof HammockBlock) {
 
               if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
@@ -186,22 +185,23 @@ public class EventHandlerCommon {
 
     if (evt.phase == TickEvent.Phase.END && evt.side == LogicalSide.SERVER) {
       PlayerEntity player = evt.player;
-      CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-        BlockPos pos = sleepdata.getSleepingPos();
 
-        if (!player.isSleeping() && pos != null && sleepdata.isAutoSleeping()) {
-          World world = player.world;
-          BlockState state = world.getBlockState(pos);
+      if (!player.isSleeping()) {
+        CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+          BlockPos pos = sleepdata.getAutoSleepingPos();
 
-          if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-            player.trySleep(pos);
-          } else {
-            sleepdata.setSleepingPos(null);
+          if (pos != null) {
+            World world = player.world;
+            BlockState state = world.getBlockState(pos);
+
+            if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
+              player.trySleep(pos);
+            }
+
+            sleepdata.setAutoSleepingPos(null);
           }
-
-          sleepdata.setAutoSleeping(false);
-        }
-      });
+        });
+      }
     }
   }
 
@@ -211,55 +211,50 @@ public class EventHandlerCommon {
     World world = player.world;
 
     if (!world.isRemote) {
+      player.getBedPosition().ifPresent(bedPos -> {
+        BlockState state = world.getBlockState(bedPos);
+
+        if (state.getBlock() instanceof SleepingBagBlock) {
+          boolean broke = false;
+          List<EffectInstance> debuffs = getDebuffs();
+
+          if (!debuffs.isEmpty()) {
+
+            for (EffectInstance effect : debuffs) {
+              player.addPotionEffect(new EffectInstance(effect.getPotion(), effect.getDuration(),
+                  effect.getAmplifier()));
+            }
+          }
+
+          if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
+            broke = true;
+            BlockPos blockpos = bedPos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+            world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+            player.sendStatusMessage(new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
+            world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
+                1.0F);
+          }
+
+          if (!broke) {
+            List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
+            BlockPos blockpos = bedPos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+            world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+
+            if (!player.abilities.isCreativeMode) {
+              drops.forEach(drop -> ItemHandlerHelper.giveItemToPlayer(player, drop, player.inventory.currentItem));
+            }
+          }
+        }
+      });
       CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-        BlockPos pos = sleepdata.getSleepingPos();
+        long wakeTime = world.getDayTime();
+        long timeSlept = wakeTime - sleepdata.getSleepTime();
 
-        if (pos != null) {
-          BlockState state = world.getBlockState(pos);
-
-          if (state.getBlock() instanceof SleepingBagBlock) {
-            boolean broke = false;
-            List<EffectInstance> debuffs = getDebuffs();
-
-            if (!debuffs.isEmpty()) {
-
-              for (EffectInstance effect : debuffs) {
-                player.addPotionEffect(new EffectInstance(effect.getPotion(), effect.getDuration(),
-                    effect.getAmplifier()));
-              }
-            }
-
-            if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
-              broke = true;
-              BlockPos blockpos = pos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-              world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-              world.setBlockState(pos, Blocks.AIR.getDefaultState(), 35);
-              player.sendStatusMessage(new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
-              world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
-                  1.0F);
-            }
-
-            if (!broke) {
-              List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, pos, null);
-              BlockPos blockpos = pos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-              world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-              world.setBlockState(pos, Blocks.AIR.getDefaultState(), 35);
-
-              if (!player.abilities.isCreativeMode) {
-                drops.forEach(drop -> ItemHandlerHelper.giveItemToPlayer(player, drop, player.inventory.currentItem));
-              }
-            }
-
-            sleepdata.setSleepingPos(null);
-          }
-
-          long wakeTime = world.getDayTime();
-          long timeSlept = wakeTime - sleepdata.getSleepTime();
-
-          if (timeSlept > 500L) {
-            sleepdata.setWakeTime(wakeTime);
-            sleepdata.setTiredTime(wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
-          }
+        if (timeSlept > 500L) {
+          sleepdata.setWakeTime(wakeTime);
+          sleepdata.setTiredTime(wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
         }
       });
     }

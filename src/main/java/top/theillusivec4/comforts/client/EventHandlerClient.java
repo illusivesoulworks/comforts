@@ -19,27 +19,47 @@
 
 package top.theillusivec4.comforts.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import top.theillusivec4.comforts.common.block.HammockBlock;
+import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 
 public class EventHandlerClient {
 
   @SubscribeEvent
-  public void onPlayerRender(RenderPlayerEvent.Pre evt) {
+  public void onPlayerRenderPre(RenderPlayerEvent.Pre evt) {
     final PlayerEntity player = evt.getPlayer();
 
-    if (player instanceof RemoteClientPlayerEntity && player.isSleeping()) {
-      Block bed = player.world
-          .getBlockState(player.getBedLocation(player.world.getDimension().getType())).getBlock();
+    if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
+      player.getBedPosition().ifPresent(bedPos -> {
+        Block bed = player.world.getBlockState(bedPos).getBlock();
+        if (bed instanceof SleepingBagBlock) {
+          GlStateManager.translatef(0.0f, -0.375F, 0.0f);
+        } else if (bed instanceof HammockBlock) {
+          GlStateManager.translatef(0.0f, -0.5F, 0.0f);
+        }
+      });
+    }
+  }
 
-      //            if (bed instanceof BlockSleepingBag) {
-      //                player.getYOffset() = -0.375F;
-      //            } else if (bed instanceof BlockHammock) {
-      //                player.renderOffsetY = -0.5F;
-      //            }
+  @SubscribeEvent
+  public void onPlayerRenderPost(RenderPlayerEvent.Post evt) {
+    final PlayerEntity player = evt.getPlayer();
+
+    if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
+      player.getBedPosition().ifPresent(bedPos -> {
+        Block bed = player.world.getBlockState(bedPos).getBlock();
+        if (bed instanceof SleepingBagBlock) {
+          GlStateManager.translatef(0.0f, 0.375F, 0.0f);
+        } else if (bed instanceof HammockBlock) {
+          GlStateManager.translatef(0.0f, 0.5F, 0.0f);
+        }
+      });
     }
   }
 }

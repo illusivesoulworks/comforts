@@ -54,11 +54,10 @@ public class SleepingBagItem extends ComfortsBaseItem {
       if (state.get(BedBlock.PART) != BedPart.HEAD) {
         pos = pos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING));
       }
-      final BlockPos blockpos = pos;
-      CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-        sleepdata.setAutoSleeping(true);
-        sleepdata.setSleepingPos(blockpos);
-      });
+
+      final BlockPos blockPos = pos;
+      CapabilitySleepData.getCapability(player)
+          .ifPresent(sleepdata -> sleepdata.setAutoSleepingPos(blockPos));
       return ActionResultType.SUCCESS;
     }
     return result;

@@ -94,7 +94,6 @@ public class ComfortsBaseBlock extends BedBlock {
         player$sleepresult.ifRight(unit -> {
           BlockState newState = finalState.with(OCCUPIED, true);
           worldIn.setBlockState(finalPos, newState, 4);
-          CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> sleepdata.setSleepingPos(finalPos));
         });
         player$sleepresult.ifLeft(result -> {
           ITextComponent text;
