@@ -56,7 +56,7 @@ public class SleepingBagItem extends ComfortsBaseItem {
       }
       final BlockPos blockpos = pos;
       CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-        sleepdata.setSleeping(true);
+        sleepdata.setAutoSleeping(true);
         sleepdata.setSleepingPos(blockpos);
       });
       return ActionResultType.SUCCESS;

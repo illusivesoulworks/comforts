@@ -58,10 +58,10 @@ public class ComfortsBaseBlock extends BedBlock {
     } else {
 
       if (state.get(PART) != BedPart.HEAD) {
-        BlockPos headPos = pos.offset(state.get(HORIZONTAL_FACING));
-        BlockState headState = worldIn.getBlockState(headPos);
+        pos = pos.offset(state.get(HORIZONTAL_FACING));
+        state = worldIn.getBlockState(pos);
 
-        if (headState.getBlock() != this) {
+        if (state.getBlock() != this) {
           return true;
         }
       }
@@ -81,7 +81,7 @@ public class ComfortsBaseBlock extends BedBlock {
 
           if (otherPlayer != null) {
             player.sendStatusMessage(
-                new TranslationTextComponent("block.comforts." + type.name + "occupied"), true);
+                new TranslationTextComponent("block.comforts." + type.name + ".occupied"), true);
             return true;
           }
 
@@ -89,17 +89,12 @@ public class ComfortsBaseBlock extends BedBlock {
         }
 
         Either<SleepResult, Unit> player$sleepresult = player.trySleep(pos);
+        final BlockPos finalPos = pos;
         final BlockState finalState = state;
         player$sleepresult.ifRight(unit -> {
           BlockState newState = finalState.with(OCCUPIED, true);
-          worldIn.setBlockState(pos, newState, 4);
-          CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-
-            if (sleepdata.getSleepingPos() == null) {
-              sleepdata
-                  .setSleepingPos(player.getBedLocation(player.world.getDimension().getType()));
-            }
-          });
+          worldIn.setBlockState(finalPos, newState, 4);
+          CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> sleepdata.setSleepingPos(finalPos));
         });
         player$sleepresult.ifLeft(result -> {
           ITextComponent text;
@@ -110,7 +105,7 @@ public class ComfortsBaseBlock extends BedBlock {
                   : new TranslationTextComponent("block.minecraft.bed.no_sleep");
               break;
             case TOO_FAR_AWAY:
-              text = new TranslationTextComponent("block.comforts." + type.name + "too_far_away");
+              text = new TranslationTextComponent("block.comforts." + type.name + ".too_far_away");
               break;
             default:
               text = result.getMessage();

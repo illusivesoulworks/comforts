@@ -50,8 +50,6 @@ public class CapabilitySleepData {
   private static final String WAKE_TAG = "wakeTime";
   private static final String TIRED_TAG = "tiredTime";
   private static final String SLEEP_TAG = "sleepTime";
-  private static final String SLEEPING_TAG = "sleeping";
-  private static final String LOC_TAG = "sleepingLocation";
 
   public static void register() {
     MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
@@ -63,13 +61,6 @@ public class CapabilitySleepData {
         compound.putLong(WAKE_TAG, instance.getWakeTime());
         compound.putLong(TIRED_TAG, instance.getTiredTime());
         compound.putLong(SLEEP_TAG, instance.getSleepTime());
-        compound.putBoolean(SLEEPING_TAG, instance.isSleeping());
-        BlockPos pos = instance.getSleepingPos();
-
-        if (pos != null) {
-          compound.put(LOC_TAG, NBTUtil.writeBlockPos(pos));
-        }
-
         return compound;
       }
 
@@ -80,11 +71,6 @@ public class CapabilitySleepData {
         instance.setWakeTime(compound.getLong(WAKE_TAG));
         instance.setTiredTime(compound.getLong(TIRED_TAG));
         instance.setSleepTime(compound.getLong(SLEEP_TAG));
-        instance.setSleeping(compound.getBoolean(SLEEPING_TAG));
-
-        if (compound.hasUniqueId(LOC_TAG)) {
-          instance.setSleepingPos(NBTUtil.readBlockPos(compound.getCompound(LOC_TAG)));
-        }
       }
     }, SleepDataWrapper::new);
   }
@@ -108,9 +94,9 @@ public class CapabilitySleepData {
 
     void setTiredTime(long tiredTime);
 
-    boolean isSleeping();
+    boolean isAutoSleeping();
 
-    void setSleeping(boolean value);
+    void setAutoSleeping(boolean value);
 
     BlockPos getSleepingPos();
 
@@ -124,7 +110,7 @@ public class CapabilitySleepData {
     long sleepTime = 0;
     long wakeTime = 0;
     long tiredTime = 0;
-    boolean isSleeping = false;
+    boolean autoSleeping = false;
     BlockPos sleepLocation = null;
 
     @Override
@@ -158,13 +144,13 @@ public class CapabilitySleepData {
     }
 
     @Override
-    public boolean isSleeping() {
-      return isSleeping;
+    public boolean isAutoSleeping() {
+      return autoSleeping;
     }
 
     @Override
-    public void setSleeping(boolean value) {
-      isSleeping = value;
+    public void setAutoSleeping(boolean value) {
+      autoSleeping = value;
     }
 
     @Override
@@ -179,8 +165,6 @@ public class CapabilitySleepData {
 
     @Override
     public void copyFrom(ISleepData other) {
-      this.setSleepingPos(other.getSleepingPos());
-      this.setSleeping(other.isSleeping());
       this.setSleepTime(other.getSleepTime());
       this.setTiredTime(other.getTiredTime());
       this.setWakeTime(other.getWakeTime());
@@ -234,6 +218,7 @@ public class CapabilitySleepData {
       if (evt.isWasDeath()) {
         PlayerEntity player = evt.getPlayer();
         PlayerEntity original = evt.getOriginal();
+        original.revive();
         CapabilitySleepData.getCapability(player).ifPresent(
             sleepdata -> CapabilitySleepData.getCapability(original)
                 .ifPresent(sleepdata::copyFrom));
