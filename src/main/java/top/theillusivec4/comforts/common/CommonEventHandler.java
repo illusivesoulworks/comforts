@@ -62,7 +62,7 @@ import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
-public class EventHandlerCommon {
+public class CommonEventHandler {
 
   public static List<EffectInstance> debuffs = new ArrayList<>();
 
@@ -183,34 +183,6 @@ public class EventHandlerCommon {
             world.dimension.resetRainAndThunder();
           }
         }
-      }
-    }
-  }
-
-  @SubscribeEvent
-  public void onPostPlayerTick(TickEvent.PlayerTickEvent evt) {
-
-    if (evt.phase == Phase.START && evt.side == LogicalSide.CLIENT) {
-      PlayerEntity player = evt.player;
-
-      if (!player.isSleeping()) {
-        CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-          BlockPos pos = sleepdata.getAutoSleepPos();
-
-          if (pos != null) {
-            World world = player.world;
-            BlockState state = world.getBlockState(pos);
-
-            if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-              Minecraft.getInstance().playerController
-                  .func_217292_a((ClientPlayerEntity) player, (ClientWorld) player.world,
-                      Hand.MAIN_HAND,
-                      new BlockRayTraceResult(new Vec3d(0, 0, 0), player.getHorizontalFacing(), pos,
-                          false));
-            }
-            sleepdata.setAutoSleepPos(null);
-          }
-        });
       }
     }
   }

@@ -45,12 +45,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.comforts.client.EventHandlerClient;
+import top.theillusivec4.comforts.client.ClientEventHandler;
 import top.theillusivec4.comforts.client.renderer.HammockTileEntityRenderer;
 import top.theillusivec4.comforts.client.renderer.SleepingBagTileEntityRenderer;
 import top.theillusivec4.comforts.common.ComfortsConfig;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
-import top.theillusivec4.comforts.common.EventHandlerCommon;
+import top.theillusivec4.comforts.common.CommonEventHandler;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
@@ -94,7 +94,7 @@ public class Comforts {
   }
 
   private void setup(FMLCommonSetupEvent evt) {
-    MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
+    MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
     CapabilitySleepData.register();
     ComfortsNetwork.register();
 
@@ -108,7 +108,7 @@ public class Comforts {
 
     @SubscribeEvent
     public static void setupClient(FMLClientSetupEvent evt) {
-      MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
+      MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
       ClientRegistry.bindTileEntitySpecialRenderer(SleepingBagTileEntity.class,
           new SleepingBagTileEntityRenderer());
       ClientRegistry
