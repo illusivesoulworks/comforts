@@ -2,8 +2,8 @@ package top.theillusivec4.comforts.common.network;
 
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
@@ -36,8 +36,8 @@ public class SPacketAutoSleep {
     ctx.get().enqueueWork(() -> {
       Entity entity = Minecraft.getInstance().world.getEntityByID(msg.entityId);
 
-      if (entity instanceof ClientPlayerEntity) {
-        ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
+      if (entity instanceof PlayerEntity) {
+        PlayerEntity playerEntity = (PlayerEntity) entity;
         CapabilitySleepData.getCapability(playerEntity)
             .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(msg.pos));
       }
