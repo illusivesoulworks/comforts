@@ -3,7 +3,6 @@ package top.theillusivec4.comforts.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Pair;
@@ -45,6 +44,10 @@ public class ComfortsLootProvider extends LootTableProvider {
     this.dataGenerator = generatorIn;
   }
 
+  private static Path getPath(Path pathIn, ResourceLocation id) {
+    return pathIn.resolve("data/" + id.getNamespace() + "/loot_tables/" + id.getPath() + ".json");
+  }
+
   @Override
   public void act(@Nonnull DirectoryCache cache) {
     Path path = this.dataGenerator.getOutputFolder();
@@ -64,7 +67,8 @@ public class ComfortsLootProvider extends LootTableProvider {
     Multimap<String, String> multimap = validationresults.getProblems();
 
     if (!multimap.isEmpty()) {
-      multimap.forEach((problemPath, problem) -> LOGGER.warn("Found validation problem in " + problemPath + ": " + problem));
+      multimap.forEach((problemPath, problem) -> LOGGER
+          .warn("Found validation problem in " + problemPath + ": " + problem));
       throw new IllegalStateException("Failed to validate loot tables, see logs");
     } else {
       map.forEach((resourceLocation, lootTable) -> {
@@ -77,10 +81,6 @@ public class ComfortsLootProvider extends LootTableProvider {
         }
       });
     }
-  }
-
-  private static Path getPath(Path pathIn, ResourceLocation id) {
-    return pathIn.resolve("data/" + id.getNamespace() + "/loot_tables/" + id.getPath() + ".json");
   }
 
   @Override

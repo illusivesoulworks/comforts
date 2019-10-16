@@ -21,16 +21,15 @@ public class ComfortsNetwork {
   public static void register() {
 
     INSTANCE = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Comforts.MODID, "main"))
-        .networkProtocolVersion(() -> PTC_VERSION)
-        .clientAcceptedVersions(PTC_VERSION::equals)
-        .serverAcceptedVersions(PTC_VERSION::equals)
-        .simpleChannel();
+        .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
+        .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();
 
     register(SPacketAutoSleep.class, SPacketAutoSleep::encode, SPacketAutoSleep::decode,
         SPacketAutoSleep::handle);
   }
 
-  private static <M> void register(Class<M> messageType, BiConsumer<M, PacketBuffer> encoder, Function<PacketBuffer, M> decoder, BiConsumer<M, Supplier<Context>> messageConsumer) {
+  private static <M> void register(Class<M> messageType, BiConsumer<M, PacketBuffer> encoder,
+      Function<PacketBuffer, M> decoder, BiConsumer<M, Supplier<Context>> messageConsumer) {
 
     INSTANCE.registerMessage(id++, messageType, encoder, decoder, messageConsumer);
   }

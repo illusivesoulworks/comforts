@@ -38,7 +38,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
-import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 public class ComfortsBaseBlock extends BedBlock {
 

@@ -28,6 +28,13 @@ public class ComfortsBlockLootTables extends BlockLootTables {
 
   private final Map<ResourceLocation, Builder> lootBuilders = Maps.newHashMap();
 
+  private static LootTable.Builder getLootBuilder(Block block) {
+    return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(
+        ItemLootEntry.builder(block)
+            .acceptCondition(BlockStateProperty.builder(block).with(BedBlock.PART, BedPart.HEAD)))
+        .acceptCondition(SurvivesExplosion.builder()));
+  }
+
   @Override
   public void accept(BiConsumer<ResourceLocation, Builder> lootBuilder) {
     List<Block> blocks = new ArrayList<>();
@@ -61,12 +68,5 @@ public class ComfortsBlockLootTables extends BlockLootTables {
 
   private void registerLootTable(Block block, Function<Block, Builder> lootBuilder) {
     this.lootBuilders.put(block.getLootTable(), lootBuilder.apply(block));
-  }
-
-  private static LootTable.Builder getLootBuilder(Block block) {
-    return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(
-        ItemLootEntry.builder(block)
-            .acceptCondition(BlockStateProperty.builder(block).with(BedBlock.PART, BedPart.HEAD)))
-        .acceptCondition(SurvivesExplosion.builder()));
   }
 }

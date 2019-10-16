@@ -25,45 +25,34 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
-import top.theillusivec4.comforts.common.network.ComfortsNetwork;
-import top.theillusivec4.comforts.common.network.SPacketAutoSleep;
 
 public class CommonEventHandler {
 
@@ -216,8 +205,9 @@ public class CommonEventHandler {
               if (!debuffs.isEmpty()) {
 
                 for (EffectInstance effect : debuffs) {
-                  player.addPotionEffect(new EffectInstance(effect.getPotion(), effect.getDuration(),
-                      effect.getAmplifier()));
+                  player.addPotionEffect(
+                      new EffectInstance(effect.getPotion(), effect.getDuration(),
+                          effect.getAmplifier()));
                 }
               }
 
@@ -229,8 +219,8 @@ public class CommonEventHandler {
                 world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
                 player.sendStatusMessage(
                     new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
-                world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
-                    1.0F);
+                world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
+                    1.0F, 1.0F);
                 player.clearBedPosition();
               }
 
@@ -251,7 +241,8 @@ public class CommonEventHandler {
             }
 
             sleepdata.setWakeTime(wakeTime);
-            sleepdata.setTiredTime(wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
+            sleepdata.setTiredTime(
+                wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
             sleepdata.setAutoSleepPos(null);
           });
         }
