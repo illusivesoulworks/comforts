@@ -145,6 +145,11 @@ public class CommonEventHandler {
     if (evt.phase == TickEvent.Phase.START && evt.world instanceof ServerWorld) {
       ServerWorld world = (ServerWorld) evt.world;
       List<ServerPlayerEntity> players = world.getPlayers();
+
+      if (!world.isDaytime() && ComfortsConfig.SERVER.nightHammocks.get()) {
+        return;
+      }
+
       Boolean allPlayersSleeping = ObfuscationReflectionHelper
           .getPrivateValue(ServerWorld.class, world, "field_73068_P");
 
@@ -196,65 +201,60 @@ public class CommonEventHandler {
     World world = player.world;
 
     if (!world.isRemote) {
-      player.getBedPosition().ifPresent(bedPos -> {
-        BlockState state = world.getBlockState(bedPos);
+      CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+        long wakeTime = world.getDayTime();
+        long timeSlept = wakeTime - sleepdata.getSleepTime();
 
-        if (state.getBlock() instanceof SleepingBagBlock) {
-          boolean broke = false;
-          List<EffectInstance> debuffs = getDebuffs();
+        if (timeSlept > 500L) {
+          player.getBedPosition().ifPresent(bedPos -> {
+            BlockState state = world.getBlockState(bedPos);
 
-          if (!debuffs.isEmpty()) {
+            if (state.getBlock() instanceof SleepingBagBlock) {
+              boolean broke = false;
+              List<EffectInstance> debuffs = getDebuffs();
 
-            for (EffectInstance effect : debuffs) {
-              player.addPotionEffect(new EffectInstance(effect.getPotion(), effect.getDuration(),
-                  effect.getAmplifier()));
-            }
-          }
+              if (!debuffs.isEmpty()) {
 
-          if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
-            broke = true;
-            BlockPos blockpos = bedPos
-                .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-            world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-            player.sendStatusMessage(
-                new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
-            world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
-                1.0F);
-            player.clearBedPosition();
-          }
-
-          final boolean hasBroken = broke;
-          CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-            if (!hasBroken && sleepdata.getAutoSleepPos() != null) {
-              List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
-              BlockPos blockpos = bedPos
-                  .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-              world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-              world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-
-              if (!player.abilities.isCreativeMode) {
-                drops.forEach(drop -> ItemHandlerHelper
-                    .giveItemToPlayer(player, drop, player.inventory.currentItem));
+                for (EffectInstance effect : debuffs) {
+                  player.addPotionEffect(new EffectInstance(effect.getPotion(), effect.getDuration(),
+                      effect.getAmplifier()));
+                }
               }
 
-              player.clearBedPosition();
+              if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
+                broke = true;
+                BlockPos blockpos = bedPos
+                    .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+                world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+                player.sendStatusMessage(
+                    new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
+                world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
+                    1.0F);
+                player.clearBedPosition();
+              }
+
+              if (!broke && sleepdata.getAutoSleepPos() != null) {
+                List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
+                BlockPos blockpos = bedPos
+                    .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+                world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+
+                if (!player.abilities.isCreativeMode) {
+                  drops.forEach(drop -> ItemHandlerHelper
+                      .giveItemToPlayer(player, drop, player.inventory.currentItem));
+                }
+
+                player.clearBedPosition();
+              }
             }
+
+            sleepdata.setWakeTime(wakeTime);
+            sleepdata.setTiredTime(wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
+            sleepdata.setAutoSleepPos(null);
           });
         }
-
-        CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-          long wakeTime = world.getDayTime();
-          long timeSlept = wakeTime - sleepdata.getSleepTime();
-
-          if (timeSlept > 500L) {
-            sleepdata.setWakeTime(wakeTime);
-            sleepdata.setTiredTime(
-                wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
-          }
-
-          sleepdata.setAutoSleepPos(null);
-        });
       });
     }
   }
@@ -264,18 +264,21 @@ public class CommonEventHandler {
     PlayerEntity player = evt.getPlayer();
     CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
 
-      if (!player.world.isRemote && ComfortsConfig.SERVER.wellRested.get()) {
+      if (!player.world.isRemote) {
         long dayTime = player.getEntityWorld().getDayTime();
+        sleepdata.setSleepTime(dayTime);
 
-        if (sleepdata.getWakeTime() > dayTime) {
-          sleepdata.setWakeTime(0);
-          sleepdata.setTiredTime(0);
-        }
+        if (ComfortsConfig.SERVER.wellRested.get()) {
+          if (sleepdata.getWakeTime() > dayTime) {
+            sleepdata.setWakeTime(0);
+            sleepdata.setTiredTime(0);
+          }
 
-        if (sleepdata.getTiredTime() > dayTime) {
-          player.sendStatusMessage(new TranslationTextComponent("capability.comforts.not_sleepy"),
-              true);
-          evt.setResult(PlayerEntity.SleepResult.OTHER_PROBLEM);
+          if (sleepdata.getTiredTime() > dayTime) {
+            player.sendStatusMessage(new TranslationTextComponent("capability.comforts.not_sleepy"),
+                true);
+            evt.setResult(PlayerEntity.SleepResult.OTHER_PROBLEM);
+          }
         }
       }
     });
