@@ -221,6 +221,7 @@ public class CommonEventHandler {
                 new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
             world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
                 1.0F);
+            player.clearBedPosition();
           }
 
           final boolean hasBroken = broke;
@@ -236,6 +237,8 @@ public class CommonEventHandler {
                 drops.forEach(drop -> ItemHandlerHelper
                     .giveItemToPlayer(player, drop, player.inventory.currentItem));
               }
+
+              player.clearBedPosition();
             }
           });
         }
