@@ -99,10 +99,6 @@ public class CapabilitySleepData {
 
     void setAutoSleepPos(BlockPos pos);
 
-    int getAutoSleepTimer();
-
-    void setAutoSleepTimer(int time);
-
     void copyFrom(ISleepData other);
   }
 
@@ -111,7 +107,6 @@ public class CapabilitySleepData {
     long sleepTime = 0;
     long wakeTime = 0;
     long tiredTime = 0;
-    int autoSleepTimer = 2;
     BlockPos autoSleepPos = null;
 
     @Override
@@ -152,16 +147,6 @@ public class CapabilitySleepData {
     @Override
     public void setAutoSleepPos(BlockPos pos) {
       autoSleepPos = pos;
-    }
-
-    @Override
-    public int getAutoSleepTimer() {
-      return autoSleepTimer;
-    }
-
-    @Override
-    public void setAutoSleepTimer(int time) {
-      autoSleepTimer = time;
     }
 
     @Override

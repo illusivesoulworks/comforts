@@ -28,6 +28,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.comforts.common.ComfortsConfig;
+import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;
 import top.theillusivec4.comforts.common.network.SPacketAutoSleep;
 
@@ -46,6 +47,8 @@ public class SleepingBagItem extends ComfortsBaseItem {
     if (player instanceof ServerPlayerEntity && result == ActionResultType.SUCCESS
         && ComfortsConfig.SERVER.autoUse.get() && !player.isSneaking()) {
       BlockPos pos = context.getPos().up();
+      CapabilitySleepData.getCapability(player)
+          .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(pos));
       ComfortsNetwork.INSTANCE
           .send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
               new SPacketAutoSleep(player.getEntityId(), pos));

@@ -55,12 +55,15 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
+import top.theillusivec4.comforts.common.network.ComfortsNetwork;
+import top.theillusivec4.comforts.common.network.SPacketAutoSleep;
 
 public class CommonEventHandler {
 
@@ -220,29 +223,35 @@ public class CommonEventHandler {
                 1.0F);
           }
 
-          if (!broke) {
-            List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
-            BlockPos blockpos = bedPos
-                .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-            world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+          final boolean hasBroken = broke;
+          CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+            if (!hasBroken && sleepdata.getAutoSleepPos() != null) {
+              List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
+              BlockPos blockpos = bedPos
+                  .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+              world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+              world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
 
-            if (!player.abilities.isCreativeMode) {
-              drops.forEach(drop -> ItemHandlerHelper
-                  .giveItemToPlayer(player, drop, player.inventory.currentItem));
+              if (!player.abilities.isCreativeMode) {
+                drops.forEach(drop -> ItemHandlerHelper
+                    .giveItemToPlayer(player, drop, player.inventory.currentItem));
+              }
             }
-          }
+          });
         }
-      });
-      CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-        long wakeTime = world.getDayTime();
-        long timeSlept = wakeTime - sleepdata.getSleepTime();
 
-        if (timeSlept > 500L) {
-          sleepdata.setWakeTime(wakeTime);
-          sleepdata.setTiredTime(
-              wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
-        }
+        CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
+          long wakeTime = world.getDayTime();
+          long timeSlept = wakeTime - sleepdata.getSleepTime();
+
+          if (timeSlept > 500L) {
+            sleepdata.setWakeTime(wakeTime);
+            sleepdata.setTiredTime(
+                wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
+          }
+
+          sleepdata.setAutoSleepPos(null);
+        });
       });
     }
   }

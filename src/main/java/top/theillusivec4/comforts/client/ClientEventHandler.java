@@ -65,6 +65,7 @@ public class ClientEventHandler {
                   .func_217292_a((ClientPlayerEntity) player, (ClientWorld) player.world,
                       Hand.MAIN_HAND, hit);
             }
+
             sleepdata.setAutoSleepPos(null);
           }
         });
