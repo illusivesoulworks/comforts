@@ -58,6 +58,7 @@ import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 import top.theillusivec4.comforts.common.item.ComfortsBaseItem;
 import top.theillusivec4.comforts.common.item.HammockItem;
 import top.theillusivec4.comforts.common.item.SleepingBagItem;
+import top.theillusivec4.comforts.common.network.ComfortsNetwork;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 import top.theillusivec4.comforts.data.ComfortsLootProvider;
@@ -95,6 +96,7 @@ public class Comforts {
   private void setup(FMLCommonSetupEvent evt) {
     MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
     CapabilitySleepData.register();
+    ComfortsNetwork.register();
 
     if (ModList.get().isLoaded("morpheus")) {
       MorpheusIntegration.register();

@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTUtil;
@@ -94,9 +95,13 @@ public class CapabilitySleepData {
 
     void setTiredTime(long tiredTime);
 
-    BlockPos getAutoSleepingPos();
+    BlockPos getAutoSleepPos();
 
-    void setAutoSleepingPos(BlockPos pos);
+    void setAutoSleepPos(BlockPos pos);
+
+    int getAutoSleepTimer();
+
+    void setAutoSleepTimer(int time);
 
     void copyFrom(ISleepData other);
   }
@@ -106,8 +111,8 @@ public class CapabilitySleepData {
     long sleepTime = 0;
     long wakeTime = 0;
     long tiredTime = 0;
-    boolean autoSleeping = false;
-    BlockPos autoSleepingPos = null;
+    int autoSleepTimer = 2;
+    BlockPos autoSleepPos = null;
 
     @Override
     public long getSleepTime() {
@@ -140,13 +145,23 @@ public class CapabilitySleepData {
     }
 
     @Override
-    public BlockPos getAutoSleepingPos() {
-      return autoSleepingPos;
+    public BlockPos getAutoSleepPos() {
+      return autoSleepPos;
     }
 
     @Override
-    public void setAutoSleepingPos(BlockPos pos) {
-      autoSleepingPos = pos;
+    public void setAutoSleepPos(BlockPos pos) {
+      autoSleepPos = pos;
+    }
+
+    @Override
+    public int getAutoSleepTimer() {
+      return autoSleepTimer;
+    }
+
+    @Override
+    public void setAutoSleepTimer(int time) {
+      autoSleepTimer = time;
     }
 
     @Override

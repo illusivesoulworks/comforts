@@ -20,18 +20,16 @@
 package top.theillusivec4.comforts.common.item;
 
 import javax.annotation.Nonnull;
-import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.comforts.common.ComfortsConfig;
-import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
+import top.theillusivec4.comforts.common.network.ComfortsNetwork;
+import top.theillusivec4.comforts.common.network.SPacketAutoSleep;
 
 public class SleepingBagItem extends ComfortsBaseItem {
 
@@ -45,19 +43,12 @@ public class SleepingBagItem extends ComfortsBaseItem {
     ActionResultType result = super.onItemUse(context);
     PlayerEntity player = context.getPlayer();
 
-    if (player != null && result == ActionResultType.SUCCESS && ComfortsConfig.SERVER.autoUse.get()
-        && !player.isSneaking()) {
+    if (player instanceof ServerPlayerEntity && result == ActionResultType.SUCCESS
+        && ComfortsConfig.SERVER.autoUse.get() && !player.isSneaking()) {
       BlockPos pos = context.getPos().up();
-      World world = context.getWorld();
-      BlockState state = world.getBlockState(pos);
-
-      if (state.get(BedBlock.PART) != BedPart.HEAD) {
-        pos = pos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING));
-      }
-
-      final BlockPos blockPos = pos;
-      CapabilitySleepData.getCapability(player)
-          .ifPresent(sleepdata -> sleepdata.setAutoSleepingPos(blockPos));
+      ComfortsNetwork.INSTANCE
+          .send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+              new SPacketAutoSleep(player.getEntityId(), pos));
       return ActionResultType.SUCCESS;
     }
     return result;

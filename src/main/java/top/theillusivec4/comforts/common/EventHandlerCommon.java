@@ -25,21 +25,28 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -140,7 +147,7 @@ public class EventHandlerCommon {
 
       if (allPlayersSleeping != null && allPlayersSleeping && players.stream()
           .noneMatch((player) -> !player.isSpectator() && !player.isPlayerFullyAsleep())) {
-        boolean[] skipToNight = { false };
+        boolean[] skipToNight = {false};
 
         for (PlayerEntity player : world.getPlayers()) {
           player.getBedPosition().ifPresent(bedPos -> {
@@ -183,22 +190,25 @@ public class EventHandlerCommon {
   @SubscribeEvent
   public void onPostPlayerTick(TickEvent.PlayerTickEvent evt) {
 
-    if (evt.phase == TickEvent.Phase.END && evt.side == LogicalSide.SERVER) {
+    if (evt.phase == Phase.START && evt.side == LogicalSide.CLIENT) {
       PlayerEntity player = evt.player;
 
       if (!player.isSleeping()) {
         CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-          BlockPos pos = sleepdata.getAutoSleepingPos();
+          BlockPos pos = sleepdata.getAutoSleepPos();
 
           if (pos != null) {
             World world = player.world;
             BlockState state = world.getBlockState(pos);
 
             if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-              player.trySleep(pos);
+              Minecraft.getInstance().playerController
+                  .func_217292_a((ClientPlayerEntity) player, (ClientWorld) player.world,
+                      Hand.MAIN_HAND,
+                      new BlockRayTraceResult(new Vec3d(0, 0, 0), player.getHorizontalFacing(), pos,
+                          false));
             }
-
-            sleepdata.setAutoSleepingPos(null);
+            sleepdata.setAutoSleepPos(null);
           }
         });
       }
@@ -228,22 +238,26 @@ public class EventHandlerCommon {
 
           if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
             broke = true;
-            BlockPos blockpos = bedPos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+            BlockPos blockpos = bedPos
+                .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
             world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
             world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-            player.sendStatusMessage(new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
+            player.sendStatusMessage(
+                new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
             world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS, 1.0F,
                 1.0F);
           }
 
           if (!broke) {
             List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
-            BlockPos blockpos = bedPos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+            BlockPos blockpos = bedPos
+                .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
             world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
             world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
 
             if (!player.abilities.isCreativeMode) {
-              drops.forEach(drop -> ItemHandlerHelper.giveItemToPlayer(player, drop, player.inventory.currentItem));
+              drops.forEach(drop -> ItemHandlerHelper
+                  .giveItemToPlayer(player, drop, player.inventory.currentItem));
             }
           }
         }
@@ -254,7 +268,8 @@ public class EventHandlerCommon {
 
         if (timeSlept > 500L) {
           sleepdata.setWakeTime(wakeTime);
-          sleepdata.setTiredTime(wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
+          sleepdata.setTiredTime(
+              wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
         }
       });
     }
