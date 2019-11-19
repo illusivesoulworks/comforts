@@ -144,42 +144,7 @@ public class CommonEventHandler {
 
       if (allPlayersSleeping != null && allPlayersSleeping && players.stream()
           .noneMatch((player) -> !player.isSpectator() && !player.isPlayerFullyAsleep())) {
-        boolean[] skipToNight = {false};
-
-        for (PlayerEntity player : world.getPlayers()) {
-          player.getBedPosition().ifPresent(bedPos -> {
-            if (player.isPlayerFullyAsleep() && world.getBlockState(bedPos)
-                .getBlock() instanceof HammockBlock) {
-
-              if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
-                long i = world.getDayTime() + 24000L;
-                long worldTime = world.getDayTime() % 24000L;
-
-                if (worldTime > 500L && worldTime < 11500L) {
-                  world.setDayTime((i - i % 24000L) - 12001L);
-                }
-              }
-
-              skipToNight[0] = true;
-            }
-          });
-
-          if (skipToNight[0]) {
-            break;
-          }
-        }
-
-        if (skipToNight[0]) {
-          ObfuscationReflectionHelper
-              .setPrivateValue(ServerWorld.class, world, false, "field_73068_P");
-          players.stream().filter(LivingEntity::isSleeping).forEach((player) -> {
-            player.wakeUpPlayer(false, false, true);
-          });
-
-          if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {
-            world.dimension.resetRainAndThunder();
-          }
-        }
+        HammockBlock.skipToNight(world);
       }
     }
   }

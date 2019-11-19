@@ -19,10 +19,8 @@
 
 package top.theillusivec4.comforts.integration;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.quetzi.morpheus.Morpheus;
 import top.theillusivec4.comforts.common.block.HammockBlock;
@@ -31,28 +29,10 @@ public class MorpheusIntegration {
 
   public static void register() {
     Morpheus.register.registerHandler(() -> {
-      World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
-      boolean skipToNight = false;
+      ServerWorld world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
 
-      for (PlayerEntity player : world.getPlayers()) {
-        BlockPos bedLocation = player.getBedLocation(world.getDimension().getType());
-
-        if (player.isPlayerFullyAsleep() && world.getBlockState(bedLocation)
-            .getBlock() instanceof HammockBlock) {
-          long worldTime = world.getDayTime() % 24000L;
-
-          if (worldTime > 500L && worldTime < 11500L) {
-            skipToNight = true;
-          }
-          break;
-        }
-      }
-      long worldTime = world.getDayTime();
-      long i = worldTime + 24000L;
-
-      if (skipToNight) {
-        world.setDayTime((i - i % 24000L) - 12001L);
-      } else {
+      if (!HammockBlock.skipToNight(world)) {
+        long i = world.getDayTime() + 24000L;
         world.setDayTime(i - i % 24000L);
       }
     }, 0);

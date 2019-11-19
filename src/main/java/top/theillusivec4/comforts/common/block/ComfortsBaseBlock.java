@@ -76,24 +76,11 @@ public class ComfortsBaseBlock extends BedBlock {
         }
 
         if (state.get(OCCUPIED)) {
-          PlayerEntity otherPlayer = this.getPlayerInBed(worldIn, pos);
-
-          if (otherPlayer != null) {
-            player.sendStatusMessage(
-                new TranslationTextComponent("block.comforts." + type.name + ".occupied"), true);
-            return true;
-          }
-
-          worldIn.setBlockState(pos, state.with(OCCUPIED, false), 4);
+          player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"), true);
+          return true;
         }
 
         Either<SleepResult, Unit> player$sleepresult = player.trySleep(pos);
-        final BlockPos finalPos = pos;
-        final BlockState finalState = state;
-        player$sleepresult.ifRight(unit -> {
-          BlockState newState = finalState.with(OCCUPIED, true);
-          worldIn.setBlockState(finalPos, newState, 4);
-        });
         player$sleepresult.ifLeft(result -> {
           ITextComponent text;
           switch (result) {
@@ -122,20 +109,6 @@ public class ComfortsBaseBlock extends BedBlock {
         return true;
       }
     }
-  }
-
-
-  @Nullable
-  private PlayerEntity getPlayerInBed(World worldIn, BlockPos pos) {
-
-    for (PlayerEntity player : worldIn.getPlayers()) {
-
-      if (player.isSleeping() && player.getBedLocation(player.world.getDimension().getType())
-          .equals(pos)) {
-        return player;
-      }
-    }
-    return null;
   }
 
   enum BedType {
