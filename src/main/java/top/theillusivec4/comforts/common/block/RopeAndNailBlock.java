@@ -111,8 +111,8 @@ public class RopeAndNailBlock extends Block {
       if (otherState.getBlock() instanceof HammockBlock
           && otherState.get(BedBlock.PART) != bedpart) {
         HammockBlock
-            .finishHammockDrops(state, pos, otherState, otherPos, direction, worldIn, player);
-        HammockBlock.dropRopeSupport(pos, direction, isHead, worldIn);
+            .finishHammockDrops(frontState, frontPos, otherState, otherPos, direction, worldIn, player);
+        HammockBlock.dropRopeSupport(frontPos, direction, isHead, worldIn);
         player.addStat(Stats.BLOCK_MINED.get(frontState.getBlock()));
       }
     }
