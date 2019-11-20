@@ -25,11 +25,23 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntity.SleepResult;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.state.properties.BedPart;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.stats.Stats;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
@@ -37,15 +49,20 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Explosion.Mode;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-public class ComfortsBaseBlock extends BedBlock {
+public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
+  public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   private final BedType type;
 
   public ComfortsBaseBlock(BedType type, DyeColor colorIn, Block.Properties properties) {
     super(colorIn, properties);
     this.type = type;
+    this.setDefaultState(
+        this.stateContainer.getBaseState().with(PART, BedPart.FOOT).with(OCCUPIED, false)
+            .with(WATERLOGGED, false));
   }
 
   @Override
@@ -76,7 +93,8 @@ public class ComfortsBaseBlock extends BedBlock {
         }
 
         if (state.get(OCCUPIED)) {
-          player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"), true);
+          player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"),
+              true);
           return true;
         }
 
@@ -109,6 +127,71 @@ public class ComfortsBaseBlock extends BedBlock {
         return true;
       }
     }
+  }
+
+  @Override
+  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+    BedPart bedpart = state.get(PART);
+    BlockPos blockpos = pos.offset(getDirectionToOther(bedpart, state.get(HORIZONTAL_FACING)));
+    BlockState blockstate = worldIn.getBlockState(blockpos);
+    if (blockstate.getBlock() == this && blockstate.get(PART) != bedpart) {
+
+      if (blockstate.get(WATERLOGGED)) {
+        worldIn.setBlockState(blockpos, Blocks.WATER.getDefaultState(), 35);
+      } else {
+        worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+      }
+
+      worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
+
+      if (!worldIn.isRemote && !player.isCreative()) {
+        ItemStack itemstack = player.getHeldItemMainhand();
+        spawnDrops(state, worldIn, pos, null, player, itemstack);
+        spawnDrops(blockstate, worldIn, blockpos, null, player, itemstack);
+      }
+
+      player.addStat(Stats.BLOCK_MINED.get(this));
+    }
+
+    worldIn.playEvent(player, 2001, pos, getStateId(state));
+  }
+
+  private static Direction getDirectionToOther(BedPart part, Direction direction) {
+    return part == BedPart.FOOT ? direction : direction.getOpposite();
+  }
+
+  @Nonnull
+  @Override
+  public BlockState updatePostPlacement(BlockState stateIn, @Nonnull Direction facing,
+      @Nonnull BlockState facingState, @Nonnull IWorld worldIn, @Nonnull BlockPos currentPos,
+      @Nonnull BlockPos facingPos) {
+
+    if (stateIn.get(WATERLOGGED)) {
+      worldIn.getPendingFluidTicks()
+          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    }
+
+    return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+  }
+
+  @Nullable
+  @Override
+  public BlockState getStateForPlacement(BlockItemUseContext context) {
+    IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+    BlockState state = super.getStateForPlacement(context);
+    return state == null ? null : state.with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+  }
+
+  @Override
+  protected void fillStateContainer(Builder<Block, BlockState> builder) {
+    builder.add(WATERLOGGED);
+    super.fillStateContainer(builder);
+  }
+
+  @Override
+  public IFluidState getFluidState(BlockState state) {
+    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+        : super.getFluidState(state);
   }
 
   enum BedType {
