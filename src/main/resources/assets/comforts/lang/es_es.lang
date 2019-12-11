@@ -1,0 +1,71 @@
+#####Translation into Spanish by OdinsRagnarok#####
+
+comforts.general.autouse=Sacos de dormir de uso automático
+comforts.general.autouse.tooltip=Establecer en TRUE para usar el saco de dormir automáticamente al colocarlo
+comforts.general.wellrested=Bien descansado
+comforts.general.wellrested.tooltip=Establecer en TRUE para evitar dormir dependiendo de cuánto tiempo haya dormido anteriormente
+comforts.general.sleepyratio=Factor Somnoliento
+comforts.general.sleepyratio.tooltip=Si bien descansado es TRUE, este valor se usa para determinar cuánto tiempo necesita antes de poder dormir nuevamente (número más grande = puede dormir antes)
+comforts.general.resthammocks=Hamacas de ocio
+comforts.general.resthammocks.tooltip=Establecer en TRUE para permitir relajarse en las hamacas sin dormir
+comforts.general.nighthammocks=Hamacas nocturnas
+comforts.general.nighthammocks.tooltip=Establecer en TRUE para permitir dormir en hamacas por la noche
+comforts.general.sleepingbagdebuffs=Desventajas del saco de dormir
+comforts.general.sleepingbagdebuffs.tooltip=Lista de desventajas para aplicar a los jugadores después de usar el saco de dormir - Formato: [efecto] [duración(segs)] [potencia]
+comforts.general.bagbreakperc=Probabilidad de rotura del saco de dormir
+comforts.general.bagbreakperc.tooltip=La posibilidad de que un saco de dormir se rompa con el uso
+comforts.general.toughasnails.tooltip=Características de integración con Tough as Nails
+comforts.general.toughasnails.warmbody=Cuerpo tibio
+comforts.general.toughasnails.warmbody.tooltip=Establezca en TRUE para evitar dormir dependiendo de cuánto tiempo haya dormido anteriormente
+
+item.comforts.sleeping_bag.white.name=Saco de Dormir Blanco
+item.comforts.sleeping_bag.orange.name=Saco de Dormir Naranja
+item.comforts.sleeping_bag.magenta.name=Saco de Dormir Magenta
+item.comforts.sleeping_bag.lightBlue.name=Saco de Dormir Azul Claro
+item.comforts.sleeping_bag.yellow.name=Saco de Dormir Amarillo
+item.comforts.sleeping_bag.lime.name=Saco de Dormir Lima
+item.comforts.sleeping_bag.pink.name=Saco de Dormir Rosa
+item.comforts.sleeping_bag.gray.name=Saco de Dormir Gris
+item.comforts.sleeping_bag.silver.name=Saco de Dormir Gris Claro
+item.comforts.sleeping_bag.cyan.name=Saco de Dormir Cian
+item.comforts.sleeping_bag.purple.name=Saco de Dormir Púrpura
+item.comforts.sleeping_bag.blue.name=Saco de Dormir Azul
+item.comforts.sleeping_bag.brown.name=Saco de Dormir Marrón
+item.comforts.sleeping_bag.green.name=Saco de Dormir Verde
+item.comforts.sleeping_bag.red.name=Saco de Dormir Rojo
+item.comforts.sleeping_bag.black.name=Saco de Dormir Negro
+
+item.comforts.hammock.white.name=Tela de Hamaca Blanca
+item.comforts.hammock.orange.name=Tela de Hamaca Naranja
+item.comforts.hammock.magenta.name=Tela de Hamaca Magenta
+item.comforts.hammock.lightBlue.name=Tela de Hamaca Azul Clara
+item.comforts.hammock.yellow.name=Tela de Hamaca Amarilla
+item.comforts.hammock.lime.name=Tela de Hamaca Lima
+item.comforts.hammock.pink.name=Tela de Hamaca Rosa
+item.comforts.hammock.gray.name=Tela de Hamaca Gris
+item.comforts.hammock.silver.name=Tela de Hamaca Gris Clara
+item.comforts.hammock.cyan.name=Tela de Hamaca Cian
+item.comforts.hammock.purple.name=Tela de Hamaca Púrpura
+item.comforts.hammock.blue.name=Tela de Hamaca Azul
+item.comforts.hammock.brown.name=Tela de Hamaca Marrón
+item.comforts.hammock.green.name=Tela de Hamaca Verde
+item.comforts.hammock.red.name=Tela de Hamaca Roja
+item.comforts.hammock.black.name=Tela de Hamaca Negra
+
+tile.sleeping_bag.noSleep=Sólo puedes dormir de noche
+tile.sleeping_bag.occupied=Éste saco de dormir está ocupado
+tile.sleeping_bag.notSafe=No puedes descansar ahora, hay monstruos cerca
+tile.sleeping_bag.tooFarAway=No puedes descansar ahora, el saco de dormir está demasiado lejos
+tile.sleeping_bag.broke=El saco de dormir se rompió
+
+tile.hammock.noSleep=Sólo puedes hacer la siesta durante el día
+tile.hammock.noSleepCustom=Aún no puedes dormir en la hamaca
+tile.hammock.occupied=Esta hamaca esta ocupada
+tile.hammock.notSafe=No puedes descansar ahora, hay monstruos cerca
+tile.hammock.tooFarAway=No puedes descansar ahora, la hamaca está demasiado lejos
+
+tile.comforts.rope.name=Cuerda y clavo
+
+capability.comforts.notSleepy=No puedes descansar ahora, todavía no tienes sueño
+
+itemGroup.comforts=Comodidades
