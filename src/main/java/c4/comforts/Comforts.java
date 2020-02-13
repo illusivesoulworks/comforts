@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
         version = Comforts.MODVER,
         dependencies = "required-after:forge@[14.23.5.2776,);after:morpheus;after:toughasnails",
         acceptedMinecraftVersions = "[1.12, 1.13)",
-        certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
+        certificateFingerprint = "@FINGERPRINT@")
 public class Comforts {
     public static final String MODID = "comforts";
     public static final String MODNAME = "Comforts";

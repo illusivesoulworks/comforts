@@ -23,6 +23,8 @@ minecraft {
     version = "1.12.2-14.23.5.2776"
     runDir = "run"
     mappings = "stable_39"
+
+    replace '@FINGERPRINT@', project.findProperty('signSHA1')
 }
 
 sourceSets {
