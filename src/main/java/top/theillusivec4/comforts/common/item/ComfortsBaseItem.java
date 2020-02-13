@@ -20,15 +20,23 @@
 package top.theillusivec4.comforts.common.item;
 
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
-import net.minecraft.item.BedItem;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import top.theillusivec4.comforts.Comforts;
 
-public class ComfortsBaseItem extends BedItem {
+public class ComfortsBaseItem extends BlockItem {
 
   public ComfortsBaseItem(Block block) {
     super(block, new Item.Properties().group(Comforts.CREATIVE_TAB));
     this.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
+  }
+
+  @Override
+  protected boolean placeBlock(BlockItemUseContext context, @Nonnull BlockState state) {
+    return context.getWorld().setBlockState(context.getPos(), state, 26);
   }
 }
