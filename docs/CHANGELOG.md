@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project does not adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
-## [2.0-beta5](https://github.com/TheIllusiveC4/Comforts/compare/f8afa4502f737f055dfef03c1d0c730a9305b369...master) - 2020.02.12
+## [2.0-beta6](https://github.com/TheIllusiveC4/Comforts/compare/68bc61a19aa7172619344d5790f96189a188554b...master) - 2020.02.12
+### Fixed
+- Fixed issue with Comforts items activating the Cosmetic Beds mod's recipes
+
+## [2.0-beta5](https://github.com/TheIllusiveC4/Comforts/compare/f8afa4502f737f055dfef03c1d0c730a9305b369...68bc61a19aa7172619344d5790f96189a188554b) - 2020.02.12
 ### Added
 - Added waterlogging for sleeping bags and hammocks
 - Added back localizations for German, Spanish, French, Korean, Russian, Turkish, and Chinese
