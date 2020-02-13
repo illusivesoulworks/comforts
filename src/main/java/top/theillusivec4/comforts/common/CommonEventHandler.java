@@ -190,7 +190,7 @@ public class CommonEventHandler {
               }
 
               if (!broke && sleepdata.getAutoSleepPos() != null) {
-                List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
+                List<ItemStack> drops = Block.func_220070_a(state, (ServerWorld) world, bedPos, null);
                 BlockPos blockpos = bedPos
                     .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
                 world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);

@@ -188,6 +188,8 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
     super.fillStateContainer(builder);
   }
 
+  @SuppressWarnings("deprecation")
+  @Nonnull
   @Override
   public IFluidState getFluidState(BlockState state) {
     return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)

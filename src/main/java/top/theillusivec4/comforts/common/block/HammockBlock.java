@@ -32,6 +32,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -95,8 +97,7 @@ public class HammockBlock extends ComfortsBaseBlock {
     }
 
     if (skipToNight[0]) {
-      ObfuscationReflectionHelper
-          .setPrivateValue(ServerWorld.class, world, false, "field_73068_P");
+      ObfuscationReflectionHelper.setPrivateValue(ServerWorld.class, world, false, "field_73068_P");
       players.stream().filter(LivingEntity::isSleeping).forEach((player) -> {
         player.wakeUpPlayer(false, false, true);
       });
@@ -124,7 +125,13 @@ public class HammockBlock extends ComfortsBaseBlock {
       BlockPos otherPos, Direction direction, World worldIn, PlayerEntity player) {
     BedPart bedpart = otherState.get(BedBlock.PART);
     boolean isHead = bedpart == BedPart.HEAD;
-    worldIn.setBlockState(otherPos, Blocks.AIR.getDefaultState(), 35);
+
+    if (otherState.get(ComfortsBaseBlock.WATERLOGGED)) {
+      worldIn.setBlockState(otherPos, Blocks.WATER.getDefaultState(), 35);
+    } else {
+      worldIn.setBlockState(otherPos, Blocks.AIR.getDefaultState(), 35);
+    }
+
     worldIn.playEvent(player, 2001, otherPos, Block.getStateId(otherState));
     dropRopeSupport(otherPos, direction, isHead, worldIn);
 
@@ -164,8 +171,10 @@ public class HammockBlock extends ComfortsBaseBlock {
     Direction direction = context.getFace();
     BlockPos blockpos = context.getPos();
     BlockPos blockpos1 = blockpos.offset(direction);
+    IFluidState ifluidstate = context.getWorld().getFluidState(blockpos);
     return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this
-        .getDefaultState().with(HORIZONTAL_FACING, direction) : null;
+        .getDefaultState().with(HORIZONTAL_FACING, direction)
+        .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER) : null;
   }
 
   @Override

@@ -65,8 +65,4 @@ public class ComfortsBlockLootTables extends BlockLootTables {
           "Created block loot tables for non-blocks: " + this.lootBuilders.keySet());
     }
   }
-
-  private void registerLootTable(Block block, Function<Block, Builder> lootBuilder) {
-    this.lootBuilders.put(block.getLootTable(), lootBuilder.apply(block));
-  }
 }

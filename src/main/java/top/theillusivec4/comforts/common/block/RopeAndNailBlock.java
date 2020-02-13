@@ -29,9 +29,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
@@ -51,7 +54,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.Comforts;
 
-public class RopeAndNailBlock extends Block {
+public class RopeAndNailBlock extends Block implements IWaterLoggable {
 
   public static final DirectionProperty HORIZONTAL_FACING = HorizontalBlock.HORIZONTAL_FACING;
   public static final BooleanProperty SUPPORTING = BooleanProperty.create("supporting");
@@ -76,6 +79,7 @@ public class RopeAndNailBlock extends Block {
         .with(SUPPORTING, false));
   }
 
+  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
@@ -84,6 +88,7 @@ public class RopeAndNailBlock extends Block {
         : SHAPES_R.get(state.get(HORIZONTAL_FACING));
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
     Direction direction = state.get(HORIZONTAL_FACING);
@@ -105,13 +110,19 @@ public class RopeAndNailBlock extends Block {
       BlockPos otherPos = frontPos.offset(HammockBlock.getDirectionToOther(bedpart, direction));
       BlockState otherState = worldIn.getBlockState(otherPos);
 
-      worldIn.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
+      if (frontState.get(ComfortsBaseBlock.WATERLOGGED)) {
+        worldIn.setBlockState(frontPos, Blocks.WATER.getDefaultState(), 35);
+      } else {
+        worldIn.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
+      }
+
       worldIn.playEvent(player, 2001, frontPos, Block.getStateId(frontState));
 
       if (otherState.getBlock() instanceof HammockBlock
           && otherState.get(BedBlock.PART) != bedpart) {
         HammockBlock
-            .finishHammockDrops(frontState, frontPos, otherState, otherPos, direction, worldIn, player);
+            .finishHammockDrops(frontState, frontPos, otherState, otherPos, direction, worldIn,
+                player);
         HammockBlock.dropRopeSupport(frontPos, direction, isHead, worldIn);
         player.addStat(Stats.BLOCK_MINED.get(frontState.getBlock()));
       }
@@ -122,6 +133,7 @@ public class RopeAndNailBlock extends Block {
   @Nullable
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
+    IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
     BlockState blockstate = this.getDefaultState();
     IWorldReader worldreader = context.getWorld();
     BlockPos blockpos = context.getPos();
@@ -131,7 +143,8 @@ public class RopeAndNailBlock extends Block {
 
       if (direction.getAxis().isHorizontal()) {
         Direction direction1 = direction.getOpposite();
-        blockstate = blockstate.with(HORIZONTAL_FACING, direction1);
+        blockstate = blockstate.with(HORIZONTAL_FACING, direction1)
+            .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
 
         if (blockstate.isValidPosition(worldreader, blockpos)) {
           return blockstate;
@@ -141,20 +154,28 @@ public class RopeAndNailBlock extends Block {
     return null;
   }
 
+  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState updatePostPlacement(@Nonnull BlockState stateIn, Direction facing,
       BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+
+    if (stateIn.get(ComfortsBaseBlock.WATERLOGGED)) {
+      worldIn.getPendingFluidTicks()
+          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    }
     return facing.getOpposite() == stateIn.get(HORIZONTAL_FACING) && !stateIn
         .isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : stateIn;
   }
 
+  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState rotate(@Nonnull BlockState state, Rotation rot) {
     return state.with(HORIZONTAL_FACING, rot.rotate(state.get(HORIZONTAL_FACING)));
   }
 
+  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState mirror(@Nonnull BlockState state, Mirror mirrorIn) {
@@ -163,8 +184,15 @@ public class RopeAndNailBlock extends Block {
 
   @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(SUPPORTING);
-    builder.add(HORIZONTAL_FACING);
+    builder.add(SUPPORTING, HORIZONTAL_FACING, ComfortsBaseBlock.WATERLOGGED);
+  }
+
+  @SuppressWarnings("deprecation")
+  @Nonnull
+  @Override
+  public IFluidState getFluidState(BlockState state) {
+    return state.get(ComfortsBaseBlock.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+        : super.getFluidState(state);
   }
 
   @Nonnull
