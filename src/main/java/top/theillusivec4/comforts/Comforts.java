@@ -21,14 +21,17 @@ package top.theillusivec4.comforts;
 
 import java.util.Arrays;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -115,6 +118,17 @@ public class Comforts {
           .bindTileEntityRenderer(ComfortsRegistry.HAMMOCK_TE, HammockTileEntityRenderer::new);
     }
 
+    @SubscribeEvent
+    public static void textureStitch(TextureStitchEvent.Pre evt) {
+
+      if (evt.getMap().getBasePath() == AtlasTexture.LOCATION_BLOCKS_TEXTURE) {
+        for (DyeColor color : DyeColor.values()) {
+          evt.addSprite(new ResourceLocation(Comforts.MODID, "entity/hammock/" + color.getName()));
+          evt.addSprite(
+              new ResourceLocation(Comforts.MODID, "entity/sleeping_bag/" + color.getName()));
+        }
+      }
+    }
   }
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

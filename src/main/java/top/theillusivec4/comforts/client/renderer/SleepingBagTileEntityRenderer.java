@@ -27,7 +27,7 @@ public class SleepingBagTileEntityRenderer extends
     ComfortsBaseTileEntityRenderer<SleepingBagTileEntity> {
 
   public SleepingBagTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
-    super(dispatcher);
+    super(dispatcher, "sleeping_bag");
     this.headPiece = new ModelRenderer(64, 64, 0, 0);
     this.headPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
     this.footPiece = new ModelRenderer(64, 64, 0, 19);

@@ -36,7 +36,7 @@ public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<Ha
   protected ModelRenderer footBoard;
 
   public HammockTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
-    super(dispatcher);
+    super(dispatcher, "hammock");
     this.headPiece = new ModelRenderer(64, 64, 0, 0);
     this.headPiece.addBox(1.0F, 1.0F, 0.0F, 14, 15, 1, 0.0F);
     this.headBoard = new ModelRenderer(64, 64, 30, 0);
@@ -55,7 +55,7 @@ public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<Ha
     this.footPiece.showModel = !isHead;
     this.footBoard.showModel = !isHead;
     matrixStack.push();
-    matrixStack.translate(0.0D, 0.5625D, p_228847_8_ ? -1.0D : 0.0D);
+    matrixStack.translate(0.0D, 0.0625D, p_228847_8_ ? -1.0D : 0.0D);
     matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0F));
     matrixStack.translate(0.5D, 0.5D, 0.5D);
     matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));

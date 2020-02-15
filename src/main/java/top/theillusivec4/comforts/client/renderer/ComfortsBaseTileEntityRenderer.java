@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.DualBrightnessCallback;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -40,26 +41,32 @@ import net.minecraft.tileentity.TileEntityMerger;
 import net.minecraft.tileentity.TileEntityMerger.ICallbackWrapper;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.tileentity.ComfortsBaseTileEntity;
 
 public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileEntity> extends
     TileEntityRenderer<T> {
 
+  private final String type;
+
   protected ModelRenderer headPiece;
   protected ModelRenderer footPiece;
 
-  public ComfortsBaseTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
+  public ComfortsBaseTileEntityRenderer(TileEntityRendererDispatcher dispatcher, String type) {
     super(dispatcher);
     this.headPiece = new ModelRenderer(0, 0, 0, 0);
     this.footPiece = new ModelRenderer(0, 0, 0, 0);
+    this.type = type;
   }
 
   @Override
   public void render(ComfortsBaseTileEntity tileEntityIn, float partialTicks,
       @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn,
       int combinedOverlayIn) {
-    Material material = Atlases.BED_TEXTURES[tileEntityIn.getColor().getId()];
+    Material material = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(
+        Comforts.MODID, "entity/" + type + "/" + tileEntityIn.getColor().getName()));
     World world = tileEntityIn.getWorld();
 
     if (world != null) {
@@ -85,7 +92,7 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
     this.headPiece.showModel = isHead;
     this.footPiece.showModel = !isHead;
     matrixStack.push();
-    matrixStack.translate(0.0D, 0.5625D, p_228847_8_ ? -1.0D : 0.0D);
+    matrixStack.translate(0.0D, 0.1875D, p_228847_8_ ? -1.0D : 0.0D);
     matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0F));
     matrixStack.translate(0.5D, 0.5D, 0.5D);
     matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
