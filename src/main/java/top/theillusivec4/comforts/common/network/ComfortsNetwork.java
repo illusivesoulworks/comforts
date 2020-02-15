@@ -19,7 +19,6 @@ public class ComfortsNetwork {
   private static int id = 0;
 
   public static void register() {
-
     INSTANCE = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Comforts.MODID, "main"))
         .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
         .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();
@@ -30,7 +29,6 @@ public class ComfortsNetwork {
 
   private static <M> void register(Class<M> messageType, BiConsumer<M, PacketBuffer> encoder,
       Function<PacketBuffer, M> decoder, BiConsumer<M, Supplier<Context>> messageConsumer) {
-
     INSTANCE.registerMessage(id++, messageType, encoder, decoder, messageConsumer);
   }
 }

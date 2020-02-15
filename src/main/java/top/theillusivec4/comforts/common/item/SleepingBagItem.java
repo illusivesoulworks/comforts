@@ -45,7 +45,7 @@ public class SleepingBagItem extends ComfortsBaseItem {
     PlayerEntity player = context.getPlayer();
 
     if (player instanceof ServerPlayerEntity && result == ActionResultType.SUCCESS
-        && ComfortsConfig.SERVER.autoUse.get() && !player.isSneaking()) {
+        && ComfortsConfig.SERVER.autoUse.get() && !player.isCrouching()) {
       BlockPos pos = context.getPos().up();
       CapabilitySleepData.getCapability(player)
           .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(pos));

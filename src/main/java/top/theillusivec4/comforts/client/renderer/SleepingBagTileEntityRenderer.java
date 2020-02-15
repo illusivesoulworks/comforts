@@ -19,13 +19,18 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import top.theillusivec4.comforts.client.model.SleepingBagModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 
 public class SleepingBagTileEntityRenderer extends
     ComfortsBaseTileEntityRenderer<SleepingBagTileEntity> {
 
-  public SleepingBagTileEntityRenderer() {
-    super("sleeping_bag", new SleepingBagModel(), 0.1875F);
+  public SleepingBagTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
+    super(dispatcher);
+    this.headPiece = new ModelRenderer(64, 64, 0, 0);
+    this.headPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
+    this.footPiece = new ModelRenderer(64, 64, 0, 19);
+    this.footPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
   }
 }

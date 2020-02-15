@@ -15,24 +15,20 @@ public class SPacketAutoSleep {
   private BlockPos pos;
 
   public SPacketAutoSleep(int entityIdIn, BlockPos posIn) {
-
     this.entityId = entityIdIn;
     this.pos = posIn;
   }
 
   public static void encode(SPacketAutoSleep msg, PacketBuffer buf) {
-
     buf.writeInt(msg.entityId);
     buf.writeBlockPos(msg.pos);
   }
 
   public static SPacketAutoSleep decode(PacketBuffer buf) {
-
     return new SPacketAutoSleep(buf.readInt(), buf.readBlockPos());
   }
 
   public static void handle(SPacketAutoSleep msg, Supplier<Context> ctx) {
-
     ctx.get().enqueueWork(() -> {
       Entity entity = Minecraft.getInstance().world.getEntityByID(msg.entityId);
 

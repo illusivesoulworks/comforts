@@ -99,7 +99,7 @@ public class HammockBlock extends ComfortsBaseBlock {
     if (skipToNight[0]) {
       ObfuscationReflectionHelper.setPrivateValue(ServerWorld.class, world, false, "field_73068_P");
       players.stream().filter(LivingEntity::isSleeping).forEach((player) -> {
-        player.wakeUpPlayer(false, false, true);
+        player.func_225652_a_(false, false);
       });
 
       if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {

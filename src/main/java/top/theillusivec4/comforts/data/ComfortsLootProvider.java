@@ -24,7 +24,7 @@ import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTable.Builder;
 import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraft.world.storage.loot.ValidationResults;
+import net.minecraft.world.storage.loot.ValidationTracker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.Comforts;
@@ -59,12 +59,10 @@ public class ComfortsLootProvider extends LootTableProvider {
             throw new IllegalStateException("Duplicate loot table " + resourceLocation);
           }
         }));
-    ValidationResults validationresults = new ValidationResults();
-
-    map.forEach((resourceLocation, lootTable) -> {
-      LootTableManager.func_215302_a(validationresults, resourceLocation, lootTable, map::get);
-    });
-    Multimap<String, String> multimap = validationresults.getProblems();
+    ValidationTracker validationtracker = new ValidationTracker(LootParameterSets.GENERIC,
+        (resourceLocation) -> null, map::get);
+    validate(map, validationtracker);
+    Multimap<String, String> multimap = validationtracker.func_227527_a_();
 
     if (!multimap.isEmpty()) {
       multimap.forEach((problemPath, problem) -> LOGGER

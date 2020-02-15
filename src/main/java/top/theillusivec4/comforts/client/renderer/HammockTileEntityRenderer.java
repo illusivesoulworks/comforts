@@ -19,12 +19,52 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import top.theillusivec4.comforts.client.model.HammockModel;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.util.Direction;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 
 public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<HammockTileEntity> {
 
-  public HammockTileEntityRenderer() {
-    super("hammock", new HammockModel(), 0.0625F);
+  protected ModelRenderer headBoard;
+  protected ModelRenderer footBoard;
+
+  public HammockTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
+    super(dispatcher);
+    this.headPiece = new ModelRenderer(64, 64, 0, 0);
+    this.headPiece.addBox(1.0F, 1.0F, 0.0F, 14, 15, 1, 0.0F);
+    this.headBoard = new ModelRenderer(64, 64, 30, 0);
+    this.headBoard.addBox(0.0F, 0.0F, 0.0F, 16, 1, 1, 0.0F);
+    this.footPiece = new ModelRenderer(64, 64, 0, 16);
+    this.footPiece.addBox(1.0F, 0.0F, 0.0F, 14, 15, 1, 0.0F);
+    this.footBoard = new ModelRenderer(64, 64, 30, 0);
+    this.footBoard.addBox(0.0F, 15.0F, 0.0F, 16, 1, 1, 0.0F);
+  }
+
+  @Override
+  protected void renderPiece(MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean isHead,
+      Direction direction, Material material, int light, int overlay, boolean p_228847_8_) {
+    this.headPiece.showModel = isHead;
+    this.headBoard.showModel = isHead;
+    this.footPiece.showModel = !isHead;
+    this.footBoard.showModel = !isHead;
+    matrixStack.push();
+    matrixStack.translate(0.0D, 0.5625D, p_228847_8_ ? -1.0D : 0.0D);
+    matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0F));
+    matrixStack.translate(0.5D, 0.5D, 0.5D);
+    matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
+    matrixStack.translate(-0.5D, -0.5D, -0.5D);
+    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::entitySolid);
+    this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
+    this.headBoard.render(matrixStack, ivertexbuilder, light, overlay);
+    this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);
+    this.footBoard.render(matrixStack, ivertexbuilder, light, overlay);
+    matrixStack.pop();
   }
 }

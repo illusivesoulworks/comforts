@@ -29,7 +29,7 @@ public class MorpheusIntegration {
 
   public static void register() {
     Morpheus.register.registerHandler(() -> {
-      ServerWorld world = ServerLifecycleHooks.getCurrentServer().func_71218_a(DimensionType.OVERWORLD);
+      ServerWorld world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
 
       if (!HammockBlock.skipToNight(world)) {
         long i = world.getDayTime() + 24000L;

@@ -19,84 +19,80 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import java.util.Arrays;
-import java.util.Comparator;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import javax.annotation.Nonnull;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.client.renderer.Atlases;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.tileentity.DualBrightnessCallback;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.item.DyeColor;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.state.properties.BedPart;
+import net.minecraft.tileentity.BedTileEntity;
+import net.minecraft.tileentity.TileEntityMerger;
+import net.minecraft.tileentity.TileEntityMerger.ICallbackWrapper;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import top.theillusivec4.comforts.Comforts;
-import top.theillusivec4.comforts.client.model.ComfortsBaseModel;
+import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.tileentity.ComfortsBaseTileEntity;
 
 public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileEntity> extends
     TileEntityRenderer<T> {
 
-  private final ResourceLocation[] textures;
-  private final ComfortsBaseModel model;
-  private final float height;
+  protected ModelRenderer headPiece;
+  protected ModelRenderer footPiece;
 
-  public ComfortsBaseTileEntityRenderer(String textureName, ComfortsBaseModel model, float height) {
-    this.textures = Arrays.stream(DyeColor.values())
-        .sorted(Comparator.comparingInt(DyeColor::getId)).map(
-            (color) -> new ResourceLocation(Comforts.MODID,
-                "textures/entity/" + textureName + "/" + color.getTranslationKey() + ".png"))
-        .toArray(ResourceLocation[]::new);
-    this.model = model;
-    this.height = height;
+  public ComfortsBaseTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
+    super(dispatcher);
+    this.headPiece = new ModelRenderer(0, 0, 0, 0);
+    this.footPiece = new ModelRenderer(0, 0, 0, 0);
   }
 
   @Override
-  public void render(T tileEntityIn, double x, double y, double z, float partialTicks,
-      int destroyStage) {
+  public void render(ComfortsBaseTileEntity tileEntityIn, float partialTicks,
+      @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn,
+      int combinedOverlayIn) {
+    Material material = Atlases.BED_TEXTURES[tileEntityIn.getColor().getId()];
+    World world = tileEntityIn.getWorld();
 
-    if (destroyStage >= 0) {
-      this.bindTexture(DESTROY_STAGES[destroyStage]);
-      GlStateManager.matrixMode(5890);
-      GlStateManager.pushMatrix();
-      GlStateManager.scalef(4.0F, 4.0F, 1.0F);
-      GlStateManager.translatef(0.0625F, 0.0625F, 0.0625F);
-      GlStateManager.matrixMode(5888);
-    } else {
-      ResourceLocation resourcelocation = textures[tileEntityIn.getColor().getId()];
-
-      if (resourcelocation != null) {
-        this.bindTexture(resourcelocation);
-      }
-    }
-
-    if (tileEntityIn.hasWorld()) {
+    if (world != null) {
       BlockState blockstate = tileEntityIn.getBlockState();
-      this.renderPiece(blockstate.get(BedBlock.PART) == BedPart.HEAD, x, y, z,
-          blockstate.get(BedBlock.HORIZONTAL_FACING));
+      ICallbackWrapper<? extends BedTileEntity> icallbackwrapper = TileEntityMerger
+          .func_226924_a_(TileEntityType.BED, BedBlock::func_226863_i_, BedBlock::func_226862_h_,
+              ChestBlock.FACING, blockstate, world, tileEntityIn.getPos(),
+              (p_228846_0_, p_228846_1_) -> false);
+      int i = icallbackwrapper.apply(new DualBrightnessCallback<>()).get(combinedLightIn);
+      this.renderPiece(matrixStackIn, bufferIn, blockstate.get(BedBlock.PART) == BedPart.HEAD,
+          blockstate.get(BedBlock.HORIZONTAL_FACING), material, i, combinedOverlayIn, false);
     } else {
-      this.renderPiece(true, x, y, z, Direction.SOUTH);
-      this.renderPiece(false, x, y, z - 1.0D, Direction.SOUTH);
-    }
-
-    if (destroyStage >= 0) {
-      GlStateManager.matrixMode(5890);
-      GlStateManager.popMatrix();
-      GlStateManager.matrixMode(5888);
+      this.renderPiece(matrixStackIn, bufferIn, true, Direction.SOUTH, material, combinedLightIn,
+          combinedOverlayIn, false);
+      this.renderPiece(matrixStackIn, bufferIn, false, Direction.SOUTH, material, combinedLightIn,
+          combinedOverlayIn, true);
     }
 
   }
 
-  private void renderPiece(boolean isHead, double x, double y, double z, Direction direction) {
-    this.model.preparePiece(isHead);
-    GlStateManager.pushMatrix();
-    GlStateManager.translatef((float) x, (float) y + height, (float) z);
-    GlStateManager.rotatef(90.0F, 1.0F, 0.0F, 0.0F);
-    GlStateManager.translatef(0.5F, 0.5F, 0.5F);
-    GlStateManager.rotatef(180.0F + direction.getHorizontalAngle(), 0.0F, 0.0F, 1.0F);
-    GlStateManager.translatef(-0.5F, -0.5F, -0.5F);
-    GlStateManager.enableRescaleNormal();
-    this.model.render();
-    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    GlStateManager.popMatrix();
+  protected void renderPiece(MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean isHead,
+      Direction direction, Material material, int light, int overlay, boolean p_228847_8_) {
+    this.headPiece.showModel = isHead;
+    this.footPiece.showModel = !isHead;
+    matrixStack.push();
+    matrixStack.translate(0.0D, 0.5625D, p_228847_8_ ? -1.0D : 0.0D);
+    matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0F));
+    matrixStack.translate(0.5D, 0.5D, 0.5D);
+    matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
+    matrixStack.translate(-0.5D, -0.5D, -0.5D);
+    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::entitySolid);
+    this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
+    this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);
+    matrixStack.pop();
   }
 }

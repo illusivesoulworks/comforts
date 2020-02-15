@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.loot.BlockLootTables;
@@ -31,8 +31,9 @@ public class ComfortsBlockLootTables extends BlockLootTables {
   private static LootTable.Builder getLootBuilder(Block block) {
     return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(
         ItemLootEntry.builder(block)
-            .acceptCondition(BlockStateProperty.builder(block).with(BedBlock.PART, BedPart.HEAD)))
-        .acceptCondition(SurvivesExplosion.builder()));
+            .acceptCondition(BlockStateProperty.builder(block).fromProperties(
+                StatePropertiesPredicate.Builder.newBuilder().withProp(BedBlock.PART, BedPart.HEAD)))
+        .acceptCondition(SurvivesExplosion.builder())));
   }
 
   @Override

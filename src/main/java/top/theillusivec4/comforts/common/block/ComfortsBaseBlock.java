@@ -39,7 +39,7 @@ import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -65,12 +65,17 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
             .with(WATERLOGGED, false));
   }
 
+  private static Direction getDirectionToOther(BedPart part, Direction direction) {
+    return part == BedPart.FOOT ? direction : direction.getOpposite();
+  }
+
+  @Nonnull
   @Override
-  public boolean onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
-      @Nonnull PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+  public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn,
+      @Nonnull BlockPos pos, @Nonnull PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
 
     if (worldIn.isRemote) {
-      return true;
+      return ActionResultType.CONSUME;
     } else {
 
       if (state.get(PART) != BedPart.HEAD) {
@@ -78,10 +83,9 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         state = worldIn.getBlockState(pos);
 
         if (state.getBlock() != this) {
-          return true;
+          return ActionResultType.CONSUME;
         }
       }
-
       net.minecraftforge.common.extensions.IForgeDimension.SleepResult sleepResult = worldIn.dimension
           .canSleepAt(player, pos);
 
@@ -89,15 +93,14 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
           != net.minecraftforge.common.extensions.IForgeDimension.SleepResult.BED_EXPLODES) {
 
         if (sleepResult == net.minecraftforge.common.extensions.IForgeDimension.SleepResult.DENY) {
-          return true;
+          return ActionResultType.SUCCESS;
         }
 
         if (state.get(OCCUPIED)) {
           player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"),
               true);
-          return true;
+          return ActionResultType.SUCCESS;
         }
-
         Either<SleepResult, Unit> player$sleepresult = player.trySleep(pos);
         player$sleepresult.ifLeft(result -> {
           ITextComponent text;
@@ -115,7 +118,6 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
           }
           player.sendStatusMessage(text, true);
         });
-        return true;
       } else {
         worldIn.removeBlock(pos, false);
         BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
@@ -124,8 +126,8 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         }
         worldIn.createExplosion(null, DamageSource.netherBedExplosion(), (double) pos.getX() + 0.5D,
             (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true, Mode.DESTROY);
-        return true;
       }
+      return ActionResultType.SUCCESS;
     }
   }
 
@@ -154,10 +156,6 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
     }
 
     worldIn.playEvent(player, 2001, pos, getStateId(state));
-  }
-
-  private static Direction getDirectionToOther(BedPart part, Direction direction) {
-    return part == BedPart.FOOT ? direction : direction.getOpposite();
   }
 
   @Nonnull

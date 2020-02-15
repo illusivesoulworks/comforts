@@ -25,7 +25,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -36,7 +35,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
@@ -190,7 +188,7 @@ public class CommonEventHandler {
               }
 
               if (!broke && sleepdata.getAutoSleepPos() != null) {
-                List<ItemStack> drops = Block.func_220070_a(state, (ServerWorld) world, bedPos, null);
+                List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
                 BlockPos blockpos = bedPos
                     .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
                 world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);

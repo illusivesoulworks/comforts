@@ -41,7 +41,6 @@ import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -94,7 +93,7 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
     Direction direction = state.get(HORIZONTAL_FACING);
     BlockPos blockpos = pos.offset(direction.getOpposite());
     BlockState blockstate = worldIn.getBlockState(blockpos);
-    return blockstate.func_224755_d(worldIn, blockpos, direction);
+    return blockstate.isSolidSide(worldIn, blockpos, direction);
   }
 
   @Override
@@ -193,11 +192,5 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
   public IFluidState getFluidState(BlockState state) {
     return state.get(ComfortsBaseBlock.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
         : super.getFluidState(state);
-  }
-
-  @Nonnull
-  @Override
-  public BlockRenderLayer getRenderLayer() {
-    return BlockRenderLayer.CUTOUT;
   }
 }
