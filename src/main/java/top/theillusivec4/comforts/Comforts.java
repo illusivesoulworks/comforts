@@ -109,10 +109,10 @@ public class Comforts {
     @SubscribeEvent
     public static void setupClient(FMLClientSetupEvent evt) {
       MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-      ClientRegistry.bindTileEntitySpecialRenderer(SleepingBagTileEntity.class,
+      ClientRegistry.bindTileEntityRenderer(ComfortsRegistry.SLEEPING_BAG_TE,
           new SleepingBagTileEntityRenderer());
       ClientRegistry
-          .bindTileEntitySpecialRenderer(HammockTileEntity.class, new HammockTileEntityRenderer());
+          .bindTileEntityRenderer(ComfortsRegistry.HAMMOCK_TE, new HammockTileEntityRenderer());
     }
 
   }
