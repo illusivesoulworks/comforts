@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019  C4
+ * Copyright (c) 2017-2020 C4
  *
  * This file is part of Comforts, a mod made for Minecraft.
  *
