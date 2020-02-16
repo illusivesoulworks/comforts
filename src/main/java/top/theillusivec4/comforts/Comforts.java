@@ -21,6 +21,8 @@ package top.theillusivec4.comforts;
 
 import java.util.Arrays;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.DyeColor;
@@ -116,6 +118,7 @@ public class Comforts {
           SleepingBagTileEntityRenderer::new);
       ClientRegistry
           .bindTileEntityRenderer(ComfortsRegistry.HAMMOCK_TE, HammockTileEntityRenderer::new);
+      RenderTypeLookup.setRenderLayer(ComfortsRegistry.ROPE_AND_NAIL, RenderType.translucent());
     }
 
     @SubscribeEvent

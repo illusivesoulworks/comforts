@@ -154,37 +154,36 @@ public class CommonEventHandler {
 
     if (!world.isRemote) {
       CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-        long wakeTime = world.getDayTime();
-        long timeSlept = wakeTime - sleepdata.getSleepTime();
 
-        if (timeSlept > 500L) {
           player.getBedPosition().ifPresent(bedPos -> {
+            long wakeTime = world.getDayTime();
+            long timeSlept = wakeTime - sleepdata.getSleepTime();
             BlockState state = world.getBlockState(bedPos);
 
             if (state.getBlock() instanceof SleepingBagBlock) {
               boolean broke = false;
-              List<EffectInstance> debuffs = getDebuffs();
 
-              if (!debuffs.isEmpty()) {
+              if (timeSlept > 500L) {
+                List<EffectInstance> debuffs = getDebuffs();
 
-                for (EffectInstance effect : debuffs) {
-                  player.addPotionEffect(
-                      new EffectInstance(effect.getPotion(), effect.getDuration(),
-                          effect.getAmplifier()));
+                if (!debuffs.isEmpty()) {
+
+                  for (EffectInstance effect : debuffs) {
+                    player.addPotionEffect(
+                        new EffectInstance(effect.getPotion(), effect.getDuration(), effect.getAmplifier()));
+                  }
                 }
-              }
 
-              if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
-                broke = true;
-                BlockPos blockpos = bedPos
-                    .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-                world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-                player.sendStatusMessage(
-                    new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
-                world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
-                    1.0F, 1.0F);
-                player.clearBedPosition();
+                if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
+                  broke = true;
+                  BlockPos blockpos = bedPos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+                  world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                  world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+                  player.sendStatusMessage(new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
+                  world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
+                      1.0F, 1.0F);
+                  player.clearBedPosition();
+                }
               }
 
               if (!broke && sleepdata.getAutoSleepPos() != null) {
@@ -202,13 +201,11 @@ public class CommonEventHandler {
                 player.clearBedPosition();
               }
             }
-
             sleepdata.setWakeTime(wakeTime);
             sleepdata.setTiredTime(
                 wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
             sleepdata.setAutoSleepPos(null);
           });
-        }
       });
     }
   }
