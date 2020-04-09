@@ -51,6 +51,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import top.theillusivec4.comforts.Comforts;
 
 public class RopeAndNailBlock extends Block implements IWaterLoggable {
@@ -93,7 +94,37 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
     Direction direction = state.get(HORIZONTAL_FACING);
     BlockPos blockpos = pos.offset(direction.getOpposite());
     BlockState blockstate = worldIn.getBlockState(blockpos);
-    return blockstate.isSolidSide(worldIn, blockpos, direction);
+    boolean valid = blockstate.isSolidSide(worldIn, blockpos, direction);
+
+    if (!valid && worldIn instanceof ServerWorld) {
+      ServerWorld world = (ServerWorld) worldIn;
+      BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
+      BlockState frontState = worldIn.getBlockState(frontPos);
+
+      if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
+        BedPart bedpart = frontState.get(BedBlock.PART);
+        boolean isHead = bedpart == BedPart.HEAD;
+        Direction frontDirection = frontState.get(HORIZONTAL_FACING);
+        BlockPos otherPos = frontPos
+            .offset(HammockBlock.getDirectionToOther(bedpart, frontDirection));
+        BlockState otherState = world.getBlockState(otherPos);
+
+        if (frontState.get(ComfortsBaseBlock.WATERLOGGED)) {
+          world.setBlockState(frontPos, Blocks.WATER.getDefaultState(), 35);
+        } else {
+          world.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
+        }
+
+        if (otherState.getBlock() instanceof HammockBlock
+            && otherState.get(BedBlock.PART) != bedpart) {
+          HammockBlock
+              .finishHammockDrops(frontState, frontPos, otherState, otherPos, frontDirection, world,
+                  null);
+          HammockBlock.dropRopeSupport(frontPos, frontDirection, isHead, world);
+        }
+      }
+    }
+    return valid;
   }
 
   @Override
@@ -114,7 +145,6 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
       } else {
         worldIn.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
       }
-
       worldIn.playEvent(player, 2001, frontPos, Block.getStateId(frontState));
 
       if (otherState.getBlock() instanceof HammockBlock

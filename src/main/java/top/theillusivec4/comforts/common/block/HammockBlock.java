@@ -23,6 +23,7 @@ import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTIN
 
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -133,8 +134,9 @@ public class HammockBlock extends ComfortsBaseBlock {
     }
   }
 
+  @SuppressWarnings("ConstantConditions")
   public static void finishHammockDrops(BlockState state, BlockPos pos, BlockState otherState,
-      BlockPos otherPos, Direction direction, World worldIn, PlayerEntity player) {
+      BlockPos otherPos, Direction direction, World worldIn, @Nullable PlayerEntity player) {
     BedPart bedpart = otherState.get(BedBlock.PART);
     boolean isHead = bedpart == BedPart.HEAD;
 
@@ -147,8 +149,16 @@ public class HammockBlock extends ComfortsBaseBlock {
     worldIn.playEvent(player, 2001, otherPos, Block.getStateId(otherState));
     dropRopeSupport(otherPos, direction, isHead, worldIn);
 
-    if (!worldIn.isRemote && !player.isCreative()) {
-      ItemStack itemstack = player.getHeldItemMainhand();
+    if (!worldIn.isRemote) {
+      ItemStack itemstack = ItemStack.EMPTY;
+
+      if (player != null) {
+
+        if (player.isCreative()) {
+          return;
+        }
+        itemstack = player.getHeldItemMainhand();
+      }
       spawnDrops(state, worldIn, pos, null, player, itemstack);
       spawnDrops(otherState, worldIn, otherPos, null, player, itemstack);
     }
