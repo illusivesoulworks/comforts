@@ -44,6 +44,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -55,7 +56,19 @@ import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 public class HammockBlock extends ComfortsBaseBlock {
 
   private static final VoxelShape HAMMOCK_SHAPE = Block
-      .makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
+      .makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 15.0D);
+  private static final VoxelShape NORTH_SHAPE = VoxelShapes
+      .or(Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 16.0D),
+          Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 1.0D));
+  private static final VoxelShape SOUTH_SHAPE = VoxelShapes
+      .or(Block.makeCuboidShape(1.0D, 0.0D, 0.0D, 15.0D, 1.0D, 15.0D),
+          Block.makeCuboidShape(0.0D, 0.0D, 15.0D, 16.0D, 1.0D, 16.0D));
+  private static final VoxelShape WEST_SHAPE = VoxelShapes
+      .or(Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
+          Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 16.0D));
+  private static final VoxelShape EAST_SHAPE = VoxelShapes
+      .or(Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
+          Block.makeCuboidShape(15.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D));
   private final DyeColor color;
 
   public HammockBlock(DyeColor color) {
@@ -98,9 +111,8 @@ public class HammockBlock extends ComfortsBaseBlock {
 
     if (skipToNight[0]) {
       ObfuscationReflectionHelper.setPrivateValue(ServerWorld.class, world, false, "field_73068_P");
-      players.stream().filter(LivingEntity::isSleeping).forEach((player) -> {
-        player.func_225652_a_(false, false);
-      });
+      players.stream().filter(LivingEntity::isSleeping)
+          .forEach((player) -> player.func_225652_a_(false, false));
 
       if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {
         world.dimension.resetRainAndThunder();
@@ -146,7 +158,19 @@ public class HammockBlock extends ComfortsBaseBlock {
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
       ISelectionContext context) {
-    return HAMMOCK_SHAPE;
+    Direction direction = func_226862_h_(state).getOpposite();
+    switch (direction) {
+      case NORTH:
+        return NORTH_SHAPE;
+      case SOUTH:
+        return SOUTH_SHAPE;
+      case WEST:
+        return WEST_SHAPE;
+      case EAST:
+        return EAST_SHAPE;
+      default:
+        return HAMMOCK_SHAPE;
+    }
   }
 
   @Override

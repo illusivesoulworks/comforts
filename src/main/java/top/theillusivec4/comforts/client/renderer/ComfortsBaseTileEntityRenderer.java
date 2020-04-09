@@ -25,16 +25,15 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.DualBrightnessCallback;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.BedTileEntity;
 import net.minecraft.tileentity.TileEntityMerger;
@@ -65,8 +64,9 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
   public void render(ComfortsBaseTileEntity tileEntityIn, float partialTicks,
       @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn,
       int combinedOverlayIn) {
-    Material material = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(
-        Comforts.MODID, "entity/" + type + "/" + tileEntityIn.getColor().getName()));
+    Material material = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE,
+        new ResourceLocation(Comforts.MODID,
+            "entity/" + type + "/" + tileEntityIn.getColor().getName()));
     World world = tileEntityIn.getWorld();
 
     if (world != null) {
