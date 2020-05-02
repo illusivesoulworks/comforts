@@ -26,7 +26,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
@@ -35,16 +34,16 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
@@ -127,22 +126,30 @@ public class CommonEventHandler {
   }
 
   @SubscribeEvent
-  public void onPreWorldTick(TickEvent.WorldTickEvent evt) {
+  public void onSleepFinished(SleepFinishedTimeEvent evt) {
+    IWorld world = evt.getWorld();
 
-    if (evt.phase == TickEvent.Phase.START && evt.world instanceof ServerWorld) {
-      ServerWorld world = (ServerWorld) evt.world;
-      List<ServerPlayerEntity> players = world.getPlayers();
+    if (world instanceof ServerWorld) {
+      ServerWorld serverWorld = (ServerWorld) world;
+      final boolean[] activeHammock = {false};
+      List<? extends PlayerEntity> players = world.getPlayers();
 
-      if (!world.isDaytime() && ComfortsConfig.SERVER.nightHammocks.get()) {
-        return;
+      for (PlayerEntity player : players) {
+        player.getBedPosition().ifPresent(bedPos -> {
+          if (player.isPlayerFullyAsleep() && world.getBlockState(bedPos)
+              .getBlock() instanceof HammockBlock) {
+            activeHammock[0] = true;
+          }
+        });
+
+        if (activeHammock[0]) {
+          break;
+        }
       }
 
-      Boolean allPlayersSleeping = ObfuscationReflectionHelper
-          .getPrivateValue(ServerWorld.class, world, "field_73068_P");
-
-      if (allPlayersSleeping != null && allPlayersSleeping && players.stream()
-          .noneMatch((player) -> !player.isSpectator() && !player.isPlayerFullyAsleep())) {
-        HammockBlock.skipToNight(world);
+      if (activeHammock[0] && world.getDimension().isDaytime()) {
+        long i = serverWorld.getDayTime() + 24000L;
+        evt.setTimeAddition((i - i % 24000L) - 12001L);
       }
     }
   }
@@ -153,9 +160,8 @@ public class CommonEventHandler {
     World world = player.world;
 
     if (!world.isRemote) {
-      CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-
-          player.getBedPosition().ifPresent(bedPos -> {
+      CapabilitySleepData.getCapability(player)
+          .ifPresent(sleepdata -> player.getBedPosition().ifPresent(bedPos -> {
             long wakeTime = world.getDayTime();
             long timeSlept = wakeTime - sleepdata.getSleepTime();
             BlockState state = world.getBlockState(bedPos);
@@ -170,16 +176,19 @@ public class CommonEventHandler {
 
                   for (EffectInstance effect : debuffs) {
                     player.addPotionEffect(
-                        new EffectInstance(effect.getPotion(), effect.getDuration(), effect.getAmplifier()));
+                        new EffectInstance(effect.getPotion(), effect.getDuration(),
+                            effect.getAmplifier()));
                   }
                 }
 
                 if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
                   broke = true;
-                  BlockPos blockpos = bedPos.offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
+                  BlockPos blockpos = bedPos
+                      .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
                   world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
                   world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-                  player.sendStatusMessage(new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
+                  player.sendStatusMessage(
+                      new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
                   world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
                       1.0F, 1.0F);
                   player.clearBedPosition();
@@ -205,8 +214,7 @@ public class CommonEventHandler {
             sleepdata.setTiredTime(
                 wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
             sleepdata.setAutoSleepPos(null);
-          });
-      });
+          }));
     }
   }
 
