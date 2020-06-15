@@ -38,6 +38,6 @@
   "block.comforts.hammock.too_far_away": "Yatamazsın, hamak senden fazla uzakta",
   "block.comforts.sleeping_bag.too_far_away": "Yatamazsın, uyku tulumu senden fazla uzakta",
   "block.comforts.hammock.no_sleep": "Sadece gündüzleri şekerleme yapabilirsin",
-  "block.comforts.sleeping_bag.broke": "The sleeping bag broke",
+  "block.comforts.sleeping_bag.broke": "Uyku tulumu kırıldı",
   "capability.comforts.not_sleepy": "Yatamazsın, fazla uykulu değilsin"
 }
