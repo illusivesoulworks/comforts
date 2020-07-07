@@ -19,7 +19,7 @@
 
 package top.theillusivec4.comforts.common.block;
 
-import com.mojang.datafixers.util.Either;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.BedBlock;
@@ -27,10 +27,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity.SleepResult;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -43,12 +44,12 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Unit;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.Explosion.Mode;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -82,52 +83,66 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         pos = pos.offset(state.get(HORIZONTAL_FACING));
         state = worldIn.getBlockState(pos);
 
-        if (state.getBlock() != this) {
+        if (!state.isIn(this)) {
           return ActionResultType.CONSUME;
         }
       }
-      net.minecraftforge.common.extensions.IForgeDimension.SleepResult sleepResult = worldIn.dimension
-          .canSleepAt(player, pos);
 
-      if (sleepResult
-          != net.minecraftforge.common.extensions.IForgeDimension.SleepResult.BED_EXPLODES) {
-
-        if (sleepResult == net.minecraftforge.common.extensions.IForgeDimension.SleepResult.DENY) {
-          return ActionResultType.SUCCESS;
-        }
-
-        if (state.get(OCCUPIED)) {
-          player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"),
-              true);
-          return ActionResultType.SUCCESS;
-        }
-        Either<SleepResult, Unit> player$sleepresult = player.trySleep(pos);
-        player$sleepresult.ifLeft(result -> {
-          ITextComponent text;
-          switch (result) {
-            case NOT_POSSIBLE_NOW:
-              text = type == BedType.HAMMOCK ? new TranslationTextComponent(
-                  "block.comforts." + type.name + ".no_sleep")
-                  : new TranslationTextComponent("block.minecraft.bed.no_sleep");
-              break;
-            case TOO_FAR_AWAY:
-              text = new TranslationTextComponent("block.comforts." + type.name + ".too_far_away");
-              break;
-            default:
-              text = result.getMessage();
-          }
-          player.sendStatusMessage(text, true);
-        });
-      } else {
+      if (!func_235330_a_(worldIn)) {
         worldIn.removeBlock(pos, false);
         BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
-        if (worldIn.getBlockState(blockpos).getBlock() == this) {
+
+        if (worldIn.getBlockState(blockpos).isIn(this)) {
           worldIn.removeBlock(blockpos, false);
         }
-        worldIn.createExplosion(null, DamageSource.netherBedExplosion(), (double) pos.getX() + 0.5D,
-            (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true, Mode.DESTROY);
+        worldIn
+            .func_230546_a_(null, DamageSource.func_233546_a_(), null, (double) pos.getX() + 0.5D,
+                (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true,
+                Explosion.Mode.DESTROY);
+        return ActionResultType.SUCCESS;
+      } else if (state.get(OCCUPIED)) {
+
+        if (!this.func_226861_a_(worldIn, pos)) {
+          player.sendStatusMessage(
+              new TranslationTextComponent("block.comforts." + this.type.name + ".occupied"), true);
+        }
+        return ActionResultType.SUCCESS;
+      } else {
+        player.trySleep(pos).ifLeft((result) -> {
+
+          if (result != null) {
+            ITextComponent text;
+            switch (result) {
+              case NOT_POSSIBLE_NOW:
+                text = type == BedType.HAMMOCK ? new TranslationTextComponent(
+                    "block.comforts." + type.name + ".no_sleep")
+                    : new TranslationTextComponent("block.minecraft.bed.no_sleep");
+                break;
+              case TOO_FAR_AWAY:
+                text = new TranslationTextComponent(
+                    "block.comforts." + type.name + ".too_far_away");
+                break;
+              default:
+                text = result.getMessage();
+            }
+            player.sendStatusMessage(text, true);
+          }
+        });
+        return ActionResultType.SUCCESS;
       }
-      return ActionResultType.SUCCESS;
+    }
+  }
+
+  private boolean func_226861_a_(World p_226861_1_, BlockPos p_226861_2_) {
+    List<VillagerEntity> list = p_226861_1_
+        .getEntitiesWithinAABB(VillagerEntity.class, new AxisAlignedBB(p_226861_2_),
+            LivingEntity::isSleeping);
+
+    if (list.isEmpty()) {
+      return false;
+    } else {
+      list.get(0).wakeUp();
+      return true;
     }
   }
 
@@ -175,7 +190,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   @Nullable
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+    FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
     BlockState state = super.getStateForPlacement(context);
     return state == null ? null : state.with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
   }
@@ -189,7 +204,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   @SuppressWarnings("deprecation")
   @Nonnull
   @Override
-  public IFluidState getFluidState(BlockState state) {
+  public FluidState getFluidState(BlockState state) {
     return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
         : super.getFluidState(state);
   }

@@ -21,7 +21,6 @@ package top.theillusivec4.comforts.common.block;
 
 import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.BedBlock;
@@ -30,11 +29,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -46,11 +43,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 
@@ -81,47 +75,6 @@ public class HammockBlock extends ComfortsBaseBlock {
 
   public static Direction getDirectionToOther(BedPart part, Direction facing) {
     return part == BedPart.FOOT ? facing : facing.getOpposite();
-  }
-
-  public static boolean skipToNight(ServerWorld world) {
-    final boolean[] skipToNight = {false};
-    List<ServerPlayerEntity> players = world.getPlayers();
-
-    for (PlayerEntity player : players) {
-      player.getBedPosition().ifPresent(bedPos -> {
-        if (player.isPlayerFullyAsleep() && world.getBlockState(bedPos)
-            .getBlock() instanceof HammockBlock) {
-
-          if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
-            long i = world.getDayTime() + 24000L;
-            long worldTime = world.getDayTime() % 24000L;
-
-            if (worldTime > 500L && worldTime < 11500L) {
-              world.setDayTime((i - i % 24000L) - 12001L);
-            }
-          }
-
-          skipToNight[0] = true;
-        }
-      });
-
-      if (skipToNight[0]) {
-        break;
-      }
-    }
-
-    if (skipToNight[0]) {
-      ObfuscationReflectionHelper.setPrivateValue(ServerWorld.class, world, false, "field_73068_P");
-      players.stream().filter(LivingEntity::isSleeping)
-          .forEach((player) -> player.func_225652_a_(false, false));
-
-      if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {
-        world.dimension.resetRainAndThunder();
-      }
-      return true;
-    } else {
-      return false;
-    }
   }
 
   public static void dropRopeSupport(BlockPos pos, Direction direction, boolean isHead,
@@ -205,7 +158,7 @@ public class HammockBlock extends ComfortsBaseBlock {
     Direction direction = context.getFace();
     BlockPos blockpos = context.getPos();
     BlockPos blockpos1 = blockpos.offset(direction);
-    IFluidState ifluidstate = context.getWorld().getFluidState(blockpos);
+    FluidState ifluidstate = context.getWorld().getFluidState(blockpos);
     return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this
         .getDefaultState().with(HORIZONTAL_FACING, direction)
         .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER) : null;

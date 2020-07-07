@@ -20,6 +20,8 @@
 package top.theillusivec4.comforts.common.tileentity;
 
 import net.minecraft.block.BedBlock;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.DyeColor;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -41,13 +43,18 @@ public class ComfortsBaseTileEntity extends TileEntity {
     this.setColor(colorIn);
   }
 
+  @Override
   public SUpdateTileEntityPacket getUpdatePacket() {
     return new SUpdateTileEntityPacket(this.pos, 11, this.getUpdateTag());
   }
 
   @Override
   public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    this.read(pkt.getNbtCompound());
+    ClientWorld clientWorld = Minecraft.getInstance().world;
+
+    if (clientWorld != null) {
+      this.func_230337_a_(clientWorld.getBlockState(pkt.getPos()), pkt.getNbtCompound());
+    }
   }
 
   @OnlyIn(Dist.CLIENT)

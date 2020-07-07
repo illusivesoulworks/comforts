@@ -27,14 +27,14 @@ import top.theillusivec4.comforts.Comforts;
 
 public class ComfortsConfig {
 
-  public static final ForgeConfigSpec serverSpec;
+  public static final ForgeConfigSpec SERVER_SPEC;
   public static final Server SERVER;
   private static final String CONFIG_PREFIX = "gui." + Comforts.MODID + ".config.";
 
   static {
     final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder()
         .configure(Server::new);
-    serverSpec = specPair.getRight();
+    SERVER_SPEC = specPair.getRight();
     SERVER = specPair.getLeft();
   }
 

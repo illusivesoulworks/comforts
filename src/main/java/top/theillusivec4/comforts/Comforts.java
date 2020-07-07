@@ -23,8 +23,8 @@ import java.util.Arrays;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -38,7 +38,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -67,7 +66,6 @@ import top.theillusivec4.comforts.common.network.ComfortsNetwork;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 import top.theillusivec4.comforts.data.ComfortsLootProvider;
-import top.theillusivec4.comforts.integration.MorpheusIntegration;
 
 @Mod(Comforts.MODID)
 public class Comforts {
@@ -87,7 +85,7 @@ public class Comforts {
     IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
     eventBus.addListener(this::setup);
     eventBus.addListener(this::gatherData);
-    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.serverSpec);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC);
   }
 
   private void gatherData(GatherDataEvent evt) {
@@ -102,10 +100,6 @@ public class Comforts {
     MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
     CapabilitySleepData.register();
     ComfortsNetwork.register();
-
-    if (ModList.get().isLoaded("morpheus")) {
-      MorpheusIntegration.register();
-    }
   }
 
   @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -118,17 +112,18 @@ public class Comforts {
           SleepingBagTileEntityRenderer::new);
       ClientRegistry
           .bindTileEntityRenderer(ComfortsRegistry.HAMMOCK_TE, HammockTileEntityRenderer::new);
-      RenderTypeLookup.setRenderLayer(ComfortsRegistry.ROPE_AND_NAIL, RenderType.translucent());
+      RenderTypeLookup.setRenderLayer(ComfortsRegistry.ROPE_AND_NAIL, RenderType.getTranslucent());
     }
 
     @SubscribeEvent
     public static void textureStitch(TextureStitchEvent.Pre evt) {
 
-      if (evt.getMap().getBasePath() == AtlasTexture.LOCATION_BLOCKS_TEXTURE) {
+      if (evt.getMap().getTextureLocation() == PlayerContainer.LOCATION_BLOCKS_TEXTURE) {
         for (DyeColor color : DyeColor.values()) {
-          evt.addSprite(new ResourceLocation(Comforts.MODID, "entity/hammock/" + color.getName()));
           evt.addSprite(
-              new ResourceLocation(Comforts.MODID, "entity/sleeping_bag/" + color.getName()));
+              new ResourceLocation(Comforts.MODID, "entity/hammock/" + color.getTranslationKey()));
+          evt.addSprite(new ResourceLocation(Comforts.MODID,
+              "entity/sleeping_bag/" + color.getTranslationKey()));
         }
       }
     }

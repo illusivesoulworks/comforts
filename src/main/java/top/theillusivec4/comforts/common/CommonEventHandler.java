@@ -147,7 +147,7 @@ public class CommonEventHandler {
         }
       }
 
-      if (activeHammock[0] && world.getDimension().isDaytime()) {
+      if (activeHammock[0] && world.getWorld().isDaytime()) {
         long i = serverWorld.getDayTime() + 24000L;
         evt.setTimeAddition((i - i % 24000L) - 12001L);
       }

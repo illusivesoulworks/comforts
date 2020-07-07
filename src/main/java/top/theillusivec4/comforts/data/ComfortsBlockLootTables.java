@@ -30,16 +30,16 @@ import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.loot.BlockLootTables;
+import net.minecraft.loot.ConstantRange;
+import net.minecraft.loot.ItemLootEntry;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTable.Builder;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.conditions.BlockStateProperty;
+import net.minecraft.loot.conditions.SurvivesExplosion;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.ConstantRange;
-import net.minecraft.world.storage.loot.ItemLootEntry;
-import net.minecraft.world.storage.loot.LootPool;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTable.Builder;
-import net.minecraft.world.storage.loot.LootTables;
-import net.minecraft.world.storage.loot.conditions.BlockStateProperty;
-import net.minecraft.world.storage.loot.conditions.SurvivesExplosion;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
 
@@ -49,10 +49,10 @@ public class ComfortsBlockLootTables extends BlockLootTables {
 
   private static LootTable.Builder getLootBuilder(Block block) {
     return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(
-        ItemLootEntry.builder(block)
-            .acceptCondition(BlockStateProperty.builder(block).fromProperties(
-                StatePropertiesPredicate.Builder.newBuilder().withProp(BedBlock.PART, BedPart.HEAD)))
-        .acceptCondition(SurvivesExplosion.builder())));
+        ItemLootEntry.builder(block).acceptCondition(BlockStateProperty.builder(block)
+            .fromProperties(StatePropertiesPredicate.Builder.newBuilder()
+                .withProp(BedBlock.PART, BedPart.HEAD)))
+            .acceptCondition(SurvivesExplosion.builder())));
   }
 
   @Override

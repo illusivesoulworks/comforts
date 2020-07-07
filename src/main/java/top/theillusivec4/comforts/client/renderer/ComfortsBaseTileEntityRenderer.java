@@ -27,9 +27,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.tileentity.DualBrightnessCallback;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -41,6 +40,7 @@ import net.minecraft.tileentity.TileEntityMerger.ICallbackWrapper;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.tileentity.ComfortsBaseTileEntity;
@@ -64,9 +64,9 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
   public void render(ComfortsBaseTileEntity tileEntityIn, float partialTicks,
       @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn,
       int combinedOverlayIn) {
-    Material material = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE,
+    RenderMaterial material = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE,
         new ResourceLocation(Comforts.MODID,
-            "entity/" + type + "/" + tileEntityIn.getColor().getName()));
+            "entity/" + type + "/" + tileEntityIn.getColor().getTranslationKey()));
     World world = tileEntityIn.getWorld();
 
     if (world != null) {
@@ -88,7 +88,7 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
   }
 
   protected void renderPiece(MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean isHead,
-      Direction direction, Material material, int light, int overlay, boolean p_228847_8_) {
+      Direction direction, RenderMaterial material, int light, int overlay, boolean p_228847_8_) {
     this.headPiece.showModel = isHead;
     this.footPiece.showModel = !isHead;
     matrixStack.push();
@@ -97,7 +97,7 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
     matrixStack.translate(0.5D, 0.5D, 0.5D);
     matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
     matrixStack.translate(-0.5D, -0.5D, -0.5D);
-    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::entitySolid);
+    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::getEntitySolid);
     this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
     this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);
     matrixStack.pop();

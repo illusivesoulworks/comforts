@@ -32,7 +32,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
@@ -60,7 +60,7 @@ public class ClientEventHandler {
             BlockState state = world.getBlockState(pos);
 
             if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-              BlockRayTraceResult hit = new BlockRayTraceResult(new Vec3d(0, 0, 0),
+              BlockRayTraceResult hit = new BlockRayTraceResult(new Vector3d(0, 0, 0),
                   player.getHorizontalFacing(), pos, false);
               PlayerController playerController = Minecraft.getInstance().playerController;
 
@@ -78,37 +78,37 @@ public class ClientEventHandler {
     }
   }
 
-    @SubscribeEvent
-    public void onPlayerRenderPre(RenderPlayerEvent.Pre evt) {
-      final PlayerEntity player = evt.getPlayer();
+  @SubscribeEvent
+  public void onPlayerRenderPre(RenderPlayerEvent.Pre evt) {
+    final PlayerEntity player = evt.getPlayer();
 
-      if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
-        player.getBedPosition().ifPresent(bedPos -> {
-          MatrixStack matrixStack = evt.getMatrixStack();
-          Block bed = player.world.getBlockState(bedPos).getBlock();
-          if (bed instanceof SleepingBagBlock) {
-            matrixStack.translate(0.0f, -0.375F, 0.0f);
-          } else if (bed instanceof HammockBlock) {
-            matrixStack.translate(0.0f, -0.5F, 0.0f);
-          }
-        });
-      }
+    if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
+      player.getBedPosition().ifPresent(bedPos -> {
+        MatrixStack matrixStack = evt.getMatrixStack();
+        Block bed = player.world.getBlockState(bedPos).getBlock();
+        if (bed instanceof SleepingBagBlock) {
+          matrixStack.translate(0.0f, -0.375F, 0.0f);
+        } else if (bed instanceof HammockBlock) {
+          matrixStack.translate(0.0f, -0.5F, 0.0f);
+        }
+      });
     }
+  }
 
-    @SubscribeEvent
-    public void onPlayerRenderPost(RenderPlayerEvent.Post evt) {
-      final PlayerEntity player = evt.getPlayer();
+  @SubscribeEvent
+  public void onPlayerRenderPost(RenderPlayerEvent.Post evt) {
+    final PlayerEntity player = evt.getPlayer();
 
-      if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
-        player.getBedPosition().ifPresent(bedPos -> {
-          MatrixStack matrixStack = evt.getMatrixStack();
-          Block bed = player.world.getBlockState(bedPos).getBlock();
-          if (bed instanceof SleepingBagBlock) {
-            matrixStack.translate(0.0f, 0.375F, 0.0f);
-          } else if (bed instanceof HammockBlock) {
-            matrixStack.translate(0.0f, 0.5F, 0.0f);
-          }
-        });
-      }
+    if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
+      player.getBedPosition().ifPresent(bedPos -> {
+        MatrixStack matrixStack = evt.getMatrixStack();
+        Block bed = player.world.getBlockState(bedPos).getBlock();
+        if (bed instanceof SleepingBagBlock) {
+          matrixStack.translate(0.0f, 0.375F, 0.0f);
+        } else if (bed instanceof HammockBlock) {
+          matrixStack.translate(0.0f, 0.5F, 0.0f);
+        }
+      });
     }
+  }
 }

@@ -23,11 +23,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Vector3f;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 
 public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<HammockTileEntity> {
@@ -49,7 +49,7 @@ public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<Ha
 
   @Override
   protected void renderPiece(MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean isHead,
-      Direction direction, Material material, int light, int overlay, boolean p_228847_8_) {
+      Direction direction, RenderMaterial material, int light, int overlay, boolean p_228847_8_) {
     this.headPiece.showModel = isHead;
     this.headBoard.showModel = isHead;
     this.footPiece.showModel = !isHead;
@@ -60,7 +60,7 @@ public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<Ha
     matrixStack.translate(0.5D, 0.5D, 0.5D);
     matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
     matrixStack.translate(-0.5D, -0.5D, -0.5D);
-    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::entitySolid);
+    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::getEntitySolid);
     this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
     this.headBoard.render(matrixStack, ivertexbuilder, light, overlay);
     this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);

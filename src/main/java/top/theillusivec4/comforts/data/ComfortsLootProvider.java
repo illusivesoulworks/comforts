@@ -37,13 +37,13 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.data.LootTableProvider;
+import net.minecraft.loot.LootParameterSet;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTable.Builder;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.loot.ValidationTracker;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.LootParameterSet;
-import net.minecraft.world.storage.loot.LootParameterSets;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTable.Builder;
-import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraft.world.storage.loot.ValidationTracker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.Comforts;
@@ -81,7 +81,7 @@ public class ComfortsLootProvider extends LootTableProvider {
     ValidationTracker validationtracker = new ValidationTracker(LootParameterSets.GENERIC,
         (resourceLocation) -> null, map::get);
     validate(map, validationtracker);
-    Multimap<String, String> multimap = validationtracker.func_227527_a_();
+    Multimap<String, String> multimap = validationtracker.getProblems();
 
     if (!multimap.isEmpty()) {
       multimap.forEach((problemPath, problem) -> LOGGER
