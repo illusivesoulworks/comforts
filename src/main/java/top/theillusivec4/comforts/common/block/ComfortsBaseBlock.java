@@ -19,17 +19,24 @@
 
 package top.theillusivec4.comforts.common.block;
 
+import com.mojang.datafixers.util.Either;
+import java.lang.reflect.Field;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntity.SleepResult;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
@@ -44,18 +51,27 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Unit;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import top.theillusivec4.comforts.Comforts;
 
 public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
+  private static final Field SLEEP_TIMER = ObfuscationReflectionHelper
+      .findField(PlayerEntity.class, "field_71076_b");
+
   private final BedType type;
 
   public ComfortsBaseBlock(BedType type, DyeColor colorIn, Block.Properties properties) {
@@ -107,8 +123,8 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
               new TranslationTextComponent("block.comforts." + this.type.name + ".occupied"), true);
         }
         return ActionResultType.SUCCESS;
-      } else {
-        player.trySleep(pos).ifLeft((result) -> {
+      } else if (player instanceof ServerPlayerEntity) {
+        trySleep((ServerPlayerEntity) player, pos).ifLeft((result) -> {
 
           if (result != null) {
             ITextComponent text;
@@ -128,9 +144,93 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
             player.sendStatusMessage(text, true);
           }
         });
-        return ActionResultType.SUCCESS;
       }
     }
+    return ActionResultType.SUCCESS;
+  }
+
+  public static Either<SleepResult, Unit> trySleep(ServerPlayerEntity playerEntity, BlockPos at) {
+    java.util.Optional<BlockPos> optAt = java.util.Optional.of(at);
+    PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory
+        .onPlayerSleepInBed(playerEntity, optAt);
+
+    if (ret != null) {
+      return Either.left(ret);
+    }
+    Direction direction = playerEntity.world.getBlockState(at)
+        .get(HorizontalBlock.HORIZONTAL_FACING);
+
+    if (!playerEntity.isSleeping() && playerEntity.isAlive()) {
+
+      if (!playerEntity.world.func_230315_m_().func_236043_f_()) {
+        return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
+      } else if (!func_241147_a_(playerEntity, at, direction)) {
+        return Either.left(PlayerEntity.SleepResult.TOO_FAR_AWAY);
+      } else if (func_241156_b_(playerEntity, at, direction)) {
+        return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
+      } else {
+
+        if (playerEntity.world.isDaytime()) {
+          return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
+        } else {
+
+          if (!playerEntity.isCreative()) {
+            double d0 = 8.0D;
+            double d1 = 5.0D;
+            Vector3d vector3d = Vector3d.func_237492_c_(at);
+            List<MonsterEntity> list = playerEntity.world.getEntitiesWithinAABB(MonsterEntity.class,
+                new AxisAlignedBB(vector3d.getX() - 8.0D, vector3d.getY() - 5.0D,
+                    vector3d.getZ() - 8.0D, vector3d.getX() + 8.0D, vector3d.getY() + 5.0D,
+                    vector3d.getZ() + 8.0D),
+                (p_241146_1_) -> p_241146_1_.func_230292_f_(playerEntity));
+
+            if (!list.isEmpty()) {
+              return Either.left(PlayerEntity.SleepResult.NOT_SAFE);
+            }
+          }
+          playerEntity.startSleeping(at);
+
+          try {
+            SLEEP_TIMER.setInt(playerEntity, 0);
+          } catch (IllegalAccessException e) {
+            Comforts.LOGGER.error("Error setting sleep timer!");
+          }
+          playerEntity.addStat(Stats.SLEEP_IN_BED);
+          CriteriaTriggers.SLEPT_IN_BED.trigger(playerEntity);
+          ((ServerWorld) playerEntity.world).updateAllPlayersSleepingFlag();
+          return Either.right(Unit.INSTANCE);
+        }
+      }
+    } else {
+      return Either.left(PlayerEntity.SleepResult.OTHER_PROBLEM);
+    }
+  }
+
+  private static boolean func_241147_a_(ServerPlayerEntity playerEntity, BlockPos p_241147_1_,
+      Direction p_241147_2_) {
+    if (p_241147_2_ == null) {
+      return false;
+    }
+    return func_241158_g_(playerEntity, p_241147_1_) || func_241158_g_(playerEntity,
+        p_241147_1_.offset(p_241147_2_.getOpposite()));
+  }
+
+  private static boolean func_241158_g_(ServerPlayerEntity playerEntity, BlockPos p_241158_1_) {
+    Vector3d vector3d = Vector3d.func_237492_c_(p_241158_1_);
+    return Math.abs(playerEntity.getPosX() - vector3d.getX()) <= 3.0D
+        && Math.abs(playerEntity.getPosY() - vector3d.getY()) <= 2.0D
+        && Math.abs(playerEntity.getPosZ() - vector3d.getZ()) <= 3.0D;
+  }
+
+  private static boolean func_241156_b_(ServerPlayerEntity playerEntity, BlockPos p_241156_1_,
+      Direction p_241156_2_) {
+    BlockPos blockpos = p_241156_1_.up();
+    return !isNormalCube(playerEntity.world, blockpos) || !isNormalCube(playerEntity.world,
+        blockpos.offset(p_241156_2_.getOpposite()));
+  }
+
+  private static boolean isNormalCube(World world, BlockPos pos) {
+    return !world.getBlockState(pos).isSuffocating(world, pos);
   }
 
   private boolean func_226861_a_(World p_226861_1_, BlockPos p_226861_2_) {
