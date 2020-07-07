@@ -62,6 +62,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import top.theillusivec4.comforts.Comforts;
 
@@ -170,7 +171,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
       } else {
 
-        if (playerEntity.world.isDaytime()) {
+        if (!ForgeEventFactory.fireSleepingTimeCheck(playerEntity, optAt)) {
           return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
         } else {
 

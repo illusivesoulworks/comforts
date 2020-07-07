@@ -56,7 +56,7 @@ public class HammockItem extends ComfortsBaseItem {
             .func_221536_a(new BlockItemUseContext(context), context.getPos().offset(direction),
                 direction));
 
-        if (result == ActionResultType.SUCCESS) {
+        if (result != ActionResultType.FAIL) {
           world.setBlockState(pos, state.with(SUPPORTING, true));
           world.setBlockState(blockpos, blockstate.with(SUPPORTING, true));
         }
