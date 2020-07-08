@@ -42,6 +42,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -85,7 +86,15 @@ public class Comforts {
     IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
     eventBus.addListener(this::setup);
     eventBus.addListener(this::gatherData);
+    eventBus.addListener(this::config);
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC);
+  }
+
+  private void config(final ModConfigEvent evt) {
+
+    if (evt.getConfig().getModId().equals(MODID)) {
+      ComfortsConfig.bake();
+    }
   }
 
   private void gatherData(GatherDataEvent evt) {
@@ -155,6 +164,7 @@ public class Comforts {
       registry.register(new ComfortsBaseItem(ComfortsRegistry.ROPE_AND_NAIL));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> evt) {
       TileEntityType<?> sleepingBag = TileEntityType.Builder.create(SleepingBagTileEntity::new,

@@ -21,7 +21,11 @@ package top.theillusivec4.comforts.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.comforts.Comforts;
 
@@ -75,5 +79,39 @@ public class ComfortsConfig {
           .translation(CONFIG_PREFIX + "sleepingBagDebuffs").worldRestart()
           .define("sleepingBagDebuffs", new ArrayList<>());
     }
+  }
+
+  public static boolean autoUse;
+  public static boolean wellRested;
+  public static double sleepyFactor;
+  public static boolean nightHammocks;
+  public static double sleepingBagBreakage;
+  public static List<EffectInstance> sleepingBagDebuffs;
+
+  public static void bake() {
+    autoUse = SERVER.autoUse.get();
+    wellRested = SERVER.wellRested.get();
+    sleepyFactor = SERVER.sleepyFactor.get();
+    nightHammocks = SERVER.nightHammocks.get();
+    sleepingBagBreakage = SERVER.sleepingBagBreakage.get();
+    sleepingBagDebuffs = new ArrayList<>();
+
+    SERVER.sleepingBagDebuffs.get().forEach(debuff -> {
+      String[] elements = debuff.split("\\s+");
+      Effect potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(elements[0]));
+
+      if (potion == null) {
+        return;
+      }
+      int duration = 0;
+      int amp = 0;
+      try {
+        duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
+        amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
+      } catch (Exception e) {
+        Comforts.LOGGER.error("Problem parsing sleeping bag debuffs in config!", e);
+      }
+      sleepingBagDebuffs.add(new EffectInstance(potion, duration * 20, amp - 1));
+    });
   }
 }

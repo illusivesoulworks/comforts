@@ -34,11 +34,17 @@ public class ComfortsRegistry {
   public static final EnumMap<DyeColor, Block> HAMMOCKS = new EnumMap<>(DyeColor.class);
 
   @ObjectHolder("comforts:rope_and_nail")
-  public static final Block ROPE_AND_NAIL = null;
+  public static final Block ROPE_AND_NAIL;
 
   @ObjectHolder("comforts:sleeping_bag")
-  public static final TileEntityType<SleepingBagTileEntity> SLEEPING_BAG_TE = null;
+  public static final TileEntityType<SleepingBagTileEntity> SLEEPING_BAG_TE;
 
   @ObjectHolder("comforts:hammock")
-  public static final TileEntityType<HammockTileEntity> HAMMOCK_TE = null;
+  public static final TileEntityType<HammockTileEntity> HAMMOCK_TE;
+
+  static {
+    ROPE_AND_NAIL = null;
+    SLEEPING_BAG_TE = null;
+    HAMMOCK_TE = null;
+  }
 }

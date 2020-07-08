@@ -26,9 +26,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -43,8 +41,6 @@ import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
@@ -52,39 +48,6 @@ import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 public class CommonEventHandler {
 
   public static List<EffectInstance> debuffs = new ArrayList<>();
-
-  private static List<EffectInstance> getDebuffs() {
-    List<String> configDebuffs = ComfortsConfig.SERVER.sleepingBagDebuffs.get();
-
-    if (!configDebuffs.isEmpty()) {
-
-      if (debuffs.isEmpty()) {
-
-        for (String s : configDebuffs) {
-          String[] elements = s.split("\\s+");
-          Effect potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(elements[0]));
-
-          if (potion == null) {
-            continue;
-          }
-
-          int duration = 0;
-          int amp = 0;
-          try {
-            duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
-            amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
-          } catch (Exception e) {
-            Comforts.LOGGER.error("Problem parsing sleeping bag debuffs in config!", e);
-          }
-          debuffs.add(new EffectInstance(potion, duration * 20, amp - 1));
-        }
-      }
-
-      return debuffs;
-    }
-
-    return new ArrayList<>();
-  }
 
   @SubscribeEvent
   public void onPlayerSetSpawn(PlayerSetSpawnEvent evt) {
@@ -168,7 +131,7 @@ public class CommonEventHandler {
               boolean broke = false;
 
               if (timeSlept > 500L) {
-                List<EffectInstance> debuffs = getDebuffs();
+                List<EffectInstance> debuffs = ComfortsConfig.sleepingBagDebuffs;
 
                 if (!debuffs.isEmpty()) {
 
