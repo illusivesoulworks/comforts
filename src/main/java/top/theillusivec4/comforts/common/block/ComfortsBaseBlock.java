@@ -34,6 +34,7 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntity.SleepResult;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -47,6 +48,7 @@ import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
@@ -226,12 +228,12 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   private static boolean func_241156_b_(ServerPlayerEntity playerEntity, BlockPos p_241156_1_,
       Direction p_241156_2_) {
     BlockPos blockpos = p_241156_1_.up();
-    return !isNormalCube(playerEntity.world, blockpos) || !isNormalCube(playerEntity.world,
+    return isAbnormalCube(playerEntity.world, blockpos) || isAbnormalCube(playerEntity.world,
         blockpos.offset(p_241156_2_.getOpposite()));
   }
 
-  private static boolean isNormalCube(World world, BlockPos pos) {
-    return !world.getBlockState(pos).isSuffocating(world, pos);
+  private static boolean isAbnormalCube(World world, BlockPos pos) {
+    return world.getBlockState(pos).isSuffocating(world, pos);
   }
 
   private boolean func_226861_a_(World p_226861_1_, BlockPos p_226861_2_) {
@@ -248,30 +250,32 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   }
 
   @Override
-  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-    BedPart bedpart = state.get(PART);
-    BlockPos blockpos = pos.offset(getDirectionToOther(bedpart, state.get(HORIZONTAL_FACING)));
-    BlockState blockstate = worldIn.getBlockState(blockpos);
-    if (blockstate.getBlock() == this && blockstate.get(PART) != bedpart) {
+  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
+      @Nonnull PlayerEntity player) {
 
-      if (blockstate.get(WATERLOGGED)) {
-        worldIn.setBlockState(blockpos, Blocks.WATER.getDefaultState(), 35);
-      } else {
-        worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+    if (!worldIn.isRemote && player.isCreative()) {
+      BedPart bedpart = state.get(PART);
+
+      if (bedpart == BedPart.FOOT) {
+        BlockPos blockpos = pos.offset(getDirectionToOther(bedpart, state.get(HORIZONTAL_FACING)));
+        BlockState blockstate = worldIn.getBlockState(blockpos);
+
+        if (blockstate.getBlock() == this && blockstate.get(PART) == BedPart.HEAD) {
+
+          if (blockstate.get(WATERLOGGED)) {
+            worldIn.setBlockState(blockpos, Blocks.WATER.getDefaultState(), 35);
+          } else {
+            worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+          }
+          worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
+        }
       }
-
-      worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
-
-      if (!worldIn.isRemote && !player.isCreative()) {
-        ItemStack itemstack = player.getHeldItemMainhand();
-        spawnDrops(state, worldIn, pos, null, player, itemstack);
-        spawnDrops(blockstate, worldIn, blockpos, null, player, itemstack);
-      }
-
-      player.addStat(Stats.BLOCK_MINED.get(this));
     }
-
     worldIn.playEvent(player, 2001, pos, getStateId(state));
+
+    if (this.isIn(BlockTags.field_232883_ay_)) {
+      PiglinTasks.func_234478_a_(player, false);
+    }
   }
 
   @Nonnull

@@ -22,11 +22,8 @@ package top.theillusivec4.comforts.common.block;
 import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,9 +31,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BedPart;
-import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -87,36 +82,6 @@ public class HammockBlock extends ComfortsBaseBlock {
     }
   }
 
-  @SuppressWarnings("ConstantConditions")
-  public static void finishHammockDrops(BlockState state, BlockPos pos, BlockState otherState,
-      BlockPos otherPos, Direction direction, World worldIn, @Nullable PlayerEntity player) {
-    BedPart bedpart = otherState.get(BedBlock.PART);
-    boolean isHead = bedpart == BedPart.HEAD;
-
-    if (otherState.get(ComfortsBaseBlock.WATERLOGGED)) {
-      worldIn.setBlockState(otherPos, Blocks.WATER.getDefaultState(), 35);
-    } else {
-      worldIn.setBlockState(otherPos, Blocks.AIR.getDefaultState(), 35);
-    }
-
-    worldIn.playEvent(player, 2001, otherPos, Block.getStateId(otherState));
-    dropRopeSupport(otherPos, direction, isHead, worldIn);
-
-    if (!worldIn.isRemote) {
-      ItemStack itemstack = ItemStack.EMPTY;
-
-      if (player != null) {
-
-        if (player.isCreative()) {
-          return;
-        }
-        itemstack = player.getHeldItemMainhand();
-      }
-      spawnDrops(state, worldIn, pos, null, player, itemstack);
-      spawnDrops(otherState, worldIn, otherPos, null, player, itemstack);
-    }
-  }
-
   @Nonnull
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
@@ -137,20 +102,15 @@ public class HammockBlock extends ComfortsBaseBlock {
   }
 
   @Override
-  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state,
+  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
       @Nonnull PlayerEntity player) {
+    super.onBlockHarvested(worldIn, pos, state, player);
     BedPart bedpart = state.get(PART);
     boolean isHead = bedpart == BedPart.HEAD;
     Direction direction = state.get(HORIZONTAL_FACING);
     BlockPos otherPos = pos.offset(getDirectionToOther(bedpart, direction));
-    BlockState otherState = worldIn.getBlockState(otherPos);
-
-    if (otherState.getBlock() == this && otherState.get(PART) != bedpart) {
-      finishHammockDrops(state, pos, otherState, otherPos, direction, worldIn, player);
-      dropRopeSupport(pos, direction, isHead, worldIn);
-      player.addStat(Stats.BLOCK_MINED.get(this));
-    }
-    worldIn.playEvent(player, 2001, pos, Block.getStateId(state));
+    dropRopeSupport(pos, direction, isHead, worldIn);
+    dropRopeSupport(otherPos, direction, !isHead, worldIn);
   }
 
   @Override

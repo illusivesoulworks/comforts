@@ -26,7 +26,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
@@ -44,7 +43,6 @@ import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.Comforts;
 import top.theillusivec4.comforts.common.block.HammockBlock;
@@ -196,17 +194,10 @@ public class CommonEventHandler {
               }
 
               if (!broke && sleepdata.getAutoSleepPos() != null) {
-                List<ItemStack> drops = Block.getDrops(state, (ServerWorld) world, bedPos, null);
                 BlockPos blockpos = bedPos
                     .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
                 world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
                 world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-
-                if (!player.abilities.isCreativeMode) {
-                  drops.forEach(drop -> ItemHandlerHelper
-                      .giveItemToPlayer(player, drop, player.inventory.currentItem));
-                }
-
                 player.clearBedPosition();
               }
             }

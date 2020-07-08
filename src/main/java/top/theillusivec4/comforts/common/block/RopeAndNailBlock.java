@@ -40,7 +40,6 @@ import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BedPart;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -98,64 +97,39 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
 
     if (!valid && worldIn instanceof ServerWorld) {
       ServerWorld world = (ServerWorld) worldIn;
-      BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
-      BlockState frontState = worldIn.getBlockState(frontPos);
-
-      if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
-        BedPart bedpart = frontState.get(BedBlock.PART);
-        boolean isHead = bedpart == BedPart.HEAD;
-        Direction frontDirection = frontState.get(HORIZONTAL_FACING);
-        BlockPos otherPos = frontPos
-            .offset(HammockBlock.getDirectionToOther(bedpart, frontDirection));
-        BlockState otherState = world.getBlockState(otherPos);
-
-        if (frontState.get(ComfortsBaseBlock.WATERLOGGED)) {
-          world.setBlockState(frontPos, Blocks.WATER.getDefaultState(), 35);
-        } else {
-          world.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
-        }
-
-        if (otherState.getBlock() instanceof HammockBlock
-            && otherState.get(BedBlock.PART) != bedpart) {
-          HammockBlock
-              .finishHammockDrops(frontState, frontPos, otherState, otherPos, frontDirection, world,
-                  null);
-          HammockBlock.dropRopeSupport(frontPos, frontDirection, isHead, world);
-        }
-      }
+      dropHammock(world, pos, state);
     }
     return valid;
+  }
+
+  private static void dropHammock(World world, BlockPos pos, BlockState state) {
+    BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
+    BlockState frontState = world.getBlockState(frontPos);
+
+    if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
+      BedPart bedpart = frontState.get(BedBlock.PART);
+      boolean isHead = bedpart == BedPart.HEAD;
+      Direction frontDirection = frontState.get(HORIZONTAL_FACING);
+      BlockPos otherPos = frontPos
+          .offset(HammockBlock.getDirectionToOther(bedpart, frontDirection));
+
+      if (isHead) {
+        spawnDrops(frontState, world, frontPos);
+      }
+
+      if (frontState.get(ComfortsBaseBlock.WATERLOGGED)) {
+        world.setBlockState(frontPos, Blocks.WATER.getDefaultState(), 35);
+      } else {
+        world.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
+      }
+      HammockBlock.dropRopeSupport(otherPos, frontDirection, !isHead, world);
+    }
   }
 
   @Override
   public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, BlockState state,
       @Nonnull PlayerEntity player) {
-    BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
-    BlockState frontState = worldIn.getBlockState(frontPos);
-
-    if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
-      BedPart bedpart = frontState.get(BedBlock.PART);
-      boolean isHead = bedpart == BedPart.HEAD;
-      Direction direction = frontState.get(HORIZONTAL_FACING);
-      BlockPos otherPos = frontPos.offset(HammockBlock.getDirectionToOther(bedpart, direction));
-      BlockState otherState = worldIn.getBlockState(otherPos);
-
-      if (frontState.get(ComfortsBaseBlock.WATERLOGGED)) {
-        worldIn.setBlockState(frontPos, Blocks.WATER.getDefaultState(), 35);
-      } else {
-        worldIn.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
-      }
-      worldIn.playEvent(player, 2001, frontPos, Block.getStateId(frontState));
-
-      if (otherState.getBlock() instanceof HammockBlock
-          && otherState.get(BedBlock.PART) != bedpart) {
-        HammockBlock
-            .finishHammockDrops(frontState, frontPos, otherState, otherPos, direction, worldIn,
-                player);
-        HammockBlock.dropRopeSupport(frontPos, direction, isHead, worldIn);
-        player.addStat(Stats.BLOCK_MINED.get(frontState.getBlock()));
-      }
-    }
+    dropHammock(worldIn, pos, state);
     super.onBlockHarvested(worldIn, pos, state, player);
   }
 
