@@ -11,7 +11,7 @@
       "item": "minecraft:yellow_wool"
     },
     "s": {
-      "item": "minecraft:string"
+      "tag": "forge:string"
     },
     "w": {
       "tag": "forge:rods/wooden"
