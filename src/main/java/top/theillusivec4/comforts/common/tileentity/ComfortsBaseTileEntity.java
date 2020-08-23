@@ -50,7 +50,7 @@ public class ComfortsBaseTileEntity extends TileEntity {
 
   @Override
   public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    ClientWorld clientWorld = Minecraft.getInstance().world;
+    final ClientWorld clientWorld = Minecraft.getInstance().world;
 
     if (clientWorld != null) {
       this.read(clientWorld.getBlockState(pkt.getPos()), pkt.getNbtCompound());

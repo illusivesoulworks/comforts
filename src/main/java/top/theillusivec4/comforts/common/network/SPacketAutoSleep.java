@@ -52,7 +52,7 @@ public class SPacketAutoSleep {
       Entity entity = Minecraft.getInstance().world.getEntityByID(msg.entityId);
 
       if (entity instanceof PlayerEntity) {
-        PlayerEntity playerEntity = (PlayerEntity) entity;
+        final PlayerEntity playerEntity = (PlayerEntity) entity;
         CapabilitySleepData.getCapability(playerEntity)
             .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(msg.pos));
       }

@@ -47,7 +47,7 @@ public class ComfortsBlockLootTables extends BlockLootTables {
 
   private final Map<ResourceLocation, Builder> lootBuilders = Maps.newHashMap();
 
-  private static LootTable.Builder getLootBuilder(Block block) {
+  private static LootTable.Builder getLootBuilder(final Block block) {
     return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(
         ItemLootEntry.builder(block).acceptCondition(BlockStateProperty.builder(block)
             .fromProperties(StatePropertiesPredicate.Builder.newBuilder()

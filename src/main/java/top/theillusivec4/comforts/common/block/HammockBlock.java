@@ -86,7 +86,7 @@ public class HammockBlock extends ComfortsBaseBlock {
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
       ISelectionContext context) {
-    Direction direction = func_226862_h_(state).getOpposite();
+    final Direction direction = func_226862_h_(state).getOpposite();
     switch (direction) {
       case NORTH:
         return NORTH_SHAPE;
@@ -105,20 +105,20 @@ public class HammockBlock extends ComfortsBaseBlock {
   public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
       @Nonnull PlayerEntity player) {
     super.onBlockHarvested(worldIn, pos, state, player);
-    BedPart bedpart = state.get(PART);
-    boolean isHead = bedpart == BedPart.HEAD;
-    Direction direction = state.get(HORIZONTAL_FACING);
-    BlockPos otherPos = pos.offset(getDirectionToOther(bedpart, direction));
+    final BedPart bedpart = state.get(PART);
+    final boolean isHead = bedpart == BedPart.HEAD;
+    final Direction direction = state.get(HORIZONTAL_FACING);
+    final BlockPos otherPos = pos.offset(getDirectionToOther(bedpart, direction));
     dropRopeSupport(pos, direction, isHead, worldIn);
     dropRopeSupport(otherPos, direction, !isHead, worldIn);
   }
 
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    Direction direction = context.getFace();
-    BlockPos blockpos = context.getPos();
-    BlockPos blockpos1 = blockpos.offset(direction);
-    FluidState ifluidstate = context.getWorld().getFluidState(blockpos);
+    final Direction direction = context.getFace();
+    final BlockPos blockpos = context.getPos();
+    final BlockPos blockpos1 = blockpos.offset(direction);
+    final FluidState ifluidstate = context.getWorld().getFluidState(blockpos);
     return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this
         .getDefaultState().with(HORIZONTAL_FACING, direction)
         .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER) : null;

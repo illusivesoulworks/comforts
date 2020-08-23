@@ -69,7 +69,7 @@ public class ComfortsLootProvider extends LootTableProvider {
 
   @Override
   public void act(@Nonnull DirectoryCache cache) {
-    Path path = this.dataGenerator.getOutputFolder();
+    final Path path = this.dataGenerator.getOutputFolder();
     Map<ResourceLocation, LootTable> map = Maps.newHashMap();
     this.lootTables
         .forEach((lootPair) -> lootPair.getFirst().get().accept((resourceLocation, lootTable) -> {
@@ -89,7 +89,7 @@ public class ComfortsLootProvider extends LootTableProvider {
       throw new IllegalStateException("Failed to validate loot tables, see logs");
     } else {
       map.forEach((resourceLocation, lootTable) -> {
-        Path path1 = getPath(path, resourceLocation);
+        final Path path1 = getPath(path, resourceLocation);
 
         try {
           IDataProvider.save(GSON, cache, LootTableManager.toJson(lootTable), path1);

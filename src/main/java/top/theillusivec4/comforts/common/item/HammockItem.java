@@ -42,14 +42,14 @@ public class HammockItem extends ComfortsBaseItem {
   @Nonnull
   @Override
   public ActionResultType onItemUse(ItemUseContext context) {
-    World world = context.getWorld();
-    BlockPos pos = context.getPos();
-    BlockState state = world.getBlockState(pos);
+    final World world = context.getWorld();
+    final BlockPos pos = context.getPos();
+    final BlockState state = world.getBlockState(pos);
 
     if (state.getBlock() instanceof RopeAndNailBlock) {
-      Direction direction = state.get(HORIZONTAL_FACING);
-      BlockPos blockpos = pos.offset(direction, 3);
-      BlockState blockstate = world.getBlockState(blockpos);
+      final Direction direction = state.get(HORIZONTAL_FACING);
+      final BlockPos blockpos = pos.offset(direction, 3);
+      final BlockState blockstate = world.getBlockState(blockpos);
 
       if (hasPartneredRopes(state, blockstate)) {
         ActionResultType result = this.tryPlace(BlockItemUseContext

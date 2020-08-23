@@ -77,7 +77,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
   private final BedType type;
 
-  public ComfortsBaseBlock(BedType type, DyeColor colorIn, Block.Properties properties) {
+  public ComfortsBaseBlock(final BedType type, DyeColor colorIn, Block.Properties properties) {
     super(colorIn, properties);
     this.type = type;
     this.setDefaultState(
@@ -109,7 +109,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
       if (!func_235330_a_(worldIn)) {
         worldIn.removeBlock(pos, false);
-        BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
+        final BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
 
         if (worldIn.getBlockState(blockpos).isIn(this)) {
           worldIn.removeBlock(blockpos, false);
@@ -130,7 +130,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         trySleep((ServerPlayerEntity) player, pos).ifLeft((result) -> {
 
           if (result != null) {
-            ITextComponent text;
+            final ITextComponent text;
             switch (result) {
               case NOT_POSSIBLE_NOW:
                 text = type == BedType.HAMMOCK ? new TranslationTextComponent(
@@ -153,14 +153,14 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   }
 
   public static Either<SleepResult, Unit> trySleep(ServerPlayerEntity playerEntity, BlockPos at) {
-    java.util.Optional<BlockPos> optAt = java.util.Optional.of(at);
-    PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory
+    final java.util.Optional<BlockPos> optAt = java.util.Optional.of(at);
+    final PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory
         .onPlayerSleepInBed(playerEntity, optAt);
 
     if (ret != null) {
       return Either.left(ret);
     }
-    Direction direction = playerEntity.world.getBlockState(at)
+    final Direction direction = playerEntity.world.getBlockState(at)
         .get(HorizontalBlock.HORIZONTAL_FACING);
 
     if (!playerEntity.isSleeping() && playerEntity.isAlive()) {
@@ -178,13 +178,13 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         } else {
 
           if (!playerEntity.isCreative()) {
-            double d0 = 8.0D;
-            double d1 = 5.0D;
-            Vector3d vector3d = Vector3d.copyCenteredHorizontally(at);
+            final double d0 = 8.0D;
+            final double d1 = 5.0D;
+            final Vector3d vector3d = Vector3d.copyCenteredHorizontally(at);
             List<MonsterEntity> list = playerEntity.world.getEntitiesWithinAABB(MonsterEntity.class,
-                new AxisAlignedBB(vector3d.getX() - 8.0D, vector3d.getY() - 5.0D,
-                    vector3d.getZ() - 8.0D, vector3d.getX() + 8.0D, vector3d.getY() + 5.0D,
-                    vector3d.getZ() + 8.0D),
+                new AxisAlignedBB(vector3d.getX() - d0, vector3d.getY() - d1,
+                    vector3d.getZ() - d0, vector3d.getX() + d0, vector3d.getY() + d1,
+                    vector3d.getZ() + d0),
                 (p_241146_1_) -> p_241146_1_.func_230292_f_(playerEntity));
 
             if (!list.isEmpty()) {
@@ -219,7 +219,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   }
 
   private static boolean func_241158_g_(ServerPlayerEntity playerEntity, BlockPos p_241158_1_) {
-    Vector3d vector3d = Vector3d.copyCenteredHorizontally(p_241158_1_);
+    final Vector3d vector3d = Vector3d.copyCenteredHorizontally(p_241158_1_);
     return Math.abs(playerEntity.getPosX() - vector3d.getX()) <= 3.0D
         && Math.abs(playerEntity.getPosY() - vector3d.getY()) <= 2.0D
         && Math.abs(playerEntity.getPosZ() - vector3d.getZ()) <= 3.0D;
@@ -227,7 +227,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
   private static boolean func_241156_b_(ServerPlayerEntity playerEntity, BlockPos p_241156_1_,
       Direction p_241156_2_) {
-    BlockPos blockpos = p_241156_1_.up();
+    final BlockPos blockpos = p_241156_1_.up();
     return isAbnormalCube(playerEntity.world, blockpos) || isAbnormalCube(playerEntity.world,
         blockpos.offset(p_241156_2_.getOpposite()));
   }
@@ -254,11 +254,11 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
       @Nonnull PlayerEntity player) {
 
     if (!worldIn.isRemote && player.isCreative()) {
-      BedPart bedpart = state.get(PART);
+      final BedPart bedpart = state.get(PART);
 
       if (bedpart == BedPart.FOOT) {
-        BlockPos blockpos = pos.offset(getDirectionToOther(bedpart, state.get(HORIZONTAL_FACING)));
-        BlockState blockstate = worldIn.getBlockState(blockpos);
+        final BlockPos blockpos = pos.offset(getDirectionToOther(bedpart, state.get(HORIZONTAL_FACING)));
+        final BlockState blockstate = worldIn.getBlockState(blockpos);
 
         if (blockstate.getBlock() == this && blockstate.get(PART) == BedPart.HEAD) {
 
@@ -295,8 +295,8 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   @Nullable
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
-    BlockState state = super.getStateForPlacement(context);
+    final FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+    final BlockState state = super.getStateForPlacement(context);
     return state == null ? null : state.with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
   }
 

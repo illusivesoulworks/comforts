@@ -41,12 +41,12 @@ public class SleepingBagItem extends ComfortsBaseItem {
   @Nonnull
   @Override
   public ActionResultType onItemUse(ItemUseContext context) {
-    ActionResultType result = super.onItemUse(context);
-    PlayerEntity player = context.getPlayer();
+    final ActionResultType result = super.onItemUse(context);
+    final PlayerEntity player = context.getPlayer();
 
     if (player instanceof ServerPlayerEntity && result.isSuccessOrConsume()
         && ComfortsConfig.SERVER.autoUse.get() && !player.isCrouching()) {
-      BlockPos pos = context.getPos().up();
+      final BlockPos pos = context.getPos().up();
       CapabilitySleepData.getCapability(player)
           .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(pos));
       ComfortsNetwork.INSTANCE

@@ -69,7 +69,7 @@ import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 import top.theillusivec4.comforts.data.ComfortsLootProvider;
 
 @Mod(Comforts.MODID)
-public class Comforts {
+public final class Comforts {
 
   public static final String MODID = "comforts";
 
@@ -83,7 +83,7 @@ public class Comforts {
   public static final Logger LOGGER = LogManager.getLogger();
 
   public Comforts() {
-    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
     eventBus.addListener(this::setup);
     eventBus.addListener(this::gatherData);
     eventBus.addListener(this::config);
@@ -97,7 +97,7 @@ public class Comforts {
     }
   }
 
-  private void gatherData(GatherDataEvent evt) {
+  private void gatherData(final GatherDataEvent evt) {
     DataGenerator generator = evt.getGenerator();
 
     if (evt.includeServer()) {
@@ -105,7 +105,7 @@ public class Comforts {
     }
   }
 
-  private void setup(FMLCommonSetupEvent evt) {
+  private void setup(final FMLCommonSetupEvent evt) {
     MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
     CapabilitySleepData.register();
     ComfortsNetwork.register();
@@ -115,7 +115,7 @@ public class Comforts {
   public static class ClientProxy {
 
     @SubscribeEvent
-    public static void setupClient(FMLClientSetupEvent evt) {
+    public static void setupClient(final FMLClientSetupEvent evt) {
       MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
       ClientRegistry.bindTileEntityRenderer(ComfortsRegistry.SLEEPING_BAG_TE,
           SleepingBagTileEntityRenderer::new);
@@ -128,7 +128,7 @@ public class Comforts {
     public static void textureStitch(TextureStitchEvent.Pre evt) {
 
       if (evt.getMap().getTextureLocation() == PlayerContainer.LOCATION_BLOCKS_TEXTURE) {
-        for (DyeColor color : DyeColor.values()) {
+        for (final DyeColor color : DyeColor.values()) {
           evt.addSprite(
               new ResourceLocation(Comforts.MODID, "entity/hammock/" + color.getTranslationKey()));
           evt.addSprite(new ResourceLocation(Comforts.MODID,
