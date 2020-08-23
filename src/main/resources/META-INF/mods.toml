@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[32,)"
 issueTrackerURL="https://github.com/TheIllusiveC4/Comforts/issues"
 logoFile="${mod_icon}"
+license="LGPL-3.0"
 [[mods]]
 modId="${mod_id}"
 version="${version}"

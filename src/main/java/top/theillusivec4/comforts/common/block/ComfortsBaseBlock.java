@@ -115,7 +115,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
           worldIn.removeBlock(blockpos, false);
         }
         worldIn
-            .func_230546_a_(null, DamageSource.func_233546_a_(), null, (double) pos.getX() + 0.5D,
+            .createExplosion(null, DamageSource.func_233546_a_(), null, (double) pos.getX() + 0.5D,
                 (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true,
                 Explosion.Mode.DESTROY);
         return ActionResultType.SUCCESS;
@@ -180,7 +180,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
           if (!playerEntity.isCreative()) {
             double d0 = 8.0D;
             double d1 = 5.0D;
-            Vector3d vector3d = Vector3d.func_237492_c_(at);
+            Vector3d vector3d = Vector3d.copyCenteredHorizontally(at);
             List<MonsterEntity> list = playerEntity.world.getEntitiesWithinAABB(MonsterEntity.class,
                 new AxisAlignedBB(vector3d.getX() - 8.0D, vector3d.getY() - 5.0D,
                     vector3d.getZ() - 8.0D, vector3d.getX() + 8.0D, vector3d.getY() + 5.0D,
@@ -219,7 +219,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
   }
 
   private static boolean func_241158_g_(ServerPlayerEntity playerEntity, BlockPos p_241158_1_) {
-    Vector3d vector3d = Vector3d.func_237492_c_(p_241158_1_);
+    Vector3d vector3d = Vector3d.copyCenteredHorizontally(p_241158_1_);
     return Math.abs(playerEntity.getPosX() - vector3d.getX()) <= 3.0D
         && Math.abs(playerEntity.getPosY() - vector3d.getY()) <= 2.0D
         && Math.abs(playerEntity.getPosZ() - vector3d.getZ()) <= 3.0D;
@@ -273,7 +273,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
     }
     worldIn.playEvent(player, 2001, pos, getStateId(state));
 
-    if (this.isIn(BlockTags.field_232883_ay_)) {
+    if (this.isIn(BlockTags.GUARDED_BY_PIGLINS)) {
       PiglinTasks.func_234478_a_(player, false);
     }
   }
