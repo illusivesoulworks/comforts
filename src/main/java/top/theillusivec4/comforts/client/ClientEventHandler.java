@@ -46,18 +46,18 @@ import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 public class ClientEventHandler {
 
   @SubscribeEvent
-  public void onPostPlayerTick(TickEvent.PlayerTickEvent evt) {
+  public void onPostPlayerTick(final TickEvent.PlayerTickEvent evt) {
 
     if (evt.phase == Phase.START && evt.side == LogicalSide.CLIENT) {
-      PlayerEntity player = evt.player;
+      final PlayerEntity player = evt.player;
 
       if (!player.isSleeping()) {
         CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
-          BlockPos pos = sleepdata.getAutoSleepPos();
+          final BlockPos pos = sleepdata.getAutoSleepPos();
 
           if (pos != null) {
-            World world = player.world;
-            BlockState state = world.getBlockState(pos);
+            final World world = player.world;
+            final BlockState state = world.getBlockState(pos);
 
             if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
               BlockRayTraceResult hit = new BlockRayTraceResult(new Vector3d(0, 0, 0),
@@ -79,13 +79,13 @@ public class ClientEventHandler {
   }
 
   @SubscribeEvent
-  public void onPlayerRenderPre(RenderPlayerEvent.Pre evt) {
+  public void onPlayerRenderPre(final RenderPlayerEvent.Pre evt) {
     final PlayerEntity player = evt.getPlayer();
 
     if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
       player.getBedPosition().ifPresent(bedPos -> {
         MatrixStack matrixStack = evt.getMatrixStack();
-        Block bed = player.world.getBlockState(bedPos).getBlock();
+        final Block bed = player.world.getBlockState(bedPos).getBlock();
         if (bed instanceof SleepingBagBlock) {
           matrixStack.translate(0.0f, -0.375F, 0.0f);
         } else if (bed instanceof HammockBlock) {
@@ -96,13 +96,13 @@ public class ClientEventHandler {
   }
 
   @SubscribeEvent
-  public void onPlayerRenderPost(RenderPlayerEvent.Post evt) {
+  public void onPlayerRenderPost(final RenderPlayerEvent.Post evt) {
     final PlayerEntity player = evt.getPlayer();
 
     if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
       player.getBedPosition().ifPresent(bedPos -> {
         MatrixStack matrixStack = evt.getMatrixStack();
-        Block bed = player.world.getBlockState(bedPos).getBlock();
+        final Block bed = player.world.getBlockState(bedPos).getBlock();
         if (bed instanceof SleepingBagBlock) {
           matrixStack.translate(0.0f, 0.375F, 0.0f);
         } else if (bed instanceof HammockBlock) {

@@ -200,8 +200,8 @@ public class CapabilitySleepData {
     public void onPlayerDeath(final PlayerEvent.Clone evt) {
 
       if (evt.isWasDeath()) {
-        PlayerEntity player = evt.getPlayer();
-        PlayerEntity original = evt.getOriginal();
+        final PlayerEntity player = evt.getPlayer();
+        final PlayerEntity original = evt.getOriginal();
         original.revive();
         CapabilitySleepData.getCapability(player).ifPresent(
             sleepdata -> CapabilitySleepData.getCapability(original)

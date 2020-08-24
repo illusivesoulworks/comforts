@@ -60,7 +60,7 @@ public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<Ha
     matrixStack.translate(0.5D, 0.5D, 0.5D);
     matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
     matrixStack.translate(-0.5D, -0.5D, -0.5D);
-    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::getEntitySolid);
+    final IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::getEntitySolid);
     this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
     this.headBoard.render(matrixStack, ivertexbuilder, light, overlay);
     this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);

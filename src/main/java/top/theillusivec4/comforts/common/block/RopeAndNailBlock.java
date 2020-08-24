@@ -90,10 +90,10 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
   @SuppressWarnings("deprecation")
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
-    Direction direction = state.get(HORIZONTAL_FACING);
-    BlockPos blockpos = pos.offset(direction.getOpposite());
-    BlockState blockstate = worldIn.getBlockState(blockpos);
-    boolean valid = blockstate.isSolidSide(worldIn, blockpos, direction);
+    final Direction direction = state.get(HORIZONTAL_FACING);
+    final BlockPos blockpos = pos.offset(direction.getOpposite());
+    final BlockState blockstate = worldIn.getBlockState(blockpos);
+    final boolean valid = blockstate.isSolidSide(worldIn, blockpos, direction);
 
     if (!valid && worldIn instanceof ServerWorld) {
       ServerWorld world = (ServerWorld) worldIn;
@@ -103,14 +103,14 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
   }
 
   private static void dropHammock(World world, BlockPos pos, BlockState state) {
-    BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
-    BlockState frontState = world.getBlockState(frontPos);
+    final BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
+    final BlockState frontState = world.getBlockState(frontPos);
 
     if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
-      BedPart bedpart = frontState.get(BedBlock.PART);
-      boolean isHead = bedpart == BedPart.HEAD;
-      Direction frontDirection = frontState.get(HORIZONTAL_FACING);
-      BlockPos otherPos = frontPos
+      final BedPart bedpart = frontState.get(BedBlock.PART);
+      final boolean isHead = bedpart == BedPart.HEAD;
+      final Direction frontDirection = frontState.get(HORIZONTAL_FACING);
+      final BlockPos otherPos = frontPos
           .offset(HammockBlock.getDirectionToOther(bedpart, frontDirection));
 
       if (isHead) {
@@ -136,16 +136,16 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
   @Nullable
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+    final FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
     BlockState blockstate = this.getDefaultState();
-    IWorldReader worldreader = context.getWorld();
-    BlockPos blockpos = context.getPos();
-    Direction[] directions = context.getNearestLookingDirections();
+    final IWorldReader worldreader = context.getWorld();
+    final BlockPos blockpos = context.getPos();
+    final Direction[] directions = context.getNearestLookingDirections();
 
     for (Direction direction : directions) {
 
       if (direction.getAxis().isHorizontal()) {
-        Direction direction1 = direction.getOpposite();
+        final Direction direction1 = direction.getOpposite();
         blockstate = blockstate.with(HORIZONTAL_FACING, direction1)
             .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
 

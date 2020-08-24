@@ -53,7 +53,7 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
   protected ModelRenderer headPiece;
   protected ModelRenderer footPiece;
 
-  public ComfortsBaseTileEntityRenderer(TileEntityRendererDispatcher dispatcher, String type) {
+  public ComfortsBaseTileEntityRenderer(TileEntityRendererDispatcher dispatcher, final String type) {
     super(dispatcher);
     this.headPiece = new ModelRenderer(0, 0, 0, 0);
     this.footPiece = new ModelRenderer(0, 0, 0, 0);
@@ -64,18 +64,18 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
   public void render(ComfortsBaseTileEntity tileEntityIn, float partialTicks,
       @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn,
       int combinedOverlayIn) {
-    RenderMaterial material = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE,
+    final RenderMaterial material = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE,
         new ResourceLocation(Comforts.MODID,
             "entity/" + type + "/" + tileEntityIn.getColor().getTranslationKey()));
-    World world = tileEntityIn.getWorld();
+    final World world = tileEntityIn.getWorld();
 
     if (world != null) {
-      BlockState blockstate = tileEntityIn.getBlockState();
+      final BlockState blockstate = tileEntityIn.getBlockState();
       ICallbackWrapper<? extends BedTileEntity> icallbackwrapper = TileEntityMerger
-          .func_226924_a_(TileEntityType.BED, BedBlock::func_226863_i_, BedBlock::func_226862_h_,
+          .func_226924_a_(TileEntityType.BED, BedBlock::getMergeType, BedBlock::func_226862_h_,
               ChestBlock.FACING, blockstate, world, tileEntityIn.getPos(),
               (p_228846_0_, p_228846_1_) -> false);
-      int i = icallbackwrapper.apply(new DualBrightnessCallback<>()).get(combinedLightIn);
+      final int i = icallbackwrapper.apply(new DualBrightnessCallback<>()).get(combinedLightIn);
       this.renderPiece(matrixStackIn, bufferIn, blockstate.get(BedBlock.PART) == BedPart.HEAD,
           blockstate.get(BedBlock.HORIZONTAL_FACING), material, i, combinedOverlayIn, false);
     } else {

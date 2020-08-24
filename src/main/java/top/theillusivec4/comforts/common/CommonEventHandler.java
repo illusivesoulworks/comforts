@@ -51,9 +51,9 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onPlayerSetSpawn(PlayerSetSpawnEvent evt) {
-    PlayerEntity player = evt.getPlayer();
-    World world = player.getEntityWorld();
-    BlockPos pos = evt.getNewSpawn();
+    final PlayerEntity player = evt.getPlayer();
+    final World world = player.getEntityWorld();
+    final BlockPos pos = evt.getNewSpawn();
 
     if (pos != null && !world.isRemote) {
       Block block = world.getBlockState(pos).getBlock();
@@ -66,8 +66,8 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onSleepTimeCheck(SleepingTimeCheckEvent evt) {
-    World world = evt.getPlayer().getEntityWorld();
-    long worldTime = world.getDayTime() % 24000L;
+    final World world = evt.getPlayer().getEntityWorld();
+    final long worldTime = world.getDayTime() % 24000L;
 
     evt.getSleepingLocation().ifPresent(sleepingLocation -> {
       if (world.getBlockState(sleepingLocation).getBlock() instanceof HammockBlock) {
@@ -109,7 +109,7 @@ public class CommonEventHandler {
       }
 
       if (activeHammock[0] && world.getWorld().isDaytime()) {
-        long i = serverWorld.getDayTime() + 24000L;
+        final long i = serverWorld.getDayTime() + 24000L;
         evt.setTimeAddition((i - i % 24000L) - 12001L);
       }
     }
@@ -117,15 +117,15 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onPlayerWakeUp(PlayerWakeUpEvent evt) {
-    PlayerEntity player = evt.getPlayer();
+    final PlayerEntity player = evt.getPlayer();
     World world = player.world;
 
     if (!world.isRemote) {
       CapabilitySleepData.getCapability(player)
           .ifPresent(sleepdata -> player.getBedPosition().ifPresent(bedPos -> {
-            long wakeTime = world.getDayTime();
-            long timeSlept = wakeTime - sleepdata.getSleepTime();
-            BlockState state = world.getBlockState(bedPos);
+            final long wakeTime = world.getDayTime();
+            final long timeSlept = wakeTime - sleepdata.getSleepTime();
+            final BlockState state = world.getBlockState(bedPos);
 
             if (state.getBlock() instanceof SleepingBagBlock) {
               boolean broke = false;
@@ -144,7 +144,7 @@ public class CommonEventHandler {
 
                 if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
                   broke = true;
-                  BlockPos blockpos = bedPos
+                  final BlockPos blockpos = bedPos
                       .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
                   world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
                   world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
@@ -157,7 +157,7 @@ public class CommonEventHandler {
               }
 
               if (!broke && sleepdata.getAutoSleepPos() != null) {
-                BlockPos blockpos = bedPos
+                final BlockPos blockpos = bedPos
                     .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
                 world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
                 world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
@@ -174,11 +174,11 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onPlayerSleep(PlayerSleepInBedEvent evt) {
-    PlayerEntity player = evt.getPlayer();
+    final PlayerEntity player = evt.getPlayer();
     CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
 
       if (!player.world.isRemote) {
-        long dayTime = player.getEntityWorld().getDayTime();
+        final long dayTime = player.getEntityWorld().getDayTime();
         sleepdata.setSleepTime(dayTime);
 
         if (ComfortsConfig.SERVER.wellRested.get()) {
