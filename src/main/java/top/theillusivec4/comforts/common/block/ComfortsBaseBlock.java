@@ -107,7 +107,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
         }
       }
 
-      if (!func_235330_a_(worldIn)) {
+      if (!doesBedWork(worldIn)) {
         worldIn.removeBlock(pos, false);
         final BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
 
@@ -165,7 +165,7 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
     if (!playerEntity.isSleeping() && playerEntity.isAlive()) {
 
-      if (!playerEntity.world.func_230315_m_().func_236043_f_()) {
+      if (!playerEntity.world.getDimensionType().isNatural()) {
         return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
       } else if (!func_241147_a_(playerEntity, at, direction)) {
         return Either.left(PlayerEntity.SleepResult.TOO_FAR_AWAY);

@@ -72,7 +72,7 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
     if (world != null) {
       final BlockState blockstate = tileEntityIn.getBlockState();
       ICallbackWrapper<? extends BedTileEntity> icallbackwrapper = TileEntityMerger
-          .func_226924_a_(TileEntityType.BED, BedBlock::getMergeType, BedBlock::func_226862_h_,
+          .func_226924_a_(TileEntityType.BED, BedBlock::getMergeType, BedBlock::getFootDirection,
               ChestBlock.FACING, blockstate, world, tileEntityIn.getPos(),
               (p_228846_0_, p_228846_1_) -> false);
       final int i = icallbackwrapper.apply(new DualBrightnessCallback<>()).get(combinedLightIn);

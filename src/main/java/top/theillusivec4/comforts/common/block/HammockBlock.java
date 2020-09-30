@@ -86,7 +86,7 @@ public class HammockBlock extends ComfortsBaseBlock {
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
       ISelectionContext context) {
-    final Direction direction = func_226862_h_(state).getOpposite();
+    final Direction direction = getFootDirection(state).getOpposite();
     switch (direction) {
       case NORTH:
         return NORTH_SHAPE;
