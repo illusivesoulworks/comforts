@@ -38,6 +38,6 @@
   "block.comforts.hammock.too_far_away": "Вы не можете вздремнуть, гамак слишком далеко",
   "block.comforts.sleeping_bag.too_far_away": "Вы не можете уснуть, спальный мешок слишком далеко",
   "block.comforts.hammock.no_sleep": "Вздремнуть можно только днём",
-  "block.comforts.sleeping_bag.broke": "The sleeping bag broke",
+  "block.comforts.sleeping_bag.broke": "Спальный мешок сломан",
   "capability.comforts.not_sleepy": "Вы недостаточно устали для отдыха"
 }
