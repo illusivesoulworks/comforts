@@ -66,8 +66,16 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        url = "https://www.cursemaven.com"
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
+
+    compile fg.deobf("curse.maven:morpheus-69118:3114135")
 }
 
 sourceSets {
