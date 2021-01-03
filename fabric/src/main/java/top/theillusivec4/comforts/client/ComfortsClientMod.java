@@ -20,8 +20,8 @@ public class ComfortsClientMod implements ClientModInitializer {
         .register(ComfortsRegistry.SLEEPING_BAG_BE, SleepingBagBlockEntityRenderer::new);
     BlockEntityRendererRegistry.INSTANCE
         .register(ComfortsRegistry.HAMMOCK_BE, HammockBlockEntityRenderer::new);
-    AccessorRenderLayers.getBlocks().put(ComfortsRegistry.ROPE_AND_NAIL,
-        RenderLayer.getTranslucent());
+    AccessorRenderLayers.getBlocks()
+        .put(ComfortsRegistry.ROPE_AND_NAIL, RenderLayer.getTranslucent());
     ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
         .register((atlasTexture, registry) -> {
           for (final DyeColor color : DyeColor.values()) {
