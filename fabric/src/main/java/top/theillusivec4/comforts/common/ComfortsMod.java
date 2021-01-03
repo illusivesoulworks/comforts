@@ -1,4 +1,4 @@
-package top.theillusivec4.comforts;
+package top.theillusivec4.comforts.common;
 
 import java.util.List;
 import net.fabricmc.api.ModInitializer;

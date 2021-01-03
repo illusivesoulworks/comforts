@@ -4,7 +4,8 @@
   "package": "top.theillusivec4.comforts.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "AccessorPlayerEntity"
+    "AccessorPlayerEntity",
+    "MixinPlayerEntity"
   ],
   "client": [
     "AccessorRenderLayers"

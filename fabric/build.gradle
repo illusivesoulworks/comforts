@@ -17,6 +17,10 @@ repositories {
     maven {
         url = "https://maven.theillusivec4.top"
     }
+    maven {
+        name = "Ladysnake Libs"
+        url = "https://dl.bintray.com/ladysnake/libs"
+    }
 }
 
 dependencies {
@@ -30,6 +34,8 @@ dependencies {
     modImplementation fabricApi.module("fabric-renderer-registries-v1", project.fabric_version)
     modImplementation fabricApi.module("fabric-textures-v0", project.fabric_version)
     modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca_version}"
     modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"

@@ -5,7 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
-import top.theillusivec4.comforts.ComfortsMod;
+import top.theillusivec4.comforts.common.ComfortsMod;
 
 public abstract class AbstractComfortsItem extends BlockItem {
 

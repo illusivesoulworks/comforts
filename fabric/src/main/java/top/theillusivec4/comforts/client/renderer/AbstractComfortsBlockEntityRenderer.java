@@ -22,7 +22,7 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import top.theillusivec4.comforts.ComfortsMod;
+import top.theillusivec4.comforts.common.ComfortsMod;
 import top.theillusivec4.comforts.common.block.entity.AbstractComfortsBlockEntity;
 
 public class AbstractComfortsBlockEntityRenderer<T extends AbstractComfortsBlockEntity>

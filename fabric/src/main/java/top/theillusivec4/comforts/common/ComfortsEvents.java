@@ -2,6 +2,9 @@ package top.theillusivec4.comforts.common;
 
 import java.util.List;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +34,7 @@ public class ComfortsEvents {
     return TriState.DEFAULT;
   }
 
-  public static long getWakeTime(ServerWorld serverWorld, long newTime, long minTime){
+  public static long getWakeTime(ServerWorld serverWorld, long newTime, long minTime) {
     final boolean[] activeHammock = {false};
     List<? extends PlayerEntity> players = serverWorld.getPlayers();
 
@@ -53,5 +56,25 @@ public class ComfortsEvents {
       return (i - i % 24000L) - 12001L;
     }
     return newTime;
+  }
+
+  public static void wakeUp(PlayerEntity player) {
+    World world = player.world;
+
+    if (!world.isClient) {
+      player.getSleepingPosition().ifPresent(bedPos -> {
+        final BlockState state = world.getBlockState(bedPos);
+        ComfortsComponents.SLEEP_TRACKER.maybeGet(player).ifPresent(tracker -> {
+          tracker.getAutoSleepPos().ifPresent(pos -> {
+            final BlockPos blockpos = bedPos
+                .offset(state.get(HorizontalFacingBlock.FACING).getOpposite());
+            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+            world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+            player.clearSleepingPosition();
+          });
+          tracker.setAutoSleepPos(null);
+        });
+      });
+    }
   }
 }

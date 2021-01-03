@@ -5,7 +5,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.registry.Registry;
-import top.theillusivec4.comforts.ComfortsMod;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;

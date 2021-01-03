@@ -15,10 +15,18 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "top.theillusivec4.comforts.ComfortsMod"
+      "top.theillusivec4.comforts.common.ComfortsMod"
     ],
     "client": [
       "top.theillusivec4.comforts.client.ComfortsClientMod"
+    ],
+    "cardinal-components-entity": [
+      "top.theillusivec4.comforts.common.ComfortsComponents"
+    ]
+  },
+  "custom": {
+    "cardinal-components": [
+      "comforts:sleep_tracker"
     ]
   },
   "mixins": [
