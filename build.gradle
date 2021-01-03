@@ -76,6 +76,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
 
     compile fg.deobf("curse.maven:morpheus-69118:3114135")
+    compile fg.deobf("curse.maven:survive-367337:3151945")
+
+    runtimeOnly fg.deobf("curse.maven:unionlib-367806:3143559")
 }
 
 sourceSets {

@@ -62,6 +62,7 @@ import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 import top.theillusivec4.comforts.common.integration.MorpheusIntegration;
+import top.theillusivec4.comforts.common.integration.SurviveIntegration;
 import top.theillusivec4.comforts.common.item.ComfortsBaseItem;
 import top.theillusivec4.comforts.common.item.HammockItem;
 import top.theillusivec4.comforts.common.item.SleepingBagItem;
@@ -114,6 +115,10 @@ public final class Comforts {
 
     if (ModList.get().isLoaded("morpheus")) {
       MorpheusIntegration.setup();
+    }
+
+    if (ModList.get().isLoaded("survive")) {
+      MinecraftForge.EVENT_BUS.register(new SurviveIntegration());
     }
   }
 
