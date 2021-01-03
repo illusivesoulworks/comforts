@@ -42,7 +42,7 @@ public class HammockBlockEntityRenderer
     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F));
     matrixStack.translate(0.5D, 0.5D, 0.5D);
     matrixStack
-        .multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F + direction.getHorizontal()));
+        .multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F + direction.asRotation()));
     matrixStack.translate(-0.5D, -0.5D, -0.5D);
     final VertexConsumer ivertexbuilder =
         material.getVertexConsumer(buffer, RenderLayer::getEntitySolid);

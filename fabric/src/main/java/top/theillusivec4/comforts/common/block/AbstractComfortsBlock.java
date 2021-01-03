@@ -6,6 +6,7 @@ import static net.minecraft.entity.player.PlayerEntity.SleepFailureReason.TOO_FA
 
 import com.mojang.datafixers.util.Either;
 import java.util.List;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BedBlock;
@@ -59,7 +60,8 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
   private final BedType type;
 
   public AbstractComfortsBlock(final BedType type, final DyeColor color) {
-    super(color, AbstractBlock.Settings.of(Material.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.1F));
+    super(color,
+        AbstractBlock.Settings.of(Material.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.1F));
     this.type = type;
     this.color = color;
     this.setDefaultState(
@@ -210,9 +212,9 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (isBedObstructed(player, pos, direction)) {
         return Either.left(PlayerEntity.SleepFailureReason.OBSTRUCTED);
       } else {
-        player.setSpawnPoint(player.world.getRegistryKey(), pos, player.yaw, false, true);
+        TriState state = SleepEvents.INTERRUPT_SLEEPING.invoker().interruptSleeping(player, pos);
 
-        if (player.world.isDay()) {
+        if ((state == TriState.DEFAULT && player.world.isDay()) || state == TriState.TRUE) {
           return Either.left(NOT_POSSIBLE_NOW);
         } else {
 
@@ -224,6 +226,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
                 new Box(vec3d.getX() - d, vec3d.getY() - e, vec3d.getZ() - d, vec3d.getX() + d,
                     vec3d.getY() + e, vec3d.getZ() + d),
                 (hostileEntity) -> hostileEntity.isAngryAt(player));
+
             if (!list.isEmpty()) {
               return Either.left(PlayerEntity.SleepFailureReason.NOT_SAFE);
             }

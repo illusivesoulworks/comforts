@@ -1,20 +1,26 @@
 package top.theillusivec4.comforts;
 
+import java.util.List;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.comforts.common.ComfortsEvents;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
-import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
+import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.item.HammockItem;
 import top.theillusivec4.comforts.common.item.RopeAndNailItem;
 import top.theillusivec4.comforts.common.item.SleepingBagItem;
+import top.theillusivec4.somnus.api.SleepEvents;
 
 public class ComfortsMod implements ModInitializer {
 
@@ -26,20 +32,8 @@ public class ComfortsMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
-    for (DyeColor value : DyeColor.values()) {
-      Block sleepingBag = ComfortsRegistry.SLEEPING_BAGS.get(value);
-      Registry.register(Registry.BLOCK, id("sleeping_bag_" + value.getName()), sleepingBag);
-      Registry.register(Registry.ITEM, id("sleeping_bag_" + value.getName()),
-          new SleepingBagItem(sleepingBag));
-      Block hammock = ComfortsRegistry.HAMMOCKS.get(value);
-      Registry.register(Registry.BLOCK, id("hammock_" + value.getName()), hammock);
-      Registry.register(Registry.ITEM, id("hammock_" + value.getName()), new HammockItem(hammock));
-    }
-    Registry.register(Registry.BLOCK, id("rope_and_nail"), ComfortsRegistry.ROPE_AND_NAIL);
-    Registry.register(Registry.ITEM, id("rope_and_nail"), new RopeAndNailItem());
-    Registry
-        .register(Registry.BLOCK_ENTITY_TYPE, id("sleeping_bag"), ComfortsRegistry.SLEEPING_BAG_BE);
-    Registry.register(Registry.BLOCK_ENTITY_TYPE, id("hammock"), ComfortsRegistry.HAMMOCK_BE);
+    ComfortsRegistry.setup();
+    ComfortsEvents.setup();
   }
 
   public static Identifier id(String path) {
