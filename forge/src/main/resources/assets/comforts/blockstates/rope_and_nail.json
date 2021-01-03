@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=west,supporting=false,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail",
+      "y": 90
+    },
+    "facing=north,supporting=true,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail_s",
+      "y": 180
+    },
+    "facing=south,supporting=true,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail_s"
+    },
+    "facing=east,supporting=true,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail_s",
+      "y": 270
+    },
+    "facing=north,supporting=false,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail",
+      "y": 180
+    },
+    "facing=west,supporting=false,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail",
+      "y": 90
+    },
+    "facing=east,supporting=false,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail",
+      "y": 270
+    },
+    "facing=west,supporting=true,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail_s",
+      "y": 90
+    },
+    "facing=south,supporting=false,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail"
+    },
+    "facing=east,supporting=true,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail_s",
+      "y": 270
+    },
+    "facing=west,supporting=true,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail_s",
+      "y": 90
+    },
+    "facing=north,supporting=false,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail",
+      "y": 180
+    },
+    "facing=east,supporting=false,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail",
+      "y": 270
+    },
+    "facing=north,supporting=true,waterlogged=false": {
+      "model": "comforts:block/rope_and_nail_s",
+      "y": 180
+    },
+    "facing=south,supporting=false,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail"
+    },
+    "facing=south,supporting=true,waterlogged=true": {
+      "model": "comforts:block/rope_and_nail_s"
+    }
+  }
+}

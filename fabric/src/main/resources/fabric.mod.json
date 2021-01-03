@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "comforts",
+  "version": "${version}",
+  "name": "Comforts",
+  "description": "Adds sleeping bags and hammocks for, respectively, portability and turning day to night, without setting new spawns. Comes in 16 different colors! ",
+  "authors": ["C4"],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/comforts-fabric",
+    "sources": "https://github.com/TheIllusiveC4/Comforts",
+    "issues": "https://github.com/TheIllusiveC4/Comforts/issues"
+  },
+  "license": "LGPL-3.0-or-later",
+  "icon": "assets/comforts/comforts_icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "top.theillusivec4.comforts.ComfortsMod"
+    ],
+    "client": [
+      "top.theillusivec4.comforts.client.ComfortsClientMod"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "minecraft": "1.16.x",
+    "somnus": ">=0.0.1"
+  }
+}

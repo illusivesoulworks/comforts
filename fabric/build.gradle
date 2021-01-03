@@ -1,0 +1,89 @@
+plugins {
+    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = "${project.archives_base_name}-fabric"
+version = project.mod_version
+group = project.maven_group
+
+minecraft {
+}
+
+repositories {
+    maven {
+        url = "https://maven.theillusivec4.top"
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation fabricApi.module("fabric-networking-blockentity-v0", project.fabric_version)
+    modImplementation fabricApi.module("fabric-item-groups-v0", project.fabric_version)
+    modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
+    modImplementation fabricApi.module("fabric-renderer-registries-v1", project.fabric_version)
+    modImplementation fabricApi.module("fabric-textures-v0", project.fabric_version)
+    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+
+    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
+    include fabricApi.module("fabric-item-groups-v0", project.fabric_version)
+    include fabricApi.module("fabric-networking-blockentity-v0", project.fabric_version)
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand 'version': project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set("sources")
+    from sourceSets.main.allSource
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += '../docs'
+        }
+    }
+}
+
+curseforge {
+    project {
+        apiKey = findProperty('curseKey') ?: 0
+        id = "${curse_id}"
+        releaseType = "${curse_release}"
+        changelogType = 'markdown'
+        changelog = file('CHANGELOG.md')
+        addGameVersion "Java 8"
+        addGameVersion "Fabric"
+        addGameVersion project.minecraft_version
+        addArtifact(sourcesJar)
+        mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
+
+        afterEvaluate {
+            uploadTask.dependsOn(remapJar)
+        }
+    }
+    options {
+        forgeGradleIntegration = false
+    }
+}

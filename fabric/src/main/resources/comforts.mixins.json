@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "top.theillusivec4.comforts.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "AccessorPlayerEntity",
+    "AccessorRenderLayers"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
