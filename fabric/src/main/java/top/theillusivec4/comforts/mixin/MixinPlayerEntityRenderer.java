@@ -2,6 +2,7 @@ package top.theillusivec4.comforts.mixin;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -22,7 +23,8 @@ public class MixinPlayerEntityRenderer {
                                           VertexConsumerProvider vertexConsumerProvider, int i,
                                           CallbackInfo ci) {
 
-    if (playerEntity.getPose() == EntityPose.SLEEPING) {
+    if (playerEntity instanceof OtherClientPlayerEntity &&
+        playerEntity.getPose() == EntityPose.SLEEPING) {
       playerEntity.getSleepingPosition().ifPresent(pos -> {
         final Block bed = playerEntity.world.getBlockState(pos).getBlock();
         if (bed instanceof SleepingBagBlock) {
@@ -40,7 +42,8 @@ public class MixinPlayerEntityRenderer {
                                                VertexConsumerProvider vertexConsumerProvider, int i,
                                                CallbackInfo ci) {
 
-    if (playerEntity.getPose() == EntityPose.SLEEPING) {
+    if (playerEntity instanceof OtherClientPlayerEntity &&
+        playerEntity.getPose() == EntityPose.SLEEPING) {
       playerEntity.getSleepingPosition().ifPresent(pos -> {
         final Block bed = playerEntity.world.getBlockState(pos).getBlock();
         if (bed instanceof SleepingBagBlock) {

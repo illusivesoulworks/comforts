@@ -49,7 +49,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 import top.theillusivec4.comforts.mixin.AccessorPlayerEntity;
-import top.theillusivec4.somnus.api.SleepEvents;
+import top.theillusivec4.somnus.api.PlayerSleepEvents;
 
 public abstract class AbstractComfortsBlock extends BedBlock implements Waterloggable {
 
@@ -194,9 +194,10 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
     return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
   }
 
-  public static Either<PlayerEntity.SleepFailureReason, Unit> trySleep(ServerPlayerEntity player,
-                                                                       BlockPos pos) {
-    PlayerEntity.SleepFailureReason result = SleepEvents.TRY_SLEEP.invoker().trySleep(player, pos);
+  public Either<PlayerEntity.SleepFailureReason, Unit> trySleep(ServerPlayerEntity player,
+                                                                BlockPos pos) {
+    PlayerEntity.SleepFailureReason result =
+        PlayerSleepEvents.TRY_SLEEP.invoker().trySleep(player, pos);
 
     if (result != null) {
       return Either.left(result);
@@ -212,9 +213,9 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (isBedObstructed(player, pos, direction)) {
         return Either.left(PlayerEntity.SleepFailureReason.OBSTRUCTED);
       } else {
-        TriState state = SleepEvents.INTERRUPT_SLEEP.invoker().interruptSleep(player, pos);
+        TriState state = PlayerSleepEvents.CAN_SLEEP_NOW.invoker().canSleepNow(player, pos);
 
-        if ((state == TriState.DEFAULT && player.world.isDay()) || state == TriState.TRUE) {
+        if ((state == TriState.DEFAULT && player.world.isDay()) || state == TriState.FALSE) {
           return Either.left(NOT_POSSIBLE_NOW);
         } else {
 

@@ -17,14 +17,30 @@ import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.config.ComfortsConfig;
-import top.theillusivec4.somnus.api.SleepEvents;
+import top.theillusivec4.somnus.api.PlayerSleepEvents;
+import top.theillusivec4.somnus.api.WorldSleepEvents;
 
 public class ComfortsEvents {
 
   public static void setup() {
-    SleepEvents.GET_WORLD_WAKE_TIME.register(ComfortsEvents::getWakeTime);
-    SleepEvents.INTERRUPT_SLEEP.register(ComfortsEvents::interruptSleep);
-    SleepEvents.TRY_SLEEP.register(ComfortsEvents::trySleep);
+    WorldSleepEvents.GET_WORLD_WAKE_TIME.register(ComfortsEvents::getWakeTime);
+    PlayerSleepEvents.TRY_SLEEP.register(ComfortsEvents::trySleep);
+    PlayerSleepEvents.CAN_SLEEP_NOW.register(ComfortsEvents::canSleepNow);
+  }
+
+  private static TriState canSleepNow(PlayerEntity player, BlockPos pos) {
+    final World world = player.getEntityWorld();
+    final long worldTime = world.getTimeOfDay() % 24000L;
+
+    if (world.getBlockState(pos).getBlock() instanceof HammockBlock) {
+
+      if (worldTime > 500L && worldTime < 11500L) {
+        return TriState.TRUE;
+      } else {
+        return ComfortsConfig.nightHammocks ? TriState.DEFAULT : TriState.FALSE;
+      }
+    }
+    return TriState.DEFAULT;
   }
 
   private static PlayerEntity.SleepFailureReason trySleep(ServerPlayerEntity serverPlayerEntity,
@@ -48,21 +64,6 @@ public class ComfortsEvents {
       }
       return null;
     }).orElse(null);
-  }
-
-  public static TriState interruptSleep(PlayerEntity player, BlockPos pos) {
-    final World world = player.getEntityWorld();
-    final long worldTime = world.getTimeOfDay() % 24000L;
-
-    if (world.getBlockState(pos).getBlock() instanceof HammockBlock) {
-
-      if (worldTime > 500L && worldTime < 11500L) {
-        return TriState.FALSE;
-      } else {
-        return ComfortsConfig.nightHammocks ? TriState.DEFAULT : TriState.TRUE;
-      }
-    }
-    return TriState.DEFAULT;
   }
 
   public static long getWakeTime(ServerWorld serverWorld, long newTime, long minTime) {
