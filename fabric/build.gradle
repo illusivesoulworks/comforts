@@ -27,6 +27,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
+    // Required
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation fabricApi.module("fabric-networking-blockentity-v0", project.fabric_version)
     modImplementation fabricApi.module("fabric-item-groups-v0", project.fabric_version)
@@ -45,13 +46,15 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    include fabricApi.module("fabric-networking-blockentity-v0", project.fabric_version)
-    include fabricApi.module("fabric-item-groups-v0", project.fabric_version)
-    include fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
-    include fabricApi.module("fabric-renderer-registries-v1", project.fabric_version)
-    include fabricApi.module("fabric-textures-v0", project.fabric_version)
-    include fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
-    include fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
+    // Embedded
+//    include fabricApi.module("fabric-networking-v0", project.fabric_version)
+//    include fabricApi.module("fabric-networking-blockentity-v0", project.fabric_version)
+//    include fabricApi.module("fabric-item-groups-v0", project.fabric_version)
+//    include fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
+//    include fabricApi.module("fabric-renderer-registries-v1", project.fabric_version)
+//    include fabricApi.module("fabric-textures-v0", project.fabric_version)
+//    include fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
+//    include fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca_version}"
     include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
