@@ -113,6 +113,13 @@ curseforge {
         addArtifact(sourcesJar)
         mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
 
+        relations {
+            requiredDependency 'fabric-api'
+            embeddedLibrary 'cardinal-components'
+            embeddedLibrary 'auto-config-updated-api'
+            embeddedLibrary 'cloth-config'
+        }
+
         afterEvaluate {
             uploadTask.dependsOn(remapJar)
         }
