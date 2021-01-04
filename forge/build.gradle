@@ -73,7 +73,7 @@ dependencies {
 sourceSets {
     main {
         resources {
-            srcDirs += 'docs'
+            srcDirs += '../docs'
         }
     }
 }
@@ -118,7 +118,7 @@ curseforge {
         id = "${curse_id}"
         releaseType = "${curse_release}"
         changelogType = 'markdown'
-        changelog = file('docs/CHANGELOG.md')
+        changelog = file('CHANGELOG.md')
         addArtifact(sourcesJar)
     }
 }
