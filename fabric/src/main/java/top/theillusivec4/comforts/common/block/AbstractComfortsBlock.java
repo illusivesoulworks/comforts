@@ -212,7 +212,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (isBedObstructed(player, pos, direction)) {
         return Either.left(PlayerEntity.SleepFailureReason.OBSTRUCTED);
       } else {
-        TriState state = SleepEvents.INTERRUPT_SLEEPING.invoker().interruptSleeping(player, pos);
+        TriState state = SleepEvents.INTERRUPT_SLEEP.invoker().interruptSleep(player, pos);
 
         if ((state == TriState.DEFAULT && player.world.isDay()) || state == TriState.TRUE) {
           return Either.left(NOT_POSSIBLE_NOW);

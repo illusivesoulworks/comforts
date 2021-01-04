@@ -5,21 +5,52 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.block.HammockBlock;
+import top.theillusivec4.comforts.common.block.SleepingBagBlock;
+import top.theillusivec4.comforts.common.config.ComfortsConfig;
 import top.theillusivec4.somnus.api.SleepEvents;
 
 public class ComfortsEvents {
 
   public static void setup() {
     SleepEvents.GET_WORLD_WAKE_TIME.register(ComfortsEvents::getWakeTime);
-    SleepEvents.INTERRUPT_SLEEPING.register(ComfortsEvents::interruptSleeping);
+    SleepEvents.INTERRUPT_SLEEP.register(ComfortsEvents::interruptSleep);
+    SleepEvents.TRY_SLEEP.register(ComfortsEvents::trySleep);
   }
 
-  public static TriState interruptSleeping(PlayerEntity player, BlockPos pos) {
+  private static PlayerEntity.SleepFailureReason trySleep(ServerPlayerEntity serverPlayerEntity,
+                                                          BlockPos blockPos) {
+    return ComfortsComponents.SLEEP_TRACKER.maybeGet(serverPlayerEntity).map(tracker -> {
+      final long dayTime = serverPlayerEntity.world.getTimeOfDay();
+      tracker.setSleepTime(dayTime);
+
+      if (ComfortsConfig.wellRested) {
+
+        if (tracker.getWakeTime() > dayTime) {
+          tracker.setWakeTime(0);
+          tracker.setTiredTime(0);
+        }
+
+        if (tracker.getTiredTime() > dayTime) {
+          serverPlayerEntity
+              .sendMessage(new TranslatableText("capability.comforts.not_sleepy"), true);
+          return PlayerEntity.SleepFailureReason.OTHER_PROBLEM;
+        }
+      }
+      return null;
+    }).orElse(null);
+  }
+
+  public static TriState interruptSleep(PlayerEntity player, BlockPos pos) {
     final World world = player.getEntityWorld();
     final long worldTime = world.getTimeOfDay() % 24000L;
 
@@ -28,7 +59,7 @@ public class ComfortsEvents {
       if (worldTime > 500L && worldTime < 11500L) {
         return TriState.FALSE;
       } else {
-        return TriState.TRUE;
+        return ComfortsConfig.nightHammocks ? TriState.DEFAULT : TriState.TRUE;
       }
     }
     return TriState.DEFAULT;
@@ -62,19 +93,52 @@ public class ComfortsEvents {
     World world = player.world;
 
     if (!world.isClient) {
-      player.getSleepingPosition().ifPresent(bedPos -> {
-        final BlockState state = world.getBlockState(bedPos);
-        ComfortsComponents.SLEEP_TRACKER.maybeGet(player).ifPresent(tracker -> {
-          tracker.getAutoSleepPos().ifPresent(pos -> {
-            final BlockPos blockpos = bedPos
-                .offset(state.get(HorizontalFacingBlock.FACING).getOpposite());
-            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-            world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-            player.clearSleepingPosition();
-          });
-          tracker.setAutoSleepPos(null);
-        });
-      });
+      player.getSleepingPosition().ifPresent(
+          bedPos -> ComfortsComponents.SLEEP_TRACKER.maybeGet(player).ifPresent(tracker -> {
+            final long wakeTime = world.getTimeOfDay();
+            final long timeSlept = wakeTime - tracker.getSleepTime();
+            final BlockState state = world.getBlockState(bedPos);
+
+            if (state.getBlock() instanceof SleepingBagBlock) {
+              boolean broke = false;
+
+              if (timeSlept > 500L) {
+                List<StatusEffectInstance> debuffs = ComfortsConfig.sleepingBagDebuffs;
+
+                for (StatusEffectInstance effect : debuffs) {
+                  player.addStatusEffect(
+                      new StatusEffectInstance(effect.getEffectType(), effect.getDuration(),
+                          effect.getAmplifier()));
+                }
+
+                if (world.random.nextDouble() < ComfortsConfig.sleepingBagBreakage) {
+                  broke = true;
+                  final BlockPos blockpos = bedPos
+                      .offset(state.get(HorizontalFacingBlock.FACING).getOpposite());
+                  world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                  world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+                  player
+                      .sendMessage(new TranslatableText("block.comforts.sleeping_bag.broke"), true);
+                  world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
+                      1.0F, 1.0F);
+                  player.clearSleepingPosition();
+                }
+              }
+
+              if (!broke) {
+                tracker.getAutoSleepPos().ifPresent(pos -> {
+                  final BlockPos blockpos = bedPos
+                      .offset(state.get(HorizontalFacingBlock.FACING).getOpposite());
+                  world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+                  world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+                  player.clearSleepingPosition();
+                });
+              }
+            }
+            tracker.setWakeTime(wakeTime);
+            tracker.setTiredTime(wakeTime + (long) (timeSlept / ComfortsConfig.sleepyFactor));
+            tracker.setAutoSleepPos(null);
+          }));
     }
   }
 }

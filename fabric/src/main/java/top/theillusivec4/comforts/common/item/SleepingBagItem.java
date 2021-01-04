@@ -7,6 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import top.theillusivec4.comforts.common.ComfortsComponents;
+import top.theillusivec4.comforts.common.config.ComfortsConfig;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;
 
 public class SleepingBagItem extends AbstractComfortsItem {
@@ -20,7 +21,8 @@ public class SleepingBagItem extends AbstractComfortsItem {
     final ActionResult result = super.useOnBlock(context);
     final PlayerEntity player = context.getPlayer();
 
-    if (player instanceof ServerPlayerEntity && result.isAccepted() && !player.isSneaking()) {
+    if (player instanceof ServerPlayerEntity && result.isAccepted() && ComfortsConfig.autoUse &&
+        !player.isSneaking()) {
       final BlockPos pos = context.getBlockPos().up();
       ComfortsComponents.SLEEP_TRACKER.maybeGet(player)
           .ifPresent(tracker -> tracker.setAutoSleepPos(pos));
