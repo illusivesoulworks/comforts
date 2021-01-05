@@ -46,6 +46,6 @@
     "fabric-registry-sync-v0": "*",
     "fabric-lifecycle-events-v1": "*",
     "cardinal-components-entity": ">=2.7.10",
-    "somnus": ">=0.0.3-1.16.4"
+    "somnus": ">=0.0.10-1.16.4"
   }
 }

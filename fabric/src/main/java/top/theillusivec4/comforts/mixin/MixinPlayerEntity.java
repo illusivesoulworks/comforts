@@ -19,9 +19,4 @@ public class MixinPlayerEntity {
       ComfortsClientEvents.playerTick(player);
     }
   }
-
-  @Inject(at = @At("HEAD"), method = "wakeUp(ZZ)V")
-  public void _comforts_wakeUp(boolean reset, boolean updateSleepers, CallbackInfo ci) {
-    ComfortsEvents.wakeUp((PlayerEntity) (Object) this);
-  }
 }

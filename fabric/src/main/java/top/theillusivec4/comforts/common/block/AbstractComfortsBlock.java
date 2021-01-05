@@ -6,7 +6,6 @@ import static net.minecraft.entity.player.PlayerEntity.SleepFailureReason.TOO_FA
 
 import com.mojang.datafixers.util.Either;
 import java.util.List;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BedBlock;
@@ -213,9 +212,8 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (isBedObstructed(player, pos, direction)) {
         return Either.left(PlayerEntity.SleepFailureReason.OBSTRUCTED);
       } else {
-        TriState state = PlayerSleepEvents.CAN_SLEEP_NOW.invoker().canSleepNow(player, pos);
 
-        if ((state == TriState.DEFAULT && player.world.isDay()) || state == TriState.FALSE) {
+        if (!PlayerSleepEvents.canSleepNow(player, pos)) {
           return Either.left(NOT_POSSIBLE_NOW);
         } else {
 

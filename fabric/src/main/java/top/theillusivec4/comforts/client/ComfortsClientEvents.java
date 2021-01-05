@@ -1,7 +1,9 @@
 package top.theillusivec4.comforts.client;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
@@ -11,9 +13,22 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.ComfortsComponents;
+import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 
 public class ComfortsClientEvents {
+
+  public static float getSleepTranslation(AbstractClientPlayerEntity player) {
+    return player.getSleepingPosition().map(pos -> {
+      final Block bed = player.world.getBlockState(pos).getBlock();
+      if (bed instanceof SleepingBagBlock) {
+        return -0.375F;
+      } else if (bed instanceof HammockBlock) {
+        return -0.5F;
+      }
+      return 0.0F;
+    }).orElse(0.0F);
+  }
 
   public static void playerTick(PlayerEntity player) {
     World world = player.getEntityWorld();

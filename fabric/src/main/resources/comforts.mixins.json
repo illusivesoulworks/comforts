@@ -8,8 +8,7 @@
     "MixinPlayerEntity"
   ],
   "client": [
-    "AccessorRenderLayers",
-    "MixinPlayerEntityRenderer"
+    "AccessorRenderLayers"
   ],
   "server": [],
   "injectors": {

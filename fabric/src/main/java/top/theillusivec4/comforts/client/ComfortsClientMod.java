@@ -13,6 +13,7 @@ import top.theillusivec4.comforts.common.ComfortsMod;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;
 import top.theillusivec4.comforts.mixin.AccessorRenderLayers;
+import top.theillusivec4.somnus.api.client.SleepRenderEvents;
 
 public class ComfortsClientMod implements ClientModInitializer {
 
@@ -31,8 +32,9 @@ public class ComfortsClientMod implements ClientModInitializer {
             registry.register(ComfortsMod.id("entity/sleeping_bag/" + color.getName()));
           }
         });
-
     ClientSidePacketRegistry.INSTANCE
         .register(ComfortsNetwork.SYNC_AUTOSLEEP, ComfortsNetwork::readAutoSleep);
+    SleepRenderEvents.PLAYER_VERTICAL_TRANSLATION
+        .register(ComfortsClientEvents::getSleepTranslation);
   }
 }

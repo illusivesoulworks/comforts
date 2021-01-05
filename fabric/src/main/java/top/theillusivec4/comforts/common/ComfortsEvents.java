@@ -23,9 +23,10 @@ import top.theillusivec4.somnus.api.WorldSleepEvents;
 public class ComfortsEvents {
 
   public static void setup() {
-    WorldSleepEvents.GET_WORLD_WAKE_TIME.register(ComfortsEvents::getWakeTime);
+    WorldSleepEvents.WORLD_WAKE_TIME.register(ComfortsEvents::getWakeTime);
     PlayerSleepEvents.TRY_SLEEP.register(ComfortsEvents::trySleep);
     PlayerSleepEvents.CAN_SLEEP_NOW.register(ComfortsEvents::canSleepNow);
+    PlayerSleepEvents.WAKE_UP.register(ComfortsEvents::wakeUp);
   }
 
   private static TriState canSleepNow(PlayerEntity player, BlockPos pos) {
@@ -90,7 +91,7 @@ public class ComfortsEvents {
     return newTime;
   }
 
-  public static void wakeUp(PlayerEntity player) {
+  public static void wakeUp(PlayerEntity player, boolean reset, boolean update) {
     World world = player.world;
 
     if (!world.isClient) {
