@@ -32,6 +32,15 @@ You can also dye a regular White Hammock Cloth into any of the other colors!
 **Please refer to [this](https://github.com/TheIllusiveC4/Comforts/wiki/Hammocks#building) guide for
 instructions on how to build the hammock.**
 
+**Configuration Options**
+- Auto-Use Sleeping Bag
+- Well-Rested Mechanic
+- Sleepiness Factor
+- Hammocks at Night
+- Sleeping Bag Break Chance
+- Sleeping Bag Debuffs
+- (Forge) Insulated Sleeping Bags
+
 ## Downloads
 
 **CurseForge**
