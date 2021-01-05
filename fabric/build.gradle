@@ -120,6 +120,7 @@ curseforge {
             embeddedLibrary 'cardinal-components'
             embeddedLibrary 'auto-config-updated-api'
             embeddedLibrary 'cloth-config'
+            embeddedLibrary 'somnus'
         }
 
         afterEvaluate {
