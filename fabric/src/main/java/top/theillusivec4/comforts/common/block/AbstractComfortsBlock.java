@@ -122,7 +122,10 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
               default:
                 text = sleepFailureReason.toText();
             }
-            player.sendMessage(text, true);
+
+            if (text != null) {
+              player.sendMessage(text, true);
+            }
           }
         });
       }
