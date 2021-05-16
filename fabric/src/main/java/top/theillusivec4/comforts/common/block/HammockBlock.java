@@ -89,6 +89,10 @@ public class HammockBlock extends AbstractComfortsBlock {
   @Override
   public BlockState getPlacementState(ItemPlacementContext ctx) {
     final Direction direction = ctx.getSide();
+
+    if (direction == Direction.UP || direction == Direction.DOWN) {
+      return null;
+    }
     final BlockPos blockpos = ctx.getBlockPos();
     final BlockPos blockpos1 = blockpos.offset(direction);
     final FluidState ifluidstate = ctx.getWorld().getFluidState(blockpos);
