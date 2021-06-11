@@ -34,26 +34,25 @@ public class ComfortsClientEvents {
     World world = player.getEntityWorld();
 
     if (!player.isSleeping()) {
-      ComfortsComponents.SLEEP_TRACKER.maybeGet(player).ifPresent(tracker -> {
-        tracker.getAutoSleepPos().ifPresent(pos -> {
-          final BlockState state = world.getBlockState(pos);
+      ComfortsComponents.SLEEP_TRACKER.maybeGet(player)
+          .ifPresent(tracker -> tracker.getAutoSleepPos().ifPresent(pos -> {
+            final BlockState state = world.getBlockState(pos);
 
-          if (pos.getSquaredDistance(player.getX(), player.getY(), player.getZ(), true) < 20 &&
-              state.getBlock() instanceof SleepingBagBlock) {
-            BlockHitResult hit = new BlockHitResult(new Vec3d(0, 0, 0),
-                player.getHorizontalFacing(), pos, false);
-            ClientPlayerInteractionManager interactionManager =
-                MinecraftClient.getInstance().interactionManager;
+            if (pos.getSquaredDistance(player.getX(), player.getY(), player.getZ(), true) < 20 &&
+                state.getBlock() instanceof SleepingBagBlock) {
+              BlockHitResult hit = new BlockHitResult(new Vec3d(0, 0, 0),
+                  player.getHorizontalFacing(), pos, false);
+              ClientPlayerInteractionManager interactionManager =
+                  MinecraftClient.getInstance().interactionManager;
 
-            if (interactionManager != null) {
-              interactionManager
-                  .interactBlock((ClientPlayerEntity) player, (ClientWorld) player.world,
-                      Hand.MAIN_HAND, hit);
+              if (interactionManager != null) {
+                interactionManager
+                    .interactBlock((ClientPlayerEntity) player, (ClientWorld) player.world,
+                        Hand.MAIN_HAND, hit);
+              }
             }
-          }
-          tracker.setAutoSleepPos(null);
-        });
-      });
+            tracker.setAutoSleepPos(null);
+          }));
     }
   }
 }

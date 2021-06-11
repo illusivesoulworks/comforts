@@ -72,18 +72,13 @@ public class HammockBlock extends AbstractComfortsBlock {
   public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,
                                     ShapeContext context) {
     final Direction direction = getOppositePartDirection(state).getOpposite();
-    switch (direction) {
-      case NORTH:
-        return NORTH_SHAPE;
-      case SOUTH:
-        return SOUTH_SHAPE;
-      case WEST:
-        return WEST_SHAPE;
-      case EAST:
-        return EAST_SHAPE;
-      default:
-        return HAMMOCK_SHAPE;
-    }
+    return switch (direction) {
+      case NORTH -> NORTH_SHAPE;
+      case SOUTH -> SOUTH_SHAPE;
+      case WEST -> WEST_SHAPE;
+      case EAST -> EAST_SHAPE;
+      default -> HAMMOCK_SHAPE;
+    };
   }
 
   @Override
@@ -102,7 +97,7 @@ public class HammockBlock extends AbstractComfortsBlock {
   }
 
   @Override
-  public BlockEntity createBlockEntity(BlockView world) {
-    return new HammockBlockEntity(this.color);
+  public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    return new HammockBlockEntity(pos, state, this.color);
   }
 }

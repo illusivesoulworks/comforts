@@ -3,7 +3,6 @@ package top.theillusivec4.comforts.common.block;
 import static net.minecraft.entity.player.PlayerEntity.SleepFailureReason.NOT_POSSIBLE_NOW;
 import static net.minecraft.entity.player.PlayerEntity.SleepFailureReason.TOO_FAR_AWAY;
 
-
 import com.mojang.datafixers.util.Either;
 import java.util.List;
 import net.minecraft.advancement.criterion.Criteria;
@@ -107,21 +106,14 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (player instanceof ServerPlayerEntity) {
         trySleep((ServerPlayerEntity) player, pos).ifLeft((sleepFailureReason) -> {
           if (sleepFailureReason != null) {
-            final Text text;
-
-            switch (sleepFailureReason) {
-              case NOT_POSSIBLE_NOW:
-                text = type == BedType.HAMMOCK ? new TranslatableText(
-                    "block.comforts." + type.name + ".no_sleep")
-                    : new TranslatableText("block.minecraft.bed.no_sleep");
-                break;
-              case TOO_FAR_AWAY:
-                text = new TranslatableText(
-                    "block.comforts." + type.name + ".too_far_away");
-                break;
-              default:
-                text = sleepFailureReason.toText();
-            }
+            final Text text = switch (sleepFailureReason) {
+              case NOT_POSSIBLE_NOW -> type == BedType.HAMMOCK ? new TranslatableText(
+                  "block.comforts." + type.name + ".no_sleep")
+                  : new TranslatableText("block.minecraft.bed.no_sleep");
+              case TOO_FAR_AWAY -> new TranslatableText(
+                  "block.comforts." + type.name + ".too_far_away");
+              default -> sleepFailureReason.toText();
+            };
 
             if (text != null) {
               player.sendMessage(text, true);
@@ -158,10 +150,9 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
         }
       }
     }
-
     world.syncWorldEvent(player, 2001, pos, getRawIdFromState(state));
 
-    if (this.isIn(BlockTags.GUARDED_BY_PIGLINS)) {
+    if (state.isIn(BlockTags.GUARDED_BY_PIGLINS)) {
       PiglinBrain.onGuardedBlockInteracted(player, false);
     }
   }

@@ -2,9 +2,7 @@ package top.theillusivec4.comforts.common.component;
 
 import java.util.Optional;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
 public class PlayerSleepTracker implements SleepTrackerComponent {
@@ -64,14 +62,14 @@ public class PlayerSleepTracker implements SleepTrackerComponent {
   }
 
   @Override
-  public void readFromNbt(CompoundTag compoundTag) {
+  public void readFromNbt(NbtCompound compoundTag) {
     this.wakeTime = compoundTag.getLong(WAKE_TAG);
     this.tiredTime = compoundTag.getLong(TIRED_TAG);
     this.sleepTime = compoundTag.getLong(SLEEP_TAG);
   }
 
   @Override
-  public void writeToNbt(CompoundTag compoundTag) {
+  public void writeToNbt(NbtCompound compoundTag) {
     compoundTag.putLong(WAKE_TAG, this.wakeTime);
     compoundTag.putLong(TIRED_TAG, this.tiredTime);
     compoundTag.putLong(SLEEP_TAG, this.sleepTime);

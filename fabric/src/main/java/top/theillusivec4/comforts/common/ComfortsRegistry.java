@@ -1,6 +1,7 @@
 package top.theillusivec4.comforts.common;
 
 import java.util.EnumMap;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.DyeColor;
@@ -27,10 +28,10 @@ public class ComfortsRegistry {
       SLEEPING_BAGS.put(value, new SleepingBagBlock(value));
       HAMMOCKS.put(value, new HammockBlock(value));
     }
-    SLEEPING_BAG_BE = BlockEntityType.Builder
+    SLEEPING_BAG_BE = FabricBlockEntityTypeBuilder
         .create(SleepingBagBlockEntity::new, SLEEPING_BAGS.values().toArray(new Block[] {}))
         .build(null);
-    HAMMOCK_BE = BlockEntityType.Builder
+    HAMMOCK_BE = FabricBlockEntityTypeBuilder
         .create(HammockBlockEntity::new, HAMMOCKS.values().toArray(new Block[] {})).build(null);
   }
 

@@ -1,55 +1,44 @@
 package top.theillusivec4.comforts.client.renderer;
 
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.model.ModelData;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
+import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import top.theillusivec4.comforts.client.ComfortsClientMod;
 import top.theillusivec4.comforts.common.block.entity.HammockBlockEntity;
 
 public class HammockBlockEntityRenderer
     extends AbstractComfortsBlockEntityRenderer<HammockBlockEntity> {
 
-  protected ModelPart headBoard;
-  protected ModelPart footBoard;
+  private static final String BOARD = "board";
 
-  public HammockBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
-    super(dispatcher, "hammock");
-    this.headPiece = new ModelPart(64, 64, 0, 0);
-    this.headPiece.addCuboid(1.0F, 1.0F, 0.0F, 14, 15, 1, 0.0F);
-    this.headBoard = new ModelPart(64, 64, 30, 0);
-    this.headBoard.addCuboid(0.0F, 0.0F, 0.0F, 16, 1, 1, 0.0F);
-    this.footPiece = new ModelPart(64, 64, 0, 16);
-    this.footPiece.addCuboid(1.0F, 0.0F, 0.0F, 14, 15, 1, 0.0F);
-    this.footBoard = new ModelPart(64, 64, 30, 0);
-    this.footBoard.addCuboid(0.0F, 15.0F, 0.0F, 16, 1, 1, 0.0F);
+  public HammockBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    super(ctx, "hammock", ComfortsClientMod.HAMMOCK_HEAD, ComfortsClientMod.HAMMOCK_FOOT);
   }
 
-  @Override
-  protected void renderPiece(MatrixStack matrixStack, VertexConsumerProvider buffer, boolean isHead,
-                             Direction direction, SpriteIdentifier material, int light, int overlay,
-                             boolean p_228847_8_) {
-    this.headPiece.visible = isHead;
-    this.headBoard.visible = isHead;
-    this.footPiece.visible = !isHead;
-    this.footBoard.visible = !isHead;
-    matrixStack.push();
-    matrixStack.translate(0.0D, 0.0625D, p_228847_8_ ? -1.0D : 0.0D);
-    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F));
-    matrixStack.translate(0.5D, 0.5D, 0.5D);
-    matrixStack
-        .multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F + direction.asRotation()));
-    matrixStack.translate(-0.5D, -0.5D, -0.5D);
-    final VertexConsumer ivertexbuilder =
-        material.getVertexConsumer(buffer, RenderLayer::getEntitySolid);
-    this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
-    this.headBoard.render(matrixStack, ivertexbuilder, light, overlay);
-    this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);
-    this.footBoard.render(matrixStack, ivertexbuilder, light, overlay);
-    matrixStack.pop();
+  public static TexturedModelData getHeadTexturedModelData() {
+    ModelData modelData = new ModelData();
+    ModelPartData modelPartData = modelData.getRoot();
+    modelPartData.addChild("main",
+        ModelPartBuilder.create().uv(0, 0).cuboid(1.0F, 1.0F, 2.0F, 14.0F, 15.0F, 1.0F),
+        ModelTransform.NONE);
+    modelPartData.addChild(BOARD,
+        ModelPartBuilder.create().uv(30, 0).cuboid(0.0F, 0.0F, 2.0F, 16.0F, 1.0F, 1.0F),
+        ModelTransform.NONE);
+    return TexturedModelData.of(modelData, 64, 64);
+  }
+
+  public static TexturedModelData getFootTexturedModelData() {
+    ModelData modelData = new ModelData();
+    ModelPartData modelPartData = modelData.getRoot();
+    modelPartData.addChild("main",
+        ModelPartBuilder.create().uv(0, 16).cuboid(1.0F, 0.0F, 2.0F, 14.0F, 15.0F, 1.0F),
+        ModelTransform.NONE);
+    modelPartData.addChild(BOARD,
+        ModelPartBuilder.create().uv(30, 0).cuboid(0.0F, 15.0F, 2.0F, 16.0F, 1.0F, 1.0F),
+        ModelTransform.NONE);
+    return TexturedModelData.of(modelData, 64, 64);
   }
 }

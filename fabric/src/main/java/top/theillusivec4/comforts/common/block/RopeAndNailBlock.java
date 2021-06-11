@@ -70,8 +70,7 @@ public class RopeAndNailBlock extends Block implements Waterloggable {
     final BlockState blockstate = world.getBlockState(blockpos);
     final boolean valid = blockstate.isSideSolidFullSquare(world, blockpos, direction);
 
-    if (!valid && world instanceof ServerWorld) {
-      ServerWorld serverWorld = (ServerWorld) world;
+    if (!valid && world instanceof ServerWorld serverWorld) {
       dropHammock(serverWorld, pos, state);
     }
     return valid;

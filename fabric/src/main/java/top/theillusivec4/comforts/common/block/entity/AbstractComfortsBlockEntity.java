@@ -2,22 +2,25 @@ package top.theillusivec4.comforts.common.block.entity;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class AbstractComfortsBlockEntity extends BlockEntity implements
     BlockEntityClientSerializable {
 
   private DyeColor color;
 
-  public AbstractComfortsBlockEntity(BlockEntityType<?> type) {
-    super(type);
+  public AbstractComfortsBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    super(type, pos, state);
   }
 
-  public AbstractComfortsBlockEntity(BlockEntityType<?> type, DyeColor color) {
-    super(type);
+  public AbstractComfortsBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+                                     DyeColor color) {
+    super(type, pos, state);
     this.setColor(color);
   }
 
@@ -34,12 +37,12 @@ public abstract class AbstractComfortsBlockEntity extends BlockEntity implements
   }
 
   @Override
-  public void fromClientTag(CompoundTag compoundTag) {
-    this.fromTag(this.getCachedState(), compoundTag);
+  public void fromClientTag(NbtCompound compoundTag) {
+    this.readNbt(compoundTag);
   }
 
   @Override
-  public CompoundTag toClientTag(CompoundTag compoundTag) {
-    return this.toTag(compoundTag);
+  public NbtCompound toClientTag(NbtCompound compoundTag) {
+    return this.writeNbt(compoundTag);
   }
 }

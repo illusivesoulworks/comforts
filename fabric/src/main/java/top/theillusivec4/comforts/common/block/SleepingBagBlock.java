@@ -1,12 +1,9 @@
 package top.theillusivec4.comforts.common.block;
 
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -29,7 +26,7 @@ public class SleepingBagBlock extends AbstractComfortsBlock {
   }
 
   @Override
-  public BlockEntity createBlockEntity(BlockView world) {
-    return new SleepingBagBlockEntity(this.color);
+  public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    return new SleepingBagBlockEntity(pos, state, this.color);
   }
 }

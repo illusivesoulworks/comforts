@@ -26,7 +26,7 @@ public class SleepingBagItem extends AbstractComfortsItem {
       final BlockPos pos = context.getBlockPos().up();
       ComfortsComponents.SLEEP_TRACKER.maybeGet(player)
           .ifPresent(tracker -> tracker.setAutoSleepPos(pos));
-      ComfortsNetwork.sendAutoSleep(player, pos);
+      ComfortsNetwork.sendAutoSleep((ServerPlayerEntity) player, pos);
     }
     return result;
   }
