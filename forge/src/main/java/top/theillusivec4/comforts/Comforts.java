@@ -38,6 +38,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -60,6 +61,8 @@ import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
+import top.theillusivec4.comforts.common.integration.MorpheusIntegration;
+import top.theillusivec4.comforts.common.integration.SurviveIntegration;
 import top.theillusivec4.comforts.common.item.ComfortsBaseItem;
 import top.theillusivec4.comforts.common.item.HammockItem;
 import top.theillusivec4.comforts.common.item.SleepingBagItem;
@@ -109,6 +112,14 @@ public final class Comforts {
     MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
     CapabilitySleepData.register();
     ComfortsNetwork.register();
+
+    if (ModList.get().isLoaded("morpheus")) {
+      MorpheusIntegration.setup();
+    }
+
+    if (ModList.get().isLoaded("survive")) {
+      MinecraftForge.EVENT_BUS.register(new SurviveIntegration());
+    }
   }
 
   @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)

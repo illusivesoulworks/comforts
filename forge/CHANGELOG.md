@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project does not adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.16.4-4.0.1.1] - 2021.01.02
+### Added
+- Insulated Sleeping Bags config option for Survive mod integration
+  [#46](https://github.com/TheIllusiveC4/Comforts/issues/46)
+### Changed
+- Updated versioning to account for lost update
+### Fixed
+- Fixed broken Morpheus compatibility [#50](https://github.com/TheIllusiveC4/Comforts/issues/50)
+  [#57](https://github.com/TheIllusiveC4/Comforts/issues/57)
+  [#59](https://github.com/TheIllusiveC4/Comforts/issues/59)
+
 ## [1.16.5-4.0.0.4] - 2021.05.15
 ### Added
 - Added Polish localization (thanks joker876!)
