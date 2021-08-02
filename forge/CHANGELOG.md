@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project does not adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
-## [1.16.4-4.0.1.1] - 2021.01.02
+## [1.16.5-4.0.1.2] - 2021.08.02
+### Changed
+- Updated Swedish translation (thanks GeorgeOrwell1!)
+
+## [1.16.5-4.0.1.1] - 2021.06.21
 ### Added
 - Insulated Sleeping Bags config option for Survive mod integration
   [#46](https://github.com/TheIllusiveC4/Comforts/issues/46)
