@@ -50,6 +50,7 @@ public class ComfortsConfig {
     public final ForgeConfigSpec.BooleanValue nightHammocks;
     public final ForgeConfigSpec.DoubleValue sleepingBagBreakage;
     public final ForgeConfigSpec.ConfigValue<List<String>> sleepingBagDebuffs;
+    public final ForgeConfigSpec.BooleanValue insulatedSleepingBag;
 
     public Server(ForgeConfigSpec.Builder builder) {
       builder.push("server");
@@ -78,6 +79,11 @@ public class ComfortsConfig {
               + "Format: [effect] [duration(secs)] [power]")
           .translation(CONFIG_PREFIX + "sleepingBagDebuffs").worldRestart()
           .define("sleepingBagDebuffs", new ArrayList<>());
+
+      insulatedSleepingBag = builder.comment(
+          "[Survive Mod Integration] Set to true to have sleeping bags increase your body temperature after sleeping")
+          .translation(CONFIG_PREFIX + "insulatedSleepingBag")
+          .define("insulatedSleepingBag", false);
     }
   }
 
@@ -87,6 +93,7 @@ public class ComfortsConfig {
   public static boolean nightHammocks;
   public static double sleepingBagBreakage;
   public static List<EffectInstance> sleepingBagDebuffs;
+  public static boolean insulatedSleepingBag;
 
   public static void bake() {
     autoUse = SERVER.autoUse.get();
@@ -95,6 +102,7 @@ public class ComfortsConfig {
     nightHammocks = SERVER.nightHammocks.get();
     sleepingBagBreakage = SERVER.sleepingBagBreakage.get();
     sleepingBagDebuffs = new ArrayList<>();
+    insulatedSleepingBag = SERVER.insulatedSleepingBag.get();
 
     SERVER.sleepingBagDebuffs.get().forEach(debuff -> {
       String[] elements = debuff.split("\\s+");
