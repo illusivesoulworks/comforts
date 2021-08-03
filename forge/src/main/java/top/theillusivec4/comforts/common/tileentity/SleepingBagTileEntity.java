@@ -19,16 +19,18 @@
 
 package top.theillusivec4.comforts.common.tileentity;
 
-import net.minecraft.item.DyeColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.state.BlockState;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
 
 public class SleepingBagTileEntity extends ComfortsBaseTileEntity {
 
-  public SleepingBagTileEntity() {
-    super(ComfortsRegistry.SLEEPING_BAG_TE);
+  public SleepingBagTileEntity(BlockPos pos, BlockState state) {
+    super(ComfortsRegistry.SLEEPING_BAG_TE, pos, state);
   }
 
-  public SleepingBagTileEntity(DyeColor colorIn) {
-    super(ComfortsRegistry.SLEEPING_BAG_TE, colorIn);
+  public SleepingBagTileEntity(BlockPos pos, BlockState state, DyeColor colorIn) {
+    super(ComfortsRegistry.SLEEPING_BAG_TE, pos, state, colorIn);
   }
 }

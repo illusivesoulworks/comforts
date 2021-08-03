@@ -25,64 +25,63 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.monster.piglin.PiglinTasks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity.SleepResult;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Unit;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Player.BedSleepingProblem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import top.theillusivec4.comforts.Comforts;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import top.theillusivec4.comforts.ComfortsMod;
 
-public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
+public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBlock {
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
   private static final Field SLEEP_TIMER = ObfuscationReflectionHelper
-      .findField(PlayerEntity.class, "field_71076_b");
+      .findField(Player.class, "f_36110_");
 
   private final BedType type;
 
   public ComfortsBaseBlock(final BedType type, DyeColor colorIn, Block.Properties properties) {
     super(colorIn, properties);
     this.type = type;
-    this.setDefaultState(
-        this.stateContainer.getBaseState().with(PART, BedPart.FOOT).with(OCCUPIED, false)
-            .with(WATERLOGGED, false));
+    this.registerDefaultState(
+        this.stateDefinition.any().setValue(PART, BedPart.FOOT).setValue(OCCUPIED, false)
+            .setValue(WATERLOGGED, false));
   }
 
   private static Direction getDirectionToOther(BedPart part, Direction direction) {
@@ -91,104 +90,106 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
 
   @Nonnull
   @Override
-  public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn,
-      @Nonnull BlockPos pos, @Nonnull PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+  public InteractionResult use(@Nonnull BlockState state, Level worldIn,
+                               @Nonnull BlockPos pos, @Nonnull Player player,
+                               InteractionHand handIn, BlockHitResult hit) {
 
-    if (worldIn.isRemote) {
-      return ActionResultType.CONSUME;
+    if (worldIn.isClientSide) {
+      return InteractionResult.CONSUME;
     } else {
 
-      if (state.get(PART) != BedPart.HEAD) {
-        pos = pos.offset(state.get(HORIZONTAL_FACING));
+      if (state.getValue(PART) != BedPart.HEAD) {
+        pos = pos.relative(state.getValue(FACING));
         state = worldIn.getBlockState(pos);
 
-        if (!state.matchesBlock(this)) {
-          return ActionResultType.CONSUME;
+        if (!state.is(this)) {
+          return InteractionResult.CONSUME;
         }
       }
 
-      if (!doesBedWork(worldIn)) {
+      if (!canSetSpawn(worldIn)) {
         worldIn.removeBlock(pos, false);
-        final BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
+        final BlockPos blockpos = pos.relative(state.getValue(FACING).getOpposite());
 
-        if (worldIn.getBlockState(blockpos).matchesBlock(this)) {
+        if (worldIn.getBlockState(blockpos).is(this)) {
           worldIn.removeBlock(blockpos, false);
         }
         worldIn
-            .createExplosion(null, DamageSource.causeBedExplosionDamage(), null, (double) pos.getX() + 0.5D,
+            .explode(null, DamageSource.badRespawnPointExplosion(), null,
+                (double) pos.getX() + 0.5D,
                 (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true,
-                Explosion.Mode.DESTROY);
-        return ActionResultType.SUCCESS;
-      } else if (state.get(OCCUPIED)) {
+                Explosion.BlockInteraction.DESTROY);
+        return InteractionResult.SUCCESS;
+      } else if (state.getValue(OCCUPIED)) {
 
-        if (!this.func_226861_a_(worldIn, pos)) {
-          player.sendStatusMessage(
-              new TranslationTextComponent("block.comforts." + this.type.name + ".occupied"), true);
+        if (!this.kickVillagerOutOfBed(worldIn, pos)) {
+          player.displayClientMessage(
+              new TranslatableComponent("block.comforts." + this.type.name + ".occupied"), true);
         }
-        return ActionResultType.SUCCESS;
-      } else if (player instanceof ServerPlayerEntity) {
-        trySleep((ServerPlayerEntity) player, pos).ifLeft((result) -> {
+        return InteractionResult.SUCCESS;
+      } else if (player instanceof ServerPlayer) {
+        trySleep((ServerPlayer) player, pos).ifLeft((result) -> {
 
           if (result != null) {
-            final ITextComponent text;
+            final Component text;
             switch (result) {
               case NOT_POSSIBLE_NOW:
-                text = type == BedType.HAMMOCK ? new TranslationTextComponent(
+                text = type == BedType.HAMMOCK ? new TranslatableComponent(
                     "block.comforts." + type.name + ".no_sleep")
-                    : new TranslationTextComponent("block.minecraft.bed.no_sleep");
+                    : new TranslatableComponent("block.minecraft.bed.no_sleep");
                 break;
               case TOO_FAR_AWAY:
-                text = new TranslationTextComponent(
+                text = new TranslatableComponent(
                     "block.comforts." + type.name + ".too_far_away");
                 break;
               default:
                 text = result.getMessage();
             }
-            player.sendStatusMessage(text, true);
+            player.displayClientMessage(text, true);
           }
         });
       }
     }
-    return ActionResultType.SUCCESS;
+    return InteractionResult.SUCCESS;
   }
 
-  public static Either<SleepResult, Unit> trySleep(ServerPlayerEntity playerEntity, BlockPos at) {
+  public static Either<BedSleepingProblem, Unit> trySleep(ServerPlayer playerEntity, BlockPos at) {
     final java.util.Optional<BlockPos> optAt = java.util.Optional.of(at);
-    final PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory
+    final Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory
         .onPlayerSleepInBed(playerEntity, optAt);
 
     if (ret != null) {
       return Either.left(ret);
     }
-    final Direction direction = playerEntity.world.getBlockState(at)
-        .get(HorizontalBlock.HORIZONTAL_FACING);
+    final Direction direction = playerEntity.level.getBlockState(at)
+        .getValue(HorizontalDirectionalBlock.FACING);
 
     if (!playerEntity.isSleeping() && playerEntity.isAlive()) {
 
-      if (!playerEntity.world.getDimensionType().isNatural()) {
-        return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
-      } else if (!func_241147_a_(playerEntity, at, direction)) {
-        return Either.left(PlayerEntity.SleepResult.TOO_FAR_AWAY);
-      } else if (func_241156_b_(playerEntity, at, direction)) {
-        return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
+      if (!playerEntity.level.dimensionType().natural()) {
+        return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
+      } else if (!bedInRange(playerEntity, at, direction)) {
+        return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
+      } else if (bedBlocked(playerEntity, at, direction)) {
+        return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
       } else {
 
         if (!ForgeEventFactory.fireSleepingTimeCheck(playerEntity, optAt)) {
-          return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
+          return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
         } else {
 
           if (!playerEntity.isCreative()) {
             final double d0 = 8.0D;
             final double d1 = 5.0D;
-            final Vector3d vector3d = Vector3d.copyCenteredHorizontally(at);
-            List<MonsterEntity> list = playerEntity.world.getEntitiesWithinAABB(MonsterEntity.class,
-                new AxisAlignedBB(vector3d.getX() - d0, vector3d.getY() - d1,
-                    vector3d.getZ() - d0, vector3d.getX() + d0, vector3d.getY() + d1,
-                    vector3d.getZ() + d0),
-                (p_241146_1_) -> p_241146_1_.func_230292_f_(playerEntity));
+            final Vec3 vector3d = Vec3.atBottomCenterOf(at);
+            List<Monster> list = playerEntity.level.getEntitiesOfClass(Monster.class,
+                new AABB(vector3d.x() - d0, vector3d.y() - d1,
+                    vector3d.z() - d0, vector3d.x() + d0, vector3d.y() + d1,
+                    vector3d.z() + d0),
+                (p_241146_1_) -> p_241146_1_.isPreventingPlayerRest(playerEntity));
 
             if (!list.isEmpty()) {
-              return Either.left(PlayerEntity.SleepResult.NOT_SAFE);
+              return Either.left(Player.BedSleepingProblem.NOT_SAFE);
             }
           }
           playerEntity.startSleeping(at);
@@ -196,121 +197,123 @@ public class ComfortsBaseBlock extends BedBlock implements IWaterLoggable {
           try {
             SLEEP_TIMER.setInt(playerEntity, 0);
           } catch (IllegalAccessException e) {
-            Comforts.LOGGER.error("Error setting sleep timer!");
+            ComfortsMod.LOGGER.error("Error setting sleep timer!");
           }
-          playerEntity.addStat(Stats.SLEEP_IN_BED);
+          playerEntity.awardStat(Stats.SLEEP_IN_BED);
           CriteriaTriggers.SLEPT_IN_BED.trigger(playerEntity);
-          ((ServerWorld) playerEntity.world).updateAllPlayersSleepingFlag();
+          ((ServerLevel) playerEntity.level).updateSleepingPlayerList();
           return Either.right(Unit.INSTANCE);
         }
       }
     } else {
-      return Either.left(PlayerEntity.SleepResult.OTHER_PROBLEM);
+      return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
     }
   }
 
-  private static boolean func_241147_a_(ServerPlayerEntity playerEntity, BlockPos p_241147_1_,
-      Direction p_241147_2_) {
+  private static boolean bedInRange(ServerPlayer playerEntity, BlockPos p_241147_1_,
+                                    Direction p_241147_2_) {
     if (p_241147_2_ == null) {
       return false;
     }
-    return func_241158_g_(playerEntity, p_241147_1_) || func_241158_g_(playerEntity,
-        p_241147_1_.offset(p_241147_2_.getOpposite()));
+    return isReachableBedBlock(playerEntity, p_241147_1_) || isReachableBedBlock(playerEntity,
+        p_241147_1_.relative(p_241147_2_.getOpposite()));
   }
 
-  private static boolean func_241158_g_(ServerPlayerEntity playerEntity, BlockPos p_241158_1_) {
-    final Vector3d vector3d = Vector3d.copyCenteredHorizontally(p_241158_1_);
-    return Math.abs(playerEntity.getPosX() - vector3d.getX()) <= 3.0D
-        && Math.abs(playerEntity.getPosY() - vector3d.getY()) <= 2.0D
-        && Math.abs(playerEntity.getPosZ() - vector3d.getZ()) <= 3.0D;
+  private static boolean isReachableBedBlock(ServerPlayer playerEntity, BlockPos p_241158_1_) {
+    final Vec3 vector3d = Vec3.atBottomCenterOf(p_241158_1_);
+    return Math.abs(playerEntity.getX() - vector3d.x()) <= 3.0D
+        && Math.abs(playerEntity.getY() - vector3d.y()) <= 2.0D
+        && Math.abs(playerEntity.getZ() - vector3d.z()) <= 3.0D;
   }
 
-  private static boolean func_241156_b_(ServerPlayerEntity playerEntity, BlockPos p_241156_1_,
-      Direction p_241156_2_) {
-    final BlockPos blockpos = p_241156_1_.up();
-    return isAbnormalCube(playerEntity.world, blockpos) || isAbnormalCube(playerEntity.world,
-        blockpos.offset(p_241156_2_.getOpposite()));
+  private static boolean bedBlocked(ServerPlayer playerEntity, BlockPos p_241156_1_,
+                                    Direction p_241156_2_) {
+    final BlockPos blockpos = p_241156_1_.above();
+    return isAbnormalCube(playerEntity.level, blockpos) || isAbnormalCube(playerEntity.level,
+        blockpos.relative(p_241156_2_.getOpposite()));
   }
 
-  private static boolean isAbnormalCube(World world, BlockPos pos) {
+  private static boolean isAbnormalCube(Level world, BlockPos pos) {
     return world.getBlockState(pos).isSuffocating(world, pos);
   }
 
-  private boolean func_226861_a_(World p_226861_1_, BlockPos p_226861_2_) {
-    List<VillagerEntity> list = p_226861_1_
-        .getEntitiesWithinAABB(VillagerEntity.class, new AxisAlignedBB(p_226861_2_),
+  private boolean kickVillagerOutOfBed(Level p_226861_1_, BlockPos p_226861_2_) {
+    List<Villager> list = p_226861_1_
+        .getEntitiesOfClass(Villager.class, new AABB(p_226861_2_),
             LivingEntity::isSleeping);
 
     if (list.isEmpty()) {
       return false;
     } else {
-      list.get(0).wakeUp();
+      list.get(0).stopSleeping();
       return true;
     }
   }
 
   @Override
-  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
-      @Nonnull PlayerEntity player) {
+  public void playerWillDestroy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                                @Nonnull Player player) {
 
-    if (!worldIn.isRemote && player.isCreative()) {
-      final BedPart bedpart = state.get(PART);
+    if (!worldIn.isClientSide && player.isCreative()) {
+      final BedPart bedpart = state.getValue(PART);
 
       if (bedpart == BedPart.FOOT) {
-        final BlockPos blockpos = pos.offset(getDirectionToOther(bedpart, state.get(HORIZONTAL_FACING)));
+        final BlockPos blockpos =
+            pos.relative(getDirectionToOther(bedpart, state.getValue(FACING)));
         final BlockState blockstate = worldIn.getBlockState(blockpos);
 
-        if (blockstate.getBlock() == this && blockstate.get(PART) == BedPart.HEAD) {
+        if (blockstate.getBlock() == this && blockstate.getValue(PART) == BedPart.HEAD) {
 
-          if (blockstate.get(WATERLOGGED)) {
-            worldIn.setBlockState(blockpos, Blocks.WATER.getDefaultState(), 35);
+          if (blockstate.getValue(WATERLOGGED)) {
+            worldIn.setBlock(blockpos, Blocks.WATER.defaultBlockState(), 35);
           } else {
-            worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+            worldIn.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
           }
-          worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
+          worldIn.levelEvent(player, 2001, blockpos, Block.getId(blockstate));
         }
       }
     }
-    worldIn.playEvent(player, 2001, pos, getStateId(state));
+    worldIn.levelEvent(player, 2001, pos, getId(state));
 
-    if (this.isIn(BlockTags.GUARDED_BY_PIGLINS)) {
-      PiglinTasks.func_234478_a_(player, false);
+    if (BlockTags.GUARDED_BY_PIGLINS.contains(this)) {
+      PiglinAi.angerNearbyPiglins(player, false);
     }
   }
 
   @Nonnull
   @Override
-  public BlockState updatePostPlacement(BlockState stateIn, @Nonnull Direction facing,
-      @Nonnull BlockState facingState, @Nonnull IWorld worldIn, @Nonnull BlockPos currentPos,
-      @Nonnull BlockPos facingPos) {
+  public BlockState updateShape(BlockState stateIn, @Nonnull Direction facing,
+                                @Nonnull BlockState facingState, @Nonnull LevelAccessor worldIn,
+                                @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
 
-    if (stateIn.get(WATERLOGGED)) {
-      worldIn.getPendingFluidTicks()
-          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    if (stateIn.getValue(WATERLOGGED)) {
+      worldIn.getLiquidTicks()
+          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
 
-    return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
   }
 
   @Nullable
   @Override
-  public BlockState getStateForPlacement(BlockItemUseContext context) {
-    final FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
+    final FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
     final BlockState state = super.getStateForPlacement(context);
-    return state == null ? null : state.with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+    return state == null ? null :
+        state.setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
   }
 
   @Override
-  protected void fillStateContainer(Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
     builder.add(WATERLOGGED);
-    super.fillStateContainer(builder);
+    super.createBlockStateDefinition(builder);
   }
 
   @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public FluidState getFluidState(BlockState state) {
-    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+    return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false)
         : super.getFluidState(state);
   }
 

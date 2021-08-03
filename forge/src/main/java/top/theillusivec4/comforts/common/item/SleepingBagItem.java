@@ -20,13 +20,13 @@
 package top.theillusivec4.comforts.common.item;
 
 import javax.annotation.Nonnull;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import top.theillusivec4.comforts.common.ComfortsConfig;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;
@@ -40,18 +40,18 @@ public class SleepingBagItem extends ComfortsBaseItem {
 
   @Nonnull
   @Override
-  public ActionResultType onItemUse(ItemUseContext context) {
-    final ActionResultType result = super.onItemUse(context);
-    final PlayerEntity player = context.getPlayer();
+  public InteractionResult useOn(UseOnContext context) {
+    final InteractionResult result = super.useOn(context);
+    final Player player = context.getPlayer();
 
-    if (player instanceof ServerPlayerEntity && result.isSuccessOrConsume()
+    if (player instanceof ServerPlayer && result.consumesAction()
         && ComfortsConfig.SERVER.autoUse.get() && !player.isCrouching()) {
-      final BlockPos pos = context.getPos().up();
+      final BlockPos pos = context.getClickedPos().above();
       CapabilitySleepData.getCapability(player)
           .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(pos));
       ComfortsNetwork.INSTANCE
-          .send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-              new SPacketAutoSleep(player.getEntityId(), pos));
+          .send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+              new SPacketAutoSleep(player.getId(), pos));
     }
     return result;
   }

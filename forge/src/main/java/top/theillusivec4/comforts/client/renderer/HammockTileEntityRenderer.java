@@ -19,52 +19,41 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 
 public class HammockTileEntityRenderer extends ComfortsBaseTileEntityRenderer<HammockTileEntity> {
 
-  protected ModelRenderer headBoard;
-  protected ModelRenderer footBoard;
+  private static final String BOARD = "board";
 
-  public HammockTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
-    super(dispatcher, "hammock");
-    this.headPiece = new ModelRenderer(64, 64, 0, 0);
-    this.headPiece.addBox(1.0F, 1.0F, 0.0F, 14, 15, 1, 0.0F);
-    this.headBoard = new ModelRenderer(64, 64, 30, 0);
-    this.headBoard.addBox(0.0F, 0.0F, 0.0F, 16, 1, 1, 0.0F);
-    this.footPiece = new ModelRenderer(64, 64, 0, 16);
-    this.footPiece.addBox(1.0F, 0.0F, 0.0F, 14, 15, 1, 0.0F);
-    this.footBoard = new ModelRenderer(64, 64, 30, 0);
-    this.footBoard.addBox(0.0F, 15.0F, 0.0F, 16, 1, 1, 0.0F);
+  public HammockTileEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+    super(ctx, "hammock", ComfortsBaseTileEntityRenderer.HAMMOCK_HEAD,
+        ComfortsBaseTileEntityRenderer.HAMMOCK_FOOT);
   }
 
-  @Override
-  protected void renderPiece(MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean isHead,
-      Direction direction, RenderMaterial material, int light, int overlay, boolean p_228847_8_) {
-    this.headPiece.showModel = isHead;
-    this.headBoard.showModel = isHead;
-    this.footPiece.showModel = !isHead;
-    this.footBoard.showModel = !isHead;
-    matrixStack.push();
-    matrixStack.translate(0.0D, 0.0625D, p_228847_8_ ? -1.0D : 0.0D);
-    matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0F));
-    matrixStack.translate(0.5D, 0.5D, 0.5D);
-    matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
-    matrixStack.translate(-0.5D, -0.5D, -0.5D);
-    final IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::getEntitySolid);
-    this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
-    this.headBoard.render(matrixStack, ivertexbuilder, light, overlay);
-    this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);
-    this.footBoard.render(matrixStack, ivertexbuilder, light, overlay);
-    matrixStack.pop();
+  public static LayerDefinition createHeadLayer() {
+    MeshDefinition var0 = new MeshDefinition();
+    PartDefinition var1 = var0.getRoot();
+    var1.addOrReplaceChild("main", CubeListBuilder
+        .create().texOffs(0, 0).addBox(1.0F, 1.0F, 2.0F, 14.0F, 15.0F, 1.0F), PartPose.ZERO);
+    var1.addOrReplaceChild(BOARD, CubeListBuilder
+        .create().texOffs(30, 0).addBox(0.0F, 0.0F, 2.0F, 16.0F, 1.0F, 1.0F), PartPose.ZERO);
+    return LayerDefinition.create(var0, 64, 64);
+  }
+
+  public static LayerDefinition createFootLayer() {
+    MeshDefinition var0 = new MeshDefinition();
+    PartDefinition var1 = var0.getRoot();
+    var1.addOrReplaceChild("main", CubeListBuilder
+        .create().texOffs(0, 16).addBox(1.0F, 0.0F, 2.0F, 14.0F, 15.0F, 1.0F), PartPose.ZERO);
+    var1.addOrReplaceChild(BOARD, CubeListBuilder
+        .create().texOffs(30, 0).addBox(0.0F, 15.0F, 2.0F, 16.0F, 1.0F, 1.0F), PartPose.ZERO);
+    return LayerDefinition.create(var0, 64, 64);
   }
 }

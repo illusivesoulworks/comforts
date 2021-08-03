@@ -22,50 +22,50 @@ package top.theillusivec4.comforts.common.block;
 import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
 import javax.annotation.Nonnull;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import top.theillusivec4.comforts.Comforts;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import top.theillusivec4.comforts.ComfortsMod;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 
 public class HammockBlock extends ComfortsBaseBlock {
 
   private static final VoxelShape HAMMOCK_SHAPE = Block
-      .makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 15.0D);
-  private static final VoxelShape NORTH_SHAPE = VoxelShapes
-      .or(Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 16.0D),
-          Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 1.0D));
-  private static final VoxelShape SOUTH_SHAPE = VoxelShapes
-      .or(Block.makeCuboidShape(1.0D, 0.0D, 0.0D, 15.0D, 1.0D, 15.0D),
-          Block.makeCuboidShape(0.0D, 0.0D, 15.0D, 16.0D, 1.0D, 16.0D));
-  private static final VoxelShape WEST_SHAPE = VoxelShapes
-      .or(Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
-          Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 16.0D));
-  private static final VoxelShape EAST_SHAPE = VoxelShapes
-      .or(Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
-          Block.makeCuboidShape(15.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D));
+      .box(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 15.0D);
+  private static final VoxelShape NORTH_SHAPE = Shapes
+      .or(Block.box(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 16.0D),
+          Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 1.0D));
+  private static final VoxelShape SOUTH_SHAPE = Shapes
+      .or(Block.box(1.0D, 0.0D, 0.0D, 15.0D, 1.0D, 15.0D),
+          Block.box(0.0D, 0.0D, 15.0D, 16.0D, 1.0D, 16.0D));
+  private static final VoxelShape WEST_SHAPE = Shapes
+      .or(Block.box(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
+          Block.box(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 16.0D));
+  private static final VoxelShape EAST_SHAPE = Shapes
+      .or(Block.box(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
+          Block.box(15.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D));
   private final DyeColor color;
 
   public HammockBlock(DyeColor color) {
     super(BedType.HAMMOCK, color,
-        Block.Properties.create(Material.WOOL).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
+        Block.Properties.of(Material.WOOL).sound(SoundType.WOOL).strength(0.1F));
     this.color = color;
-    this.setRegistryName(Comforts.MODID, "hammock_" + color.getTranslationKey());
+    this.setRegistryName(ComfortsMod.MOD_ID, "hammock_" + color.getName());
   }
 
   public static Direction getDirectionToOther(BedPart part, Direction facing) {
@@ -73,20 +73,20 @@ public class HammockBlock extends ComfortsBaseBlock {
   }
 
   public static void dropRopeSupport(BlockPos pos, Direction direction, boolean isHead,
-      World worldIn) {
-    BlockPos ropePos = isHead ? pos.offset(direction) : pos.offset(direction.getOpposite());
+                                     Level worldIn) {
+    BlockPos ropePos = isHead ? pos.relative(direction) : pos.relative(direction.getOpposite());
     BlockState ropeState = worldIn.getBlockState(ropePos);
 
     if (ropeState.getBlock() instanceof RopeAndNailBlock) {
-      worldIn.setBlockState(ropePos, ropeState.with(SUPPORTING, false));
+      worldIn.setBlockAndUpdate(ropePos, ropeState.setValue(SUPPORTING, false));
     }
   }
 
   @Nonnull
   @Override
-  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
-      ISelectionContext context) {
-    final Direction direction = getFootDirection(state).getOpposite();
+  public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos,
+                             CollisionContext context) {
+    final Direction direction = getConnectedDirection(state).getOpposite();
     switch (direction) {
       case NORTH:
         return NORTH_SHAPE;
@@ -102,34 +102,34 @@ public class HammockBlock extends ComfortsBaseBlock {
   }
 
   @Override
-  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
-      @Nonnull PlayerEntity player) {
-    super.onBlockHarvested(worldIn, pos, state, player);
-    final BedPart bedpart = state.get(PART);
+  public void playerWillDestroy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                                @Nonnull Player player) {
+    super.playerWillDestroy(worldIn, pos, state, player);
+    final BedPart bedpart = state.getValue(PART);
     final boolean isHead = bedpart == BedPart.HEAD;
-    final Direction direction = state.get(HORIZONTAL_FACING);
-    final BlockPos otherPos = pos.offset(getDirectionToOther(bedpart, direction));
+    final Direction direction = state.getValue(FACING);
+    final BlockPos otherPos = pos.relative(getDirectionToOther(bedpart, direction));
     dropRopeSupport(pos, direction, isHead, worldIn);
     dropRopeSupport(otherPos, direction, !isHead, worldIn);
   }
 
   @Override
-  public BlockState getStateForPlacement(BlockItemUseContext context) {
-    final Direction direction = context.getFace();
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
+    final Direction direction = context.getClickedFace();
 
     if (direction == Direction.UP || direction == Direction.DOWN) {
       return null;
     }
-    final BlockPos blockpos = context.getPos();
-    final BlockPos blockpos1 = blockpos.offset(direction);
-    final FluidState ifluidstate = context.getWorld().getFluidState(blockpos);
-    return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this
-        .getDefaultState().with(HORIZONTAL_FACING, direction)
-        .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER) : null;
+    final BlockPos blockpos = context.getClickedPos();
+    final BlockPos blockpos1 = blockpos.relative(direction);
+    final FluidState ifluidstate = context.getLevel().getFluidState(blockpos);
+    return context.getLevel().getBlockState(blockpos1).canBeReplaced(context) ? this
+        .defaultBlockState().setValue(FACING, direction)
+        .setValue(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getType() == Fluids.WATER) : null;
   }
 
   @Override
-  public TileEntity createNewTileEntity(IBlockReader worldIn) {
-    return new HammockTileEntity(this.color);
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new HammockTileEntity(pos, state, this.color);
   }
 }

@@ -21,11 +21,11 @@ package top.theillusivec4.comforts.common.network;
 
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 public class SPacketAutoSleep {
@@ -38,21 +38,21 @@ public class SPacketAutoSleep {
     this.pos = posIn;
   }
 
-  public static void encode(SPacketAutoSleep msg, PacketBuffer buf) {
+  public static void encode(SPacketAutoSleep msg, FriendlyByteBuf buf) {
     buf.writeInt(msg.entityId);
     buf.writeBlockPos(msg.pos);
   }
 
-  public static SPacketAutoSleep decode(PacketBuffer buf) {
+  public static SPacketAutoSleep decode(FriendlyByteBuf buf) {
     return new SPacketAutoSleep(buf.readInt(), buf.readBlockPos());
   }
 
-  public static void handle(SPacketAutoSleep msg, Supplier<Context> ctx) {
+  public static void handle(SPacketAutoSleep msg, Supplier<NetworkEvent.Context> ctx) {
     ctx.get().enqueueWork(() -> {
-      Entity entity = Minecraft.getInstance().world.getEntityByID(msg.entityId);
+      Entity entity = Minecraft.getInstance().level.getEntity(msg.entityId);
 
-      if (entity instanceof PlayerEntity) {
-        final PlayerEntity playerEntity = (PlayerEntity) entity;
+      if (entity instanceof Player) {
+        final Player playerEntity = (Player) entity;
         CapabilitySleepData.getCapability(playerEntity)
             .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(msg.pos));
       }

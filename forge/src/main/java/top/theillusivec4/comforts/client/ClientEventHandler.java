@@ -19,21 +19,21 @@
 
 package top.theillusivec4.comforts.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
-import net.minecraft.client.multiplayer.PlayerController;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -49,25 +49,25 @@ public class ClientEventHandler {
   public void onPostPlayerTick(final TickEvent.PlayerTickEvent evt) {
 
     if (evt.phase == Phase.START && evt.side == LogicalSide.CLIENT) {
-      final PlayerEntity player = evt.player;
+      final Player player = evt.player;
 
       if (!player.isSleeping()) {
         CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
           final BlockPos pos = sleepdata.getAutoSleepPos();
 
           if (pos != null) {
-            final World world = player.world;
+            final Level world = player.level;
             final BlockState state = world.getBlockState(pos);
 
             if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-              BlockRayTraceResult hit = new BlockRayTraceResult(new Vector3d(0, 0, 0),
-                  player.getHorizontalFacing(), pos, false);
-              PlayerController playerController = Minecraft.getInstance().playerController;
+              BlockHitResult hit = new BlockHitResult(new Vec3(0, 0, 0),
+                  player.getDirection(), pos, false);
+              MultiPlayerGameMode playerController = Minecraft.getInstance().gameMode;
 
               if (playerController != null) {
                 playerController
-                    .func_217292_a((ClientPlayerEntity) player, (ClientWorld) player.world,
-                        Hand.MAIN_HAND, hit);
+                    .useItemOn((LocalPlayer) player, (ClientLevel) player.level,
+                        InteractionHand.MAIN_HAND, hit);
               }
             }
 
@@ -80,12 +80,12 @@ public class ClientEventHandler {
 
   @SubscribeEvent
   public void onPlayerRenderPre(final RenderPlayerEvent.Pre evt) {
-    final PlayerEntity player = evt.getPlayer();
+    final Player player = evt.getPlayer();
 
-    if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
-      player.getBedPosition().ifPresent(bedPos -> {
-        MatrixStack matrixStack = evt.getMatrixStack();
-        final Block bed = player.world.getBlockState(bedPos).getBlock();
+    if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
+      player.getSleepingPos().ifPresent(bedPos -> {
+        PoseStack matrixStack = evt.getMatrixStack();
+        final Block bed = player.level.getBlockState(bedPos).getBlock();
         if (bed instanceof SleepingBagBlock) {
           matrixStack.translate(0.0f, -0.375F, 0.0f);
         } else if (bed instanceof HammockBlock) {
@@ -97,12 +97,12 @@ public class ClientEventHandler {
 
   @SubscribeEvent
   public void onPlayerRenderPost(final RenderPlayerEvent.Post evt) {
-    final PlayerEntity player = evt.getPlayer();
+    final Player player = evt.getPlayer();
 
-    if (player instanceof RemoteClientPlayerEntity && player.getPose() == Pose.SLEEPING) {
-      player.getBedPosition().ifPresent(bedPos -> {
-        MatrixStack matrixStack = evt.getMatrixStack();
-        final Block bed = player.world.getBlockState(bedPos).getBlock();
+    if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
+      player.getSleepingPos().ifPresent(bedPos -> {
+        PoseStack matrixStack = evt.getMatrixStack();
+        final Block bed = player.level.getBlockState(bedPos).getBlock();
         if (bed instanceof SleepingBagBlock) {
           matrixStack.translate(0.0f, 0.375F, 0.0f);
         } else if (bed instanceof HammockBlock) {

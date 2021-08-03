@@ -21,19 +21,19 @@ package top.theillusivec4.comforts.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
-import top.theillusivec4.comforts.Comforts;
+import top.theillusivec4.comforts.ComfortsMod;
 
 public class ComfortsConfig {
 
   public static final ForgeConfigSpec SERVER_SPEC;
   public static final Server SERVER;
-  private static final String CONFIG_PREFIX = "gui." + Comforts.MODID + ".config.";
+  private static final String CONFIG_PREFIX = "gui." + ComfortsMod.MOD_ID + ".config.";
 
   static {
     final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder()
@@ -92,7 +92,7 @@ public class ComfortsConfig {
   public static double sleepyFactor;
   public static boolean nightHammocks;
   public static double sleepingBagBreakage;
-  public static List<EffectInstance> sleepingBagDebuffs;
+  public static List<MobEffectInstance> sleepingBagDebuffs;
   public static boolean insulatedSleepingBag;
 
   public static void bake() {
@@ -106,7 +106,7 @@ public class ComfortsConfig {
 
     SERVER.sleepingBagDebuffs.get().forEach(debuff -> {
       String[] elements = debuff.split("\\s+");
-      Effect potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(elements[0]));
+      MobEffect potion = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(elements[0]));
 
       if (potion == null) {
         return;
@@ -117,9 +117,9 @@ public class ComfortsConfig {
         duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
         amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
       } catch (Exception e) {
-        Comforts.LOGGER.error("Problem parsing sleeping bag debuffs in config!", e);
+        ComfortsMod.LOGGER.error("Problem parsing sleeping bag debuffs in config!", e);
       }
-      sleepingBagDebuffs.add(new EffectInstance(potion, duration * 20, amp - 1));
+      sleepingBagDebuffs.add(new MobEffectInstance(potion, duration * 20, amp - 1));
     });
   }
 }

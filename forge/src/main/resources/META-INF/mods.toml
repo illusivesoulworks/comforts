@@ -1,26 +1,26 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[37,)"
 issueTrackerURL="https://github.com/TheIllusiveC4/Comforts/issues"
-logoFile="${mod_icon}"
+logoFile="comforts_icon.png"
 license="LGPL-3.0-or-later"
 [[mods]]
-modId="${mod_id}"
-version="${version}"
-displayName="${mod_name}"
-displayURL="${mod_url}"
-authors="${mod_author}"
+modId="comforts"
+version="${file.jarVersion}"
+displayName="Comforts"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/comforts"
+authors="C4"
 description='''
-${mod_description}
+Adds sleeping bags and hammocks for, respectively, portability and turning day to night, without setting new spawns. Comes in 16 different colors!
 '''
 [[dependencies.comforts]]
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[37,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.comforts]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,1.17)"
+    versionRange="[1.17.1,1.18)"
     ordering="NONE"
     side="BOTH"

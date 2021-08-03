@@ -23,14 +23,14 @@ import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.HORIZONTA
 import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
 import javax.annotation.Nonnull;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 
 public class HammockItem extends ComfortsBaseItem {
@@ -41,34 +41,34 @@ public class HammockItem extends ComfortsBaseItem {
 
   @Nonnull
   @Override
-  public ActionResultType onItemUse(ItemUseContext context) {
-    final World world = context.getWorld();
-    final BlockPos pos = context.getPos();
+  public InteractionResult useOn(UseOnContext context) {
+    final Level world = context.getLevel();
+    final BlockPos pos = context.getClickedPos();
     final BlockState state = world.getBlockState(pos);
 
     if (state.getBlock() instanceof RopeAndNailBlock) {
-      final Direction direction = state.get(HORIZONTAL_FACING);
-      final BlockPos blockpos = pos.offset(direction, 3);
+      final Direction direction = state.getValue(HORIZONTAL_FACING);
+      final BlockPos blockpos = pos.relative(direction, 3);
       final BlockState blockstate = world.getBlockState(blockpos);
 
       if (hasPartneredRopes(state, blockstate)) {
-        ActionResultType result = this.tryPlace(BlockItemUseContext
-            .func_221536_a(new BlockItemUseContext(context), context.getPos().offset(direction),
+        InteractionResult result = this.place(BlockPlaceContext
+            .at(new BlockPlaceContext(context), context.getClickedPos().relative(direction),
                 direction));
 
-        if (result.isSuccessOrConsume()) {
-          world.setBlockState(pos, state.with(SUPPORTING, true));
-          world.setBlockState(blockpos, blockstate.with(SUPPORTING, true));
+        if (result.consumesAction()) {
+          world.setBlockAndUpdate(pos, state.setValue(SUPPORTING, true));
+          world.setBlockAndUpdate(blockpos, blockstate.setValue(SUPPORTING, true));
         }
         return result;
       }
     }
-    return ActionResultType.FAIL;
+    return InteractionResult.FAIL;
   }
 
   private boolean hasPartneredRopes(BlockState state, BlockState otherState) {
     return otherState.getBlock() instanceof RopeAndNailBlock
-        && otherState.get(HORIZONTAL_FACING) == state.get(HORIZONTAL_FACING).getOpposite() && !state
-        .get(SUPPORTING) && !otherState.get(SUPPORTING);
+        && otherState.getValue(HORIZONTAL_FACING) == state.getValue(HORIZONTAL_FACING).getOpposite() && !state
+        .getValue(SUPPORTING) && !otherState.getValue(SUPPORTING);
   }
 }

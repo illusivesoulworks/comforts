@@ -20,9 +20,9 @@
 package top.theillusivec4.comforts.common;
 
 import java.util.EnumMap;
-import net.minecraft.block.Block;
-import net.minecraft.item.DyeColor;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
@@ -37,10 +37,10 @@ public class ComfortsRegistry {
   public static final Block ROPE_AND_NAIL;
 
   @ObjectHolder("comforts:sleeping_bag")
-  public static final TileEntityType<SleepingBagTileEntity> SLEEPING_BAG_TE;
+  public static final BlockEntityType<SleepingBagTileEntity> SLEEPING_BAG_TE;
 
   @ObjectHolder("comforts:hammock")
-  public static final TileEntityType<HammockTileEntity> HAMMOCK_TE;
+  public static final BlockEntityType<HammockTileEntity> HAMMOCK_TE;
 
   static {
     ROPE_AND_NAIL = null;

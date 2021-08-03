@@ -26,33 +26,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.data.loot.BlockLootTables;
-import net.minecraft.loot.ConstantRange;
-import net.minecraft.loot.ItemLootEntry;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTable.Builder;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.conditions.BlockStateProperty;
-import net.minecraft.loot.conditions.SurvivesExplosion;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTable.Builder;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
 
-public class ComfortsBlockLootTables extends BlockLootTables {
+public class ComfortsBlockLootTables extends BlockLoot {
 
   private final Map<ResourceLocation, Builder> lootBuilders = Maps.newHashMap();
 
   private static LootTable.Builder getLootBuilder(final Block block) {
-    return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(
-        ItemLootEntry.builder(block).acceptCondition(BlockStateProperty.builder(block)
-            .fromProperties(StatePropertiesPredicate.Builder.newBuilder()
-                .withProp(BedBlock.PART, BedPart.HEAD)))
-            .acceptCondition(SurvivesExplosion.builder())));
+    return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+        .add(LootItem.lootTableItem(block).when(
+            LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(
+                StatePropertiesPredicate.Builder.properties()
+                    .hasProperty(BedBlock.PART, BedPart.HEAD)))
+            .when(ExplosionCondition.survivesExplosion())));
   }
 
   @Override
@@ -60,14 +61,14 @@ public class ComfortsBlockLootTables extends BlockLootTables {
     List<Block> blocks = new ArrayList<>();
     blocks.addAll(ComfortsRegistry.SLEEPING_BAGS.values());
     blocks.addAll(ComfortsRegistry.HAMMOCKS.values());
-    blocks.forEach(block -> this.registerLootTable(block, ComfortsBlockLootTables::getLootBuilder));
+    blocks.forEach(block -> this.add(block, ComfortsBlockLootTables::getLootBuilder));
 
     Set<ResourceLocation> set = Sets.newHashSet();
 
     for (Block block : blocks) {
       ResourceLocation resourcelocation = block.getLootTable();
 
-      if (resourcelocation != LootTables.EMPTY && set.add(resourcelocation)) {
+      if (resourcelocation != BuiltInLootTables.EMPTY && set.add(resourcelocation)) {
         LootTable.Builder loottable$builder = this.lootBuilders.remove(resourcelocation);
 
         if (loottable$builder == null) {

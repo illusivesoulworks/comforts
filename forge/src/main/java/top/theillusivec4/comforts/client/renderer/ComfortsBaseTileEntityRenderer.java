@@ -19,65 +19,78 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import javax.annotation.Nonnull;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.tileentity.DualBrightnessCallback;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.tileentity.BedTileEntity;
-import net.minecraft.tileentity.TileEntityMerger;
-import net.minecraft.tileentity.TileEntityMerger.ICallbackWrapper;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
-import top.theillusivec4.comforts.Comforts;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BrightnessCombiner;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DoubleBlockCombiner;
+import net.minecraft.world.level.block.DoubleBlockCombiner.NeighborCombineResult;
+import net.minecraft.world.level.block.entity.BedBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import top.theillusivec4.comforts.ComfortsMod;
 import top.theillusivec4.comforts.common.tileentity.ComfortsBaseTileEntity;
 
-public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileEntity> extends
-    TileEntityRenderer<T> {
+public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileEntity>
+    implements BlockEntityRenderer<T> {
+
+  public static final ModelLayerLocation SLEEPING_BAG_HEAD =
+      new ModelLayerLocation(new ResourceLocation(ComfortsMod.MOD_ID, "sleeping_bag_head"), "main");
+  public static final ModelLayerLocation SLEEPING_BAG_FOOT =
+      new ModelLayerLocation(new ResourceLocation(ComfortsMod.MOD_ID, "sleeping_bag_foot"), "main");
+  public static final ModelLayerLocation HAMMOCK_HEAD =
+      new ModelLayerLocation(new ResourceLocation(ComfortsMod.MOD_ID, "hammock_head"), "main");
+  public static final ModelLayerLocation HAMMOCK_FOOT =
+      new ModelLayerLocation(new ResourceLocation(ComfortsMod.MOD_ID, "hammock_foot"), "main");
 
   private final String type;
 
-  protected ModelRenderer headPiece;
-  protected ModelRenderer footPiece;
+  protected ModelPart headPiece;
+  protected ModelPart footPiece;
 
-  public ComfortsBaseTileEntityRenderer(TileEntityRendererDispatcher dispatcher, final String type) {
-    super(dispatcher);
-    this.headPiece = new ModelRenderer(0, 0, 0, 0);
-    this.footPiece = new ModelRenderer(0, 0, 0, 0);
+  public ComfortsBaseTileEntityRenderer(BlockEntityRendererProvider.Context ctx, String type,
+                                        ModelLayerLocation headModel,
+                                        ModelLayerLocation footModel) {
+    this.headPiece = ctx.bakeLayer(headModel);
+    this.footPiece = ctx.bakeLayer(footModel);
     this.type = type;
   }
 
   @Override
   public void render(ComfortsBaseTileEntity tileEntityIn, float partialTicks,
-      @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn,
-      int combinedOverlayIn) {
-    final RenderMaterial material = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE,
-        new ResourceLocation(Comforts.MODID,
-            "entity/" + type + "/" + tileEntityIn.getColor().getTranslationKey()));
-    final World world = tileEntityIn.getWorld();
+                     @Nonnull PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn,
+                     int combinedLightIn,
+                     int combinedOverlayIn) {
+    final Material material = new Material(InventoryMenu.BLOCK_ATLAS,
+        new ResourceLocation(ComfortsMod.MOD_ID,
+            "entity/" + type + "/" + tileEntityIn.getColor().getName()));
+    final Level world = tileEntityIn.getLevel();
 
     if (world != null) {
       final BlockState blockstate = tileEntityIn.getBlockState();
-      ICallbackWrapper<? extends BedTileEntity> icallbackwrapper = TileEntityMerger
-          .func_226924_a_(TileEntityType.BED, BedBlock::getMergeType, BedBlock::getFootDirection,
-              ChestBlock.FACING, blockstate, world, tileEntityIn.getPos(),
+      NeighborCombineResult<? extends BedBlockEntity> icallbackwrapper = DoubleBlockCombiner
+          .combineWithNeigbour(BlockEntityType.BED, BedBlock::getBlockType,
+              BedBlock::getConnectedDirection,
+              ChestBlock.FACING, blockstate, world, tileEntityIn.getBlockPos(),
               (p_228846_0_, p_228846_1_) -> false);
-      final int i = icallbackwrapper.apply(new DualBrightnessCallback<>()).get(combinedLightIn);
-      this.renderPiece(matrixStackIn, bufferIn, blockstate.get(BedBlock.PART) == BedPart.HEAD,
-          blockstate.get(BedBlock.HORIZONTAL_FACING), material, i, combinedOverlayIn, false);
+      final int i = icallbackwrapper.apply(new BrightnessCombiner<>()).get(combinedLightIn);
+      this.renderPiece(matrixStackIn, bufferIn, blockstate.getValue(BedBlock.PART) == BedPart.HEAD,
+          blockstate.getValue(BedBlock.FACING), material, i, combinedOverlayIn, false);
     } else {
       this.renderPiece(matrixStackIn, bufferIn, true, Direction.SOUTH, material, combinedLightIn,
           combinedOverlayIn, false);
@@ -87,19 +100,20 @@ public abstract class ComfortsBaseTileEntityRenderer<T extends ComfortsBaseTileE
 
   }
 
-  protected void renderPiece(MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean isHead,
-      Direction direction, RenderMaterial material, int light, int overlay, boolean p_228847_8_) {
-    this.headPiece.showModel = isHead;
-    this.footPiece.showModel = !isHead;
-    matrixStack.push();
+  protected void renderPiece(PoseStack matrixStack, MultiBufferSource buffer, boolean isHead,
+                             Direction direction, Material material, int light, int overlay,
+                             boolean p_228847_8_) {
+    this.headPiece.visible = isHead;
+    this.footPiece.visible = !isHead;
+    matrixStack.pushPose();
     matrixStack.translate(0.0D, 0.1875D, p_228847_8_ ? -1.0D : 0.0D);
-    matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0F));
+    matrixStack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
     matrixStack.translate(0.5D, 0.5D, 0.5D);
-    matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F + direction.getHorizontalAngle()));
+    matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F + direction.toYRot()));
     matrixStack.translate(-0.5D, -0.5D, -0.5D);
-    IVertexBuilder ivertexbuilder = material.getBuffer(buffer, RenderType::getEntitySolid);
+    VertexConsumer ivertexbuilder = material.buffer(buffer, RenderType::entitySolid);
     this.headPiece.render(matrixStack, ivertexbuilder, light, overlay);
     this.footPiece.render(matrixStack, ivertexbuilder, light, overlay);
-    matrixStack.pop();
+    matrixStack.popPose();
   }
 }

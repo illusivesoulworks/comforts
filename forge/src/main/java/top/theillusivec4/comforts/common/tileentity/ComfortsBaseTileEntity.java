@@ -19,41 +19,43 @@
 
 package top.theillusivec4.comforts.common.tileentity;
 
-import net.minecraft.block.BedBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.DyeColor;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ComfortsBaseTileEntity extends TileEntity {
+public class ComfortsBaseTileEntity extends BlockEntity {
 
   private DyeColor color;
 
-  public ComfortsBaseTileEntity(TileEntityType<?> tileEntityType) {
-    super(tileEntityType);
+  public ComfortsBaseTileEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state) {
+    super(tileEntityType, pos, state);
   }
 
-  public ComfortsBaseTileEntity(TileEntityType<?> tileEntityType, DyeColor colorIn) {
-    this(tileEntityType);
+  public ComfortsBaseTileEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state, DyeColor colorIn) {
+    this(tileEntityType, pos, state);
     this.setColor(colorIn);
   }
 
   @Override
-  public SUpdateTileEntityPacket getUpdatePacket() {
-    return new SUpdateTileEntityPacket(this.pos, 11, this.getUpdateTag());
+  public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    return new ClientboundBlockEntityDataPacket(this.worldPosition, 11, this.getUpdateTag());
   }
 
   @Override
-  public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    final ClientWorld clientWorld = Minecraft.getInstance().world;
+  public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    final ClientLevel clientWorld = Minecraft.getInstance().level;
 
     if (clientWorld != null) {
-      this.read(clientWorld.getBlockState(pkt.getPos()), pkt.getNbtCompound());
+      this.load(pkt.getTag());
     }
   }
 

@@ -19,16 +19,18 @@
 
 package top.theillusivec4.comforts.common.tileentity;
 
-import net.minecraft.item.DyeColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.state.BlockState;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
 
 public class HammockTileEntity extends ComfortsBaseTileEntity {
 
-  public HammockTileEntity() {
-    super(ComfortsRegistry.HAMMOCK_TE);
+  public HammockTileEntity(BlockPos pos, BlockState state) {
+    super(ComfortsRegistry.HAMMOCK_TE, pos, state);
   }
 
-  public HammockTileEntity(DyeColor colorIn) {
-    super(ComfortsRegistry.HAMMOCK_TE, colorIn);
+  public HammockTileEntity(BlockPos pos, BlockState state, DyeColor colorIn) {
+    super(ComfortsRegistry.HAMMOCK_TE, pos, state, colorIn);
   }
 }

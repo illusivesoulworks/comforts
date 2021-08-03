@@ -19,18 +19,35 @@
 
 package top.theillusivec4.comforts.client.renderer;
 
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 
 public class SleepingBagTileEntityRenderer extends
     ComfortsBaseTileEntityRenderer<SleepingBagTileEntity> {
 
-  public SleepingBagTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
-    super(dispatcher, "sleeping_bag");
-    this.headPiece = new ModelRenderer(64, 64, 0, 0);
-    this.headPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
-    this.footPiece = new ModelRenderer(64, 64, 0, 19);
-    this.footPiece.addBox(0.0F, 0.0F, 0.0F, 16, 16, 3, 0.0F);
+  public SleepingBagTileEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+    super(ctx, "sleeping_bag", ComfortsBaseTileEntityRenderer.SLEEPING_BAG_HEAD,
+        ComfortsBaseTileEntityRenderer.SLEEPING_BAG_FOOT);
+  }
+
+  public static LayerDefinition createHeadLayer() {
+    MeshDefinition var0 = new MeshDefinition();
+    PartDefinition var1 = var0.getRoot();
+    var1.addOrReplaceChild("main", CubeListBuilder
+        .create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 16.0F, 16.0F, 3.0F), PartPose.ZERO);
+    return LayerDefinition.create(var0, 64, 64);
+  }
+
+  public static LayerDefinition createFootLayer() {
+    MeshDefinition var0 = new MeshDefinition();
+    PartDefinition var1 = var0.getRoot();
+    var1.addOrReplaceChild("main", CubeListBuilder
+        .create().texOffs(0, 19).addBox(0.0F, 0.0F, 0.0F, 16.0F, 16.0F, 3.0F), PartPose.ZERO);
+    return LayerDefinition.create(var0, 64, 64);
   }
 }

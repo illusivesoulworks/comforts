@@ -20,41 +20,41 @@
 package top.theillusivec4.comforts.common.block;
 
 import javax.annotation.Nonnull;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.DyeColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import top.theillusivec4.comforts.Comforts;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import top.theillusivec4.comforts.ComfortsMod;
 import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
 
 public class SleepingBagBlock extends ComfortsBaseBlock {
 
   private static final VoxelShape SLEEPING_BAG_SHAPE = Block
-      .makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
+      .box(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
   private final DyeColor color;
 
   public SleepingBagBlock(DyeColor color) {
     super(BedType.SLEEPING_BAG, color,
-        Block.Properties.create(Material.WOOL).sound(SoundType.CLOTH).hardnessAndResistance(0.1F));
+        Block.Properties.of(Material.WOOL).sound(SoundType.WOOL).strength(0.1F));
     this.color = color;
-    this.setRegistryName(Comforts.MODID, "sleeping_bag_" + color.getTranslationKey());
+    this.setRegistryName(ComfortsMod.MOD_ID, "sleeping_bag_" + color.getName());
   }
 
   @Nonnull
   @Override
-  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
-      ISelectionContext context) {
+  public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos,
+      CollisionContext context) {
     return SLEEPING_BAG_SHAPE;
   }
 
   @Override
-  public TileEntity createNewTileEntity(IBlockReader worldIn) {
-    return new SleepingBagTileEntity(this.color);
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new SleepingBagTileEntity(pos, state, this.color);
   }
 }

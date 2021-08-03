@@ -24,132 +24,132 @@ import java.util.EnumMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import top.theillusivec4.comforts.Comforts;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import top.theillusivec4.comforts.ComfortsMod;
 
-public class RopeAndNailBlock extends Block implements IWaterLoggable {
+public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
 
-  public static final DirectionProperty HORIZONTAL_FACING = HorizontalBlock.HORIZONTAL_FACING;
+  public static final DirectionProperty HORIZONTAL_FACING = HorizontalDirectionalBlock.FACING;
   public static final BooleanProperty SUPPORTING = BooleanProperty.create("supporting");
 
   private static final Map<Direction, VoxelShape> SHAPES_R = new EnumMap<>(ImmutableMap
-      .of(Direction.NORTH, Block.makeCuboidShape(6.0D, 0.0D, 12.0D, 10.0D, 8.0D, 16.0D),
-          Direction.SOUTH, Block.makeCuboidShape(6.0D, 0.0D, 0.0D, 10.0D, 8.0D, 4.0D),
-          Direction.WEST, Block.makeCuboidShape(12.0D, 0.0D, 6.0D, 16.0D, 8.0D, 10.0D),
-          Direction.EAST, Block.makeCuboidShape(0.0D, 0.0D, 6.0D, 4.0D, 8.0D, 10.0D)));
+      .of(Direction.NORTH, Block.box(6.0D, 0.0D, 12.0D, 10.0D, 8.0D, 16.0D),
+          Direction.SOUTH, Block.box(6.0D, 0.0D, 0.0D, 10.0D, 8.0D, 4.0D),
+          Direction.WEST, Block.box(12.0D, 0.0D, 6.0D, 16.0D, 8.0D, 10.0D),
+          Direction.EAST, Block.box(0.0D, 0.0D, 6.0D, 4.0D, 8.0D, 10.0D)));
 
   private static final Map<Direction, VoxelShape> SHAPES_S = new EnumMap<>(ImmutableMap
-      .of(Direction.NORTH, Block.makeCuboidShape(6.0D, 3.0D, 9.0D, 10.0D, 8.0D, 16.0D),
-          Direction.SOUTH, Block.makeCuboidShape(6.0D, 3.0D, 0.0D, 10.0D, 8.0D, 7.0D),
-          Direction.WEST, Block.makeCuboidShape(9.0D, 3.0D, 6.0D, 16.0D, 8.0D, 10.0D),
-          Direction.EAST, Block.makeCuboidShape(0.0D, 3.0D, 6.0D, 7.0D, 8.0D, 10.0D)));
+      .of(Direction.NORTH, Block.box(6.0D, 3.0D, 9.0D, 10.0D, 8.0D, 16.0D),
+          Direction.SOUTH, Block.box(6.0D, 3.0D, 0.0D, 10.0D, 8.0D, 7.0D),
+          Direction.WEST, Block.box(9.0D, 3.0D, 6.0D, 16.0D, 8.0D, 10.0D),
+          Direction.EAST, Block.box(0.0D, 3.0D, 6.0D, 7.0D, 8.0D, 10.0D)));
 
   public RopeAndNailBlock() {
     super(
-        Block.Properties.create(Material.WOOL).sound(SoundType.METAL).hardnessAndResistance(0.2F));
-    this.setRegistryName(Comforts.MODID, "rope_and_nail");
-    this.setDefaultState(this.stateContainer.getBaseState().with(HORIZONTAL_FACING, Direction.NORTH)
-        .with(SUPPORTING, false));
+        Block.Properties.of(Material.WOOL).sound(SoundType.METAL).strength(0.2F));
+    this.setRegistryName(ComfortsMod.MOD_ID, "rope_and_nail");
+    this.registerDefaultState(this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH)
+        .setValue(SUPPORTING, false));
   }
 
   @SuppressWarnings("deprecation")
   @Nonnull
   @Override
-  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos,
-      ISelectionContext context) {
-    return state.get(SUPPORTING) ? SHAPES_S.get(state.get(HORIZONTAL_FACING))
-        : SHAPES_R.get(state.get(HORIZONTAL_FACING));
+  public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos,
+      CollisionContext context) {
+    return state.getValue(SUPPORTING) ? SHAPES_S.get(state.getValue(HORIZONTAL_FACING))
+        : SHAPES_R.get(state.getValue(HORIZONTAL_FACING));
   }
 
   @SuppressWarnings("deprecation")
   @Override
-  public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
-    final Direction direction = state.get(HORIZONTAL_FACING);
-    final BlockPos blockpos = pos.offset(direction.getOpposite());
+  public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
+    final Direction direction = state.getValue(HORIZONTAL_FACING);
+    final BlockPos blockpos = pos.relative(direction.getOpposite());
     final BlockState blockstate = worldIn.getBlockState(blockpos);
-    final boolean valid = blockstate.isSolidSide(worldIn, blockpos, direction);
+    final boolean valid = blockstate.isFaceSturdy(worldIn, blockpos, direction);
 
-    if (!valid && worldIn instanceof ServerWorld) {
-      ServerWorld world = (ServerWorld) worldIn;
+    if (!valid && worldIn instanceof ServerLevel) {
+      ServerLevel world = (ServerLevel) worldIn;
       dropHammock(world, pos, state);
     }
     return valid;
   }
 
-  private static void dropHammock(World world, BlockPos pos, BlockState state) {
-    final BlockPos frontPos = pos.offset(state.get(HORIZONTAL_FACING));
+  private static void dropHammock(Level world, BlockPos pos, BlockState state) {
+    final BlockPos frontPos = pos.relative(state.getValue(HORIZONTAL_FACING));
     final BlockState frontState = world.getBlockState(frontPos);
 
-    if (state.get(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
-      final BedPart bedpart = frontState.get(BedBlock.PART);
+    if (state.getValue(SUPPORTING) && frontState.getBlock() instanceof HammockBlock) {
+      final BedPart bedpart = frontState.getValue(BedBlock.PART);
       final boolean isHead = bedpart == BedPart.HEAD;
-      final Direction frontDirection = frontState.get(HORIZONTAL_FACING);
+      final Direction frontDirection = frontState.getValue(HORIZONTAL_FACING);
       final BlockPos otherPos = frontPos
-          .offset(HammockBlock.getDirectionToOther(bedpart, frontDirection));
+          .relative(HammockBlock.getDirectionToOther(bedpart, frontDirection));
 
       if (isHead) {
-        spawnDrops(frontState, world, frontPos);
+        dropResources(frontState, world, frontPos);
       }
 
-      if (frontState.get(ComfortsBaseBlock.WATERLOGGED)) {
-        world.setBlockState(frontPos, Blocks.WATER.getDefaultState(), 35);
+      if (frontState.getValue(ComfortsBaseBlock.WATERLOGGED)) {
+        world.setBlock(frontPos, Blocks.WATER.defaultBlockState(), 35);
       } else {
-        world.setBlockState(frontPos, Blocks.AIR.getDefaultState(), 35);
+        world.setBlock(frontPos, Blocks.AIR.defaultBlockState(), 35);
       }
       HammockBlock.dropRopeSupport(otherPos, frontDirection, !isHead, world);
     }
   }
 
   @Override
-  public void onBlockHarvested(World worldIn, @Nonnull BlockPos pos, BlockState state,
-      @Nonnull PlayerEntity player) {
+  public void playerWillDestroy(Level worldIn, @Nonnull BlockPos pos, BlockState state,
+      @Nonnull Player player) {
     dropHammock(worldIn, pos, state);
-    super.onBlockHarvested(worldIn, pos, state, player);
+    super.playerWillDestroy(worldIn, pos, state, player);
   }
 
   @Nullable
   @Override
-  public BlockState getStateForPlacement(BlockItemUseContext context) {
-    final FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
-    BlockState blockstate = this.getDefaultState();
-    final IWorldReader worldreader = context.getWorld();
-    final BlockPos blockpos = context.getPos();
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
+    final FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
+    BlockState blockstate = this.defaultBlockState();
+    final LevelReader worldreader = context.getLevel();
+    final BlockPos blockpos = context.getClickedPos();
     final Direction[] directions = context.getNearestLookingDirections();
 
     for (Direction direction : directions) {
 
       if (direction.getAxis().isHorizontal()) {
         final Direction direction1 = direction.getOpposite();
-        blockstate = blockstate.with(HORIZONTAL_FACING, direction1)
-            .with(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+        blockstate = blockstate.setValue(HORIZONTAL_FACING, direction1)
+            .setValue(ComfortsBaseBlock.WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
 
-        if (blockstate.isValidPosition(worldreader, blockpos)) {
+        if (blockstate.canSurvive(worldreader, blockpos)) {
           return blockstate;
         }
       }
@@ -160,33 +160,33 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
   @SuppressWarnings("deprecation")
   @Nonnull
   @Override
-  public BlockState updatePostPlacement(@Nonnull BlockState stateIn, Direction facing,
-      BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  public BlockState updateShape(@Nonnull BlockState stateIn, Direction facing,
+      BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
 
-    if (stateIn.get(ComfortsBaseBlock.WATERLOGGED)) {
-      worldIn.getPendingFluidTicks()
-          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    if (stateIn.getValue(ComfortsBaseBlock.WATERLOGGED)) {
+      worldIn.getLiquidTicks()
+          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
-    return facing.getOpposite() == stateIn.get(HORIZONTAL_FACING) && !stateIn
-        .isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : stateIn;
+    return facing.getOpposite() == stateIn.getValue(HORIZONTAL_FACING) && !stateIn
+        .canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;
   }
 
   @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState rotate(@Nonnull BlockState state, Rotation rot) {
-    return state.with(HORIZONTAL_FACING, rot.rotate(state.get(HORIZONTAL_FACING)));
+    return state.setValue(HORIZONTAL_FACING, rot.rotate(state.getValue(HORIZONTAL_FACING)));
   }
 
   @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState mirror(@Nonnull BlockState state, Mirror mirrorIn) {
-    return state.rotate(mirrorIn.toRotation(state.get(HORIZONTAL_FACING)));
+    return state.rotate(mirrorIn.getRotation(state.getValue(HORIZONTAL_FACING)));
   }
 
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
     builder.add(SUPPORTING, HORIZONTAL_FACING, ComfortsBaseBlock.WATERLOGGED);
   }
 
@@ -194,7 +194,7 @@ public class RopeAndNailBlock extends Block implements IWaterLoggable {
   @Nonnull
   @Override
   public FluidState getFluidState(BlockState state) {
-    return state.get(ComfortsBaseBlock.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+    return state.getValue(ComfortsBaseBlock.WATERLOGGED) ? Fluids.WATER.getSource(false)
         : super.getFluidState(state);
   }
 }

@@ -21,19 +21,19 @@ package top.theillusivec4.comforts.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -47,15 +47,13 @@ import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 public class CommonEventHandler {
 
-  public static List<EffectInstance> debuffs = new ArrayList<>();
-
   @SubscribeEvent
   public void onPlayerSetSpawn(PlayerSetSpawnEvent evt) {
-    final PlayerEntity player = evt.getPlayer();
-    final World world = player.getEntityWorld();
+    final Player player = evt.getPlayer();
+    final Level world = player.getCommandSenderWorld();
     final BlockPos pos = evt.getNewSpawn();
 
-    if (pos != null && !world.isRemote) {
+    if (pos != null && !world.isClientSide) {
       Block block = world.getBlockState(pos).getBlock();
 
       if (block instanceof SleepingBagBlock || block instanceof HammockBlock) {
@@ -66,7 +64,7 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onSleepTimeCheck(SleepingTimeCheckEvent evt) {
-    final World world = evt.getPlayer().getEntityWorld();
+    final Level world = evt.getPlayer().getCommandSenderWorld();
     final long worldTime = world.getDayTime() % 24000L;
 
     evt.getSleepingLocation().ifPresent(sleepingLocation -> {
@@ -88,16 +86,16 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onSleepFinished(SleepFinishedTimeEvent evt) {
-    IWorld world = evt.getWorld();
+    LevelAccessor world = evt.getWorld();
 
-    if (world instanceof ServerWorld) {
-      ServerWorld serverWorld = (ServerWorld) world;
+    if (world instanceof ServerLevel) {
+      ServerLevel serverWorld = (ServerLevel) world;
       final boolean[] activeHammock = {false};
-      List<? extends PlayerEntity> players = world.getPlayers();
+      List<? extends Player> players = world.players();
 
-      for (PlayerEntity player : players) {
-        player.getBedPosition().ifPresent(bedPos -> {
-          if (player.isPlayerFullyAsleep() && world.getBlockState(bedPos)
+      for (Player player : players) {
+        player.getSleepingPos().ifPresent(bedPos -> {
+          if (player.isSleepingLongEnough() && world.getBlockState(bedPos)
               .getBlock() instanceof HammockBlock) {
             activeHammock[0] = true;
           }
@@ -108,7 +106,7 @@ public class CommonEventHandler {
         }
       }
 
-      if (activeHammock[0] && ((ServerWorld) world).getWorld().isDaytime()) {
+      if (activeHammock[0] && ((ServerLevel) world).getLevel().isDay()) {
         final long i = serverWorld.getDayTime() + 24000L;
         evt.setTimeAddition((i - i % 24000L) - 12001L);
       }
@@ -117,12 +115,12 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onPlayerWakeUp(PlayerWakeUpEvent evt) {
-    final PlayerEntity player = evt.getPlayer();
-    World world = player.world;
+    final Player player = evt.getPlayer();
+    Level world = player.level;
 
-    if (!world.isRemote) {
+    if (!world.isClientSide) {
       CapabilitySleepData.getCapability(player)
-          .ifPresent(sleepdata -> player.getBedPosition().ifPresent(bedPos -> {
+          .ifPresent(sleepdata -> player.getSleepingPos().ifPresent(bedPos -> {
             final long wakeTime = world.getDayTime();
             final long timeSlept = wakeTime - sleepdata.getSleepTime();
             final BlockState state = world.getBlockState(bedPos);
@@ -131,37 +129,37 @@ public class CommonEventHandler {
               boolean broke = false;
 
               if (timeSlept > 500L) {
-                List<EffectInstance> debuffs = ComfortsConfig.sleepingBagDebuffs;
+                List<MobEffectInstance> debuffs = ComfortsConfig.sleepingBagDebuffs;
 
                 if (!debuffs.isEmpty()) {
 
-                  for (EffectInstance effect : debuffs) {
-                    player.addPotionEffect(
-                        new EffectInstance(effect.getPotion(), effect.getDuration(),
+                  for (MobEffectInstance effect : debuffs) {
+                    player.addEffect(
+                        new MobEffectInstance(effect.getEffect(), effect.getDuration(),
                             effect.getAmplifier()));
                   }
                 }
 
-                if (world.rand.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
+                if (world.random.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
                   broke = true;
                   final BlockPos blockpos = bedPos
-                      .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-                  world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                  world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-                  player.sendStatusMessage(
-                      new TranslationTextComponent("block.comforts.sleeping_bag.broke"), true);
-                  world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
+                      .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
+                  world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
+                  world.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
+                  player.displayClientMessage(
+                      new TranslatableComponent("block.comforts.sleeping_bag.broke"), true);
+                  world.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
                       1.0F, 1.0F);
-                  player.clearBedPosition();
+                  player.clearSleepingPos();
                 }
               }
 
               if (!broke && sleepdata.getAutoSleepPos() != null) {
                 final BlockPos blockpos = bedPos
-                    .offset(state.get(HorizontalBlock.HORIZONTAL_FACING).getOpposite());
-                world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
-                player.clearBedPosition();
+                    .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
+                world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
+                world.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
+                player.clearSleepingPos();
               }
             }
             sleepdata.setWakeTime(wakeTime);
@@ -174,11 +172,11 @@ public class CommonEventHandler {
 
   @SubscribeEvent
   public void onPlayerSleep(PlayerSleepInBedEvent evt) {
-    final PlayerEntity player = evt.getPlayer();
+    final Player player = evt.getPlayer();
     CapabilitySleepData.getCapability(player).ifPresent(sleepdata -> {
 
-      if (!player.world.isRemote) {
-        final long dayTime = player.getEntityWorld().getDayTime();
+      if (!player.level.isClientSide) {
+        final long dayTime = player.getCommandSenderWorld().getDayTime();
         sleepdata.setSleepTime(dayTime);
 
         if (ComfortsConfig.SERVER.wellRested.get()) {
@@ -188,9 +186,9 @@ public class CommonEventHandler {
           }
 
           if (sleepdata.getTiredTime() > dayTime) {
-            player.sendStatusMessage(new TranslationTextComponent("capability.comforts.not_sleepy"),
+            player.displayClientMessage(new TranslatableComponent("capability.comforts.not_sleepy"),
                 true);
-            evt.setResult(PlayerEntity.SleepResult.OTHER_PROBLEM);
+            evt.setResult(Player.BedSleepingProblem.OTHER_PROBLEM);
           }
         }
       }
