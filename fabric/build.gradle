@@ -21,6 +21,12 @@ repositories {
         name = "Ladysnake Libs"
         url = "https://ladysnake.jfrog.io/artifactory/mods"
     }
+    maven {
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        url "https://maven.shedaniel.me/"
+    }
 }
 
 dependencies {
@@ -62,10 +68,10 @@ dependencies {
     include "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig_version}"
 
     // Optional
-    modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}", {
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}", {
         exclude group: "net.fabricmc.fabric-api"
     }
-    modRuntime "io.github.prospector:modmenu:${project.modmenu_version}", {
+    modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}", {
         exclude group: "net.fabricmc.fabric-api"
     }
 }
