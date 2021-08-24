@@ -5,6 +5,7 @@ import static net.minecraft.entity.player.PlayerEntity.SleepFailureReason.TOO_FA
 
 import com.mojang.datafixers.util.Either;
 import java.util.List;
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BedBlock;
@@ -47,7 +48,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 import top.theillusivec4.comforts.mixin.AccessorPlayerEntity;
-import top.theillusivec4.somnus.api.PlayerSleepEvents;
 
 public abstract class AbstractComfortsBlock extends BedBlock implements Waterloggable {
 
@@ -190,7 +190,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
   public Either<PlayerEntity.SleepFailureReason, Unit> trySleep(ServerPlayerEntity player,
                                                                 BlockPos pos) {
     PlayerEntity.SleepFailureReason result =
-        PlayerSleepEvents.TRY_SLEEP.invoker().trySleep(player, pos);
+        EntitySleepEvents.ALLOW_SLEEPING.invoker().allowSleep(player, pos);
 
     if (result != null) {
       return Either.left(result);
@@ -206,8 +206,10 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (isBedObstructed(player, pos, direction)) {
         return Either.left(PlayerEntity.SleepFailureReason.OBSTRUCTED);
       } else {
+        ActionResult sleep = EntitySleepEvents.ALLOW_SLEEP_TIME.invoker().allowSleepTime(player, pos, !player.world.isDay());
+        boolean canSleep = sleep == ActionResult.PASS ? !player.world.isDay() : sleep.isAccepted();
 
-        if (!PlayerSleepEvents.canSleepNow(player, pos)) {
+        if (!canSleep) {
           return Either.left(NOT_POSSIBLE_NOW);
         } else {
 
