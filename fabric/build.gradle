@@ -74,6 +74,7 @@ dependencies {
     modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}", {
         exclude group: "net.fabricmc.fabric-api"
     }
+    modRuntime fabricApi.module("fabric-screen-api-v1", project.fabric_version)
 }
 
 processResources {
