@@ -38,7 +38,7 @@
   "depends": {
     "fabricloader": ">=0.11.3",
     "minecraft": "1.17.x",
-    "fabric": ">=0.40.1",
+    "fabric": ">=0.39.0",
     "cardinal-components-entity": "*",
     "somnus": ">=0.0.12-1.17"
   }
