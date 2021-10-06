@@ -38,14 +38,7 @@
   "depends": {
     "fabricloader": ">=0.11.3",
     "minecraft": "1.17.x",
-    "fabric": ">=0.39.1",
-    "fabric-networking-blockentity-v0": "*",
-    "fabric-item-groups-v0": "*",
-    "fabric-resource-loader-v0": "*",
-    "fabric-renderer-registries-v1": "*",
-    "fabric-textures-v0": "*",
-    "fabric-registry-sync-v0": "*",
-    "fabric-lifecycle-events-v1": "*",
+    "fabric": ">=0.40.1",
     "cardinal-components-entity": "*",
     "somnus": ">=0.0.12-1.17"
   }
