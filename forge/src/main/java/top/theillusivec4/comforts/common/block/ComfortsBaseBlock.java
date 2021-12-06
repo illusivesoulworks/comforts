@@ -287,8 +287,7 @@ public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBloc
                                 @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
 
     if (stateIn.getValue(WATERLOGGED)) {
-      worldIn.getLiquidTicks()
-          .scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+      worldIn.m_186469_(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
 
     return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);

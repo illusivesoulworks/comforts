@@ -28,10 +28,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -41,8 +40,9 @@ import top.theillusivec4.comforts.ComfortsMod;
 
 public class CapabilitySleepData {
 
-  @CapabilityInject(ISleepData.class)
-  public static final Capability<ISleepData> SLEEP_DATA_CAP = null;
+  public static final Capability<ISleepData> SLEEP_DATA_CAP =
+      CapabilityManager.get(new CapabilityToken<>() {
+      });
 
   public static final ResourceLocation ID = new ResourceLocation(ComfortsMod.MOD_ID, "sleep_data");
 
@@ -50,12 +50,6 @@ public class CapabilitySleepData {
   private static final String TIRED_TAG = "tiredTime";
   private static final String SLEEP_TAG = "sleepTime";
 
-  public static void register() {
-    MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
-    CapabilityManager.INSTANCE.register(ISleepData.class);
-  }
-
-  @SuppressWarnings("ConstantConditions")
   public static LazyOptional<ISleepData> getCapability(final Player player) {
     return player.getCapability(SLEEP_DATA_CAP);
   }
@@ -146,7 +140,6 @@ public class CapabilitySleepData {
       this.optional = LazyOptional.of(() -> data);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nullable Capability<T> capability, Direction side) {

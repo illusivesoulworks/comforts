@@ -84,7 +84,7 @@ public class ClientEventHandler {
 
     if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
       player.getSleepingPos().ifPresent(bedPos -> {
-        PoseStack matrixStack = evt.getMatrixStack();
+        PoseStack matrixStack = evt.getPoseStack();
         final Block bed = player.level.getBlockState(bedPos).getBlock();
         if (bed instanceof SleepingBagBlock) {
           matrixStack.translate(0.0f, -0.375F, 0.0f);
@@ -101,7 +101,7 @@ public class ClientEventHandler {
 
     if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
       player.getSleepingPos().ifPresent(bedPos -> {
-        PoseStack matrixStack = evt.getMatrixStack();
+        PoseStack matrixStack = evt.getPoseStack();
         final Block bed = player.level.getBlockState(bedPos).getBlock();
         if (bed instanceof SleepingBagBlock) {
           matrixStack.translate(0.0f, 0.375F, 0.0f);

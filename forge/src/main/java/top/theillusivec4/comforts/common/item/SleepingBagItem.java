@@ -26,7 +26,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import top.theillusivec4.comforts.common.ComfortsConfig;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;

@@ -24,9 +24,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
-import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import top.theillusivec4.comforts.ComfortsMod;
 
 public class ComfortsNetwork {
@@ -38,9 +38,10 @@ public class ComfortsNetwork {
   private static int id = 0;
 
   public static void register() {
-    INSTANCE = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(ComfortsMod.MOD_ID, "main"))
-        .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
-        .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();
+    INSTANCE =
+        NetworkRegistry.ChannelBuilder.named(new ResourceLocation(ComfortsMod.MOD_ID, "main"))
+            .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
+            .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();
 
     register(SPacketAutoSleep.class, SPacketAutoSleep::encode, SPacketAutoSleep::decode,
         SPacketAutoSleep::handle);

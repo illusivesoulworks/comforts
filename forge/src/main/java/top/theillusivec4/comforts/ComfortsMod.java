@@ -20,6 +20,7 @@
 package top.theillusivec4.comforts;
 
 import java.util.Arrays;
+import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
@@ -36,6 +37,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -75,6 +77,7 @@ public final class ComfortsMod {
   public static final String MOD_ID = "comforts";
 
   public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(-1, "comforts") {
+    @Nonnull
     @OnlyIn(Dist.CLIENT)
     public ItemStack makeIcon() {
       return new ItemStack(ComfortsRegistry.SLEEPING_BAGS.get(DyeColor.RED));
@@ -88,6 +91,7 @@ public final class ComfortsMod {
     eventBus.addListener(this::setup);
     eventBus.addListener(this::gatherData);
     eventBus.addListener(this::config);
+    eventBus.addListener(this::registerCapabilities);
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC);
   }
 
@@ -106,18 +110,14 @@ public final class ComfortsMod {
     }
   }
 
+  private void registerCapabilities(final RegisterCapabilitiesEvent evt) {
+    evt.register(CapabilitySleepData.ISleepData.class);
+  }
+
   private void setup(final FMLCommonSetupEvent evt) {
     MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
-    CapabilitySleepData.register();
+    MinecraftForge.EVENT_BUS.register(new CapabilitySleepData.CapabilityEvents());
     ComfortsNetwork.register();
-
-//    if (ModList.get().isLoaded("morpheus")) {
-//      MorpheusIntegration.setup();
-//    }
-//
-//    if (ModList.get().isLoaded("survive")) {
-//      MinecraftForge.EVENT_BUS.register(new SurviveIntegration());
-//    }
   }
 
   @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -152,7 +152,7 @@ public final class ComfortsMod {
     @SubscribeEvent
     public static void textureStitch(TextureStitchEvent.Pre evt) {
 
-      if (evt.getMap().location() == InventoryMenu.BLOCK_ATLAS) {
+      if (evt.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
         for (final DyeColor color : DyeColor.values()) {
           evt.addSprite(
               new ResourceLocation(ComfortsMod.MOD_ID, "entity/hammock/" + color.getName()));
@@ -192,7 +192,7 @@ public final class ComfortsMod {
     @SubscribeEvent
     public static void onTileEntityRegistry(final RegistryEvent.Register<BlockEntityType<?>> evt) {
       BlockEntityType<?> sleepingBag = BlockEntityType.Builder.of(SleepingBagTileEntity::new,
-          ComfortsRegistry.SLEEPING_BAGS.values().toArray(new Block[0])).build(null)
+              ComfortsRegistry.SLEEPING_BAGS.values().toArray(new Block[0])).build(null)
           .setRegistryName(ComfortsMod.MOD_ID, "sleeping_bag");
       BlockEntityType<?> hammock = BlockEntityType.Builder
           .of(HammockTileEntity::new, ComfortsRegistry.HAMMOCKS.values().toArray(new Block[0]))

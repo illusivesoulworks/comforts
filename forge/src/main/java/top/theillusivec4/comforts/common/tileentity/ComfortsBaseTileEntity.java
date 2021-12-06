@@ -19,13 +19,14 @@
 
 package top.theillusivec4.comforts.common.tileentity;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.item.DyeColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,22 +41,24 @@ public class ComfortsBaseTileEntity extends BlockEntity {
     super(tileEntityType, pos, state);
   }
 
-  public ComfortsBaseTileEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state, DyeColor colorIn) {
+  public ComfortsBaseTileEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state,
+                                DyeColor colorIn) {
     this(tileEntityType, pos, state);
     this.setColor(colorIn);
   }
 
   @Override
-  public ClientboundBlockEntityDataPacket getUpdatePacket() {
-    return new ClientboundBlockEntityDataPacket(this.worldPosition, 11, this.getUpdateTag());
+  public ClientboundBlockEntityDataPacket m_183216_() {
+    return ClientboundBlockEntityDataPacket.m_195640_(this);
   }
 
   @Override
   public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
     final ClientLevel clientWorld = Minecraft.getInstance().level;
+    final CompoundTag tag = pkt.getTag();
 
-    if (clientWorld != null) {
-      this.load(pkt.getTag());
+    if (clientWorld != null && tag != null) {
+      this.load(tag);
     }
   }
 

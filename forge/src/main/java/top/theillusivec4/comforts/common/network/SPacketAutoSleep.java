@@ -21,11 +21,12 @@ package top.theillusivec4.comforts.common.network;
 
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
 
 public class SPacketAutoSleep {
@@ -49,12 +50,15 @@ public class SPacketAutoSleep {
 
   public static void handle(SPacketAutoSleep msg, Supplier<NetworkEvent.Context> ctx) {
     ctx.get().enqueueWork(() -> {
-      Entity entity = Minecraft.getInstance().level.getEntity(msg.entityId);
+      ClientLevel level = Minecraft.getInstance().level;
 
-      if (entity instanceof Player) {
-        final Player playerEntity = (Player) entity;
-        CapabilitySleepData.getCapability(playerEntity)
-            .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(msg.pos));
+      if (level != null) {
+        Entity entity = level.getEntity(msg.entityId);
+
+        if (entity instanceof final Player playerEntity) {
+          CapabilitySleepData.getCapability(playerEntity)
+              .ifPresent(sleepdata -> sleepdata.setAutoSleepPos(msg.pos));
+        }
       }
     });
     ctx.get().setPacketHandled(true);
