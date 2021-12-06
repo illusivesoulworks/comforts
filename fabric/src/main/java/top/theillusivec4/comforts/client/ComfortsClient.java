@@ -6,7 +6,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.network.OtherClientPlayerEntity;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -16,18 +19,40 @@ import top.theillusivec4.comforts.common.ComfortsComponents;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 
-public class ComfortsClientEvents {
+public class ComfortsClient {
 
-  public static float getSleepTranslation(AbstractClientPlayerEntity player) {
-    return player.getSleepingPosition().map(pos -> {
-      final Block bed = player.world.getBlockState(pos).getBlock();
-      if (bed instanceof SleepingBagBlock) {
-        return -0.375F;
-      } else if (bed instanceof HammockBlock) {
-        return -0.5F;
-      }
-      return 0.0F;
-    }).orElse(0.0F);
+  public static void sleepingTranslate(AbstractClientPlayerEntity player, MatrixStack matrixStack) {
+
+    if (player instanceof OtherClientPlayerEntity && player.getPose() == EntityPose.SLEEPING) {
+      player.getSleepingPosition().ifPresent(pos -> {
+        final Block bed = player.world.getBlockState(pos).getBlock();
+        float translate = 0.0F;
+
+        if (bed instanceof SleepingBagBlock) {
+          translate = -0.375F;
+        } else if (bed instanceof HammockBlock) {
+          translate = -0.5F;
+        }
+        matrixStack.translate(0.0F, translate, 0.0F);
+      });
+    }
+  }
+
+  public static void resetSleepingTranslate(AbstractClientPlayerEntity player, MatrixStack matrixStack) {
+
+    if (player instanceof OtherClientPlayerEntity && player.getPose() == EntityPose.SLEEPING) {
+      player.getSleepingPosition().ifPresent(pos -> {
+        final Block bed = player.world.getBlockState(pos).getBlock();
+        float translate = 0.0F;
+
+        if (bed instanceof SleepingBagBlock) {
+          translate = -0.375F;
+        } else if (bed instanceof HammockBlock) {
+          translate = -0.5F;
+        }
+        matrixStack.translate(0.0F, -translate, 0.0F);
+      });
+    }
   }
 
   public static void playerTick(PlayerEntity player) {

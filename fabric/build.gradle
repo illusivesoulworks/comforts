@@ -1,10 +1,10 @@
 plugins {
-    id 'fabric-loom' version '0.9-SNAPSHOT'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "${project.archives_base_name}-fabric"
 version = project.mod_version
@@ -14,9 +14,6 @@ minecraft {
 }
 
 repositories {
-    maven {
-        url = "https://maven.theillusivec4.top"
-    }
     maven {
         name = "Ladysnake Libs"
         url = "https://ladysnake.jfrog.io/artifactory/mods"
@@ -35,7 +32,7 @@ dependencies {
 
     // Required
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation fabricApi.module("fabric-networking-blockentity-v0", project.fabric_version)
+    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
     modImplementation fabricApi.module("fabric-item-groups-v0", project.fabric_version)
     modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
     modImplementation fabricApi.module("fabric-renderer-registries-v1", project.fabric_version)
@@ -43,15 +40,13 @@ dependencies {
     modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
     modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
     modImplementation fabricApi.module("fabric-object-builder-api-v1", project.fabric_version)
+    modImplementation fabricApi.module("fabric-entity-events-v1", project.fabric_version)
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca_version}"
-    modImplementation "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
-
 
     // Embedded
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
     include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca_version}"
-    include "top.theillusivec4.somnus:somnus-fabric:${project.somnus_version}"
 
     // Optional
     modCompileOnly "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}", {
@@ -60,9 +55,9 @@ dependencies {
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}", {
         exclude group: "net.fabricmc.fabric-api"
     }
-    modRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
-    modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modRuntime "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modRuntimeOnly "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
+    modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
@@ -76,7 +71,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    it.options.release = 16
+    it.options.release = 17
 }
 
 java {
@@ -98,9 +93,11 @@ curseforge {
         releaseType = "${curse_release}"
         changelogType = 'markdown'
         changelog = file('CHANGELOG.md')
-        addGameVersion "Java 16"
+        addGameVersion "Java 17"
         addGameVersion "Fabric"
-        addGameVersion project.minecraft_version
+        "${curse_versions}".split(',').each {
+            addGameVersion "${it}"
+        }
         addArtifact(sourcesJar)
         mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
 
@@ -109,7 +106,6 @@ curseforge {
             optionalDependency 'cloth-config'
             optionalDependency 'modmenu'
             embeddedLibrary 'cardinal-components'
-            embeddedLibrary 'somnus'
         }
 
         afterEvaluate {

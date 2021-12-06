@@ -84,7 +84,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
         }
       }
 
-      if (!isOverworld(world)) {
+      if (!isBedWorking(world)) {
         world.removeBlock(pos, false);
         BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
 
@@ -112,7 +112,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
                   : new TranslatableText("block.minecraft.bed.no_sleep");
               case TOO_FAR_AWAY -> new TranslatableText(
                   "block.comforts." + type.name + ".too_far_away");
-              default -> sleepFailureReason.toText();
+              default -> sleepFailureReason.getMessage();
             };
 
             if (text != null) {
@@ -163,7 +163,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
                                               BlockPos posFrom) {
 
     if (state.get(WATERLOGGED)) {
-      world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+      world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
     }
     return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
   }

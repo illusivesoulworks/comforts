@@ -2,8 +2,8 @@ package top.theillusivec4.comforts.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
@@ -16,7 +16,6 @@ import top.theillusivec4.comforts.common.ComfortsMod;
 import top.theillusivec4.comforts.common.ComfortsRegistry;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;
 import top.theillusivec4.comforts.mixin.AccessorRenderLayers;
-import top.theillusivec4.somnus.api.client.SleepRenderEvents;
 
 public class ComfortsClientMod implements ClientModInitializer {
 
@@ -42,10 +41,10 @@ public class ComfortsClientMod implements ClientModInitializer {
     EntityModelLayerRegistry.registerModelLayer(
         HAMMOCK_FOOT,
         HammockBlockEntityRenderer::getFootTexturedModelData);
-    BlockEntityRendererRegistry.INSTANCE
+    BlockEntityRendererRegistry
         .register(ComfortsRegistry.SLEEPING_BAG_BE, SleepingBagBlockEntityRenderer::new);
-    BlockEntityRendererRegistry.INSTANCE
-        .register(ComfortsRegistry.HAMMOCK_BE, HammockBlockEntityRenderer::new);
+    BlockEntityRendererRegistry.register(ComfortsRegistry.HAMMOCK_BE,
+        HammockBlockEntityRenderer::new);
     AccessorRenderLayers.getBlocks()
         .put(ComfortsRegistry.ROPE_AND_NAIL, RenderLayer.getTranslucent());
     ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
@@ -57,7 +56,5 @@ public class ComfortsClientMod implements ClientModInitializer {
         });
     ClientPlayNetworking
         .registerGlobalReceiver(ComfortsNetwork.SYNC_AUTOSLEEP, ComfortsNetwork::readAutoSleep);
-    SleepRenderEvents.PLAYER_VERTICAL_TRANSLATION
-        .register(ComfortsClientEvents::getSleepTranslation);
   }
 }

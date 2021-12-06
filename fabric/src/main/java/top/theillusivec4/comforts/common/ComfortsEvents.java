@@ -18,12 +18,10 @@ import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.block.HammockBlock;
 import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.config.ComfortsConfig;
-import top.theillusivec4.somnus.api.WorldSleepEvents;
 
 public class ComfortsEvents {
 
   public static void setup() {
-    WorldSleepEvents.WORLD_WAKE_TIME.register(ComfortsEvents::getWakeTime);
     EntitySleepEvents.ALLOW_SLEEPING.register(ComfortsEvents::trySleep);
     EntitySleepEvents.ALLOW_SLEEP_TIME.register(ComfortsEvents::canSleepNow);
     EntitySleepEvents.STOP_SLEEPING.register(ComfortsEvents::wakeUp);
@@ -128,7 +126,7 @@ public class ComfortsEvents {
 
     for (PlayerEntity player : players) {
       player.getSleepingPosition().ifPresent(bedPos -> {
-        if (player.isSleepingLongEnough() &&
+        if (player.isSleeping() &&
             serverWorld.getBlockState(bedPos).getBlock() instanceof HammockBlock) {
           activeHammock[0] = true;
         }

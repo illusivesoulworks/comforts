@@ -3,39 +3,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.0.7-1.17.1] - 2021.10.06
-### Changed
-- Updated to Fabric API 0.40.1+
-- Updated to Fabric Loader 0.12.0+
-- 
-
-## [0.0.6-1.17.1] - 2021.08.24
-### Changed
-- Updated to Fabric API 0.39.0+
-- Optimized assets (thanks RDKRACZ!)
-
-## [0.0.5-1.17.1] - 2021.08.02
-### Changed
-- Updated to Minecraft 1.17.1
-- Updated Swedish localization (thanks GeorgeOrwell1!)
-
-## [0.0.4-1.17] - 2021.06.11
-### Changed
-- Updated to Minecraft 1.17
-- Cloth Config is now an optional dependency
-
-## [0.0.3-1.16.5] - 2021.05.15
-### Added
-- Added Polish localization (thanks joker876!)
-### Fixed
-- Added failsafe for hammock placement [#53](https://github.com/TheIllusiveC4/Comforts/issues/53)
-
-## [0.0.2-1.16.5] - 2021.02.26
-### Changed
-- Updated to Minecraft 1.16.5
-- Updated Somnus API to 0.0.11-1.16.5
-### Fixed
-- Fixed NPE with null chat messages from Comforts blocks
-
-## [0.0.1-1.16.4] - 2021.01.04
-Initial beta release
+## [1.0.0-1.18] - 2021.12.06
+- Updated to Minecraft 1.18
+- Updated to Fabric API 0.44.0+

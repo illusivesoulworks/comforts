@@ -135,8 +135,7 @@ public class RopeAndNailBlock extends Block implements Waterloggable {
                                               BlockState newState, WorldAccess world, BlockPos pos,
                                               BlockPos posFrom) {
     if (state.get(AbstractComfortsBlock.WATERLOGGED)) {
-      world.getFluidTickScheduler()
-          .schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+      world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
     }
     return direction.getOpposite() == state.get(HorizontalFacingBlock.FACING) &&
         !state.canPlaceAt(world, pos) ? Blocks.AIR.getDefaultState() : state;
