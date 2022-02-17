@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.0.6-1.16.5] - 2022.02.16
+### Changed
+- Attempting invalid placements for hammocks will now provide general feedback messages to the player about what went
+  wrong
+
 ## [0.0.5-1.16.5] - 2021.08.24
 ### Changed
 - Updated to Fabric API 0.39.0
