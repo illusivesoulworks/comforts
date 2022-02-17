@@ -8,7 +8,7 @@
   ],
   "key": {
     "a": {
-      "item": "minecraft:string"
+      "tag": "forge:string"
     },
     "x": {
       "tag": "forge:ingots/iron"
