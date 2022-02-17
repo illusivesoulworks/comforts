@@ -25,11 +25,13 @@ import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTIN
 import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 
@@ -45,6 +47,7 @@ public class HammockItem extends ComfortsBaseItem {
     final World world = context.getWorld();
     final BlockPos pos = context.getPos();
     final BlockState state = world.getBlockState(pos);
+    final PlayerEntity player = context.getPlayer();
 
     if (state.getBlock() instanceof RopeAndNailBlock) {
       final Direction direction = state.get(HORIZONTAL_FACING);
@@ -59,9 +62,29 @@ public class HammockItem extends ComfortsBaseItem {
         if (result.isSuccessOrConsume()) {
           world.setBlockState(pos, state.with(SUPPORTING, true));
           world.setBlockState(blockpos, blockstate.with(SUPPORTING, true));
+        } else {
+
+          if (player != null) {
+            player.sendStatusMessage(
+                new TranslationTextComponent("block.comforts.hammock.no_space"), true);
+          }
         }
         return result;
+      } else if (player != null) {
+        boolean flag = hasPartneredRopes(state, world.getBlockState(pos.offset(direction, 1)));
+        flag = flag || hasPartneredRopes(state, world.getBlockState(pos.offset(direction, 2)));
+
+        if (flag) {
+          player.sendStatusMessage(new TranslationTextComponent("block.comforts.hammock.no_space"),
+              true);
+        } else {
+          player.sendStatusMessage(
+              new TranslationTextComponent("block.comforts.hammock.missing_rope"), true);
+        }
       }
+    } else if (player != null) {
+      player.sendStatusMessage(new TranslationTextComponent("block.comforts.hammock.no_rope"),
+          true);
     }
     return ActionResultType.FAIL;
   }
