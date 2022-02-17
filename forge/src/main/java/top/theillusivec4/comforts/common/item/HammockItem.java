@@ -23,14 +23,16 @@ import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.HORIZONTA
 import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTING;
 
 import javax.annotation.Nonnull;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
 
 public class HammockItem extends ComfortsBaseItem {
@@ -45,6 +47,7 @@ public class HammockItem extends ComfortsBaseItem {
     final Level world = context.getLevel();
     final BlockPos pos = context.getClickedPos();
     final BlockState state = world.getBlockState(pos);
+    final Player player = context.getPlayer();
 
     if (state.getBlock() instanceof RopeAndNailBlock) {
       final Direction direction = state.getValue(HORIZONTAL_FACING);
@@ -59,16 +62,36 @@ public class HammockItem extends ComfortsBaseItem {
         if (result.consumesAction()) {
           world.setBlockAndUpdate(pos, state.setValue(SUPPORTING, true));
           world.setBlockAndUpdate(blockpos, blockstate.setValue(SUPPORTING, true));
+        } else {
+
+          if (player != null) {
+            player.displayClientMessage(
+                new TranslatableComponent("block.comforts.hammock.no_space"), true);
+          }
         }
         return result;
+      } else if (player != null) {
+        boolean flag = hasPartneredRopes(state, world.getBlockState(pos.relative(direction, 1)));
+        flag = flag || hasPartneredRopes(state, world.getBlockState(pos.relative(direction, 2)));
+
+        if (flag) {
+          player.displayClientMessage(
+              new TranslatableComponent("block.comforts.hammock.no_space"), true);
+        } else {
+          player.displayClientMessage(
+              new TranslatableComponent("block.comforts.hammock.missing_rope"), true);
+        }
       }
+    } else if (player != null) {
+      player.displayClientMessage(new TranslatableComponent("block.comforts.hammock.no_rope"),
+          true);
     }
     return InteractionResult.FAIL;
   }
 
   private boolean hasPartneredRopes(BlockState state, BlockState otherState) {
-    return otherState.getBlock() instanceof RopeAndNailBlock
-        && otherState.getValue(HORIZONTAL_FACING) == state.getValue(HORIZONTAL_FACING).getOpposite() && !state
-        .getValue(SUPPORTING) && !otherState.getValue(SUPPORTING);
+    return otherState.getBlock() instanceof RopeAndNailBlock &&
+        otherState.getValue(HORIZONTAL_FACING) == state.getValue(HORIZONTAL_FACING).getOpposite() &&
+        !state.getValue(SUPPORTING) && !otherState.getValue(SUPPORTING);
   }
 }
