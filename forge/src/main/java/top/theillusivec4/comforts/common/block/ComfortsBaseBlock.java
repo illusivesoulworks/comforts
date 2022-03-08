@@ -275,7 +275,7 @@ public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBloc
     }
     worldIn.levelEvent(player, 2001, pos, getId(state));
 
-    if (BlockTags.GUARDED_BY_PIGLINS.contains(this)) {
+    if (state.is(BlockTags.GUARDED_BY_PIGLINS)) {
       PiglinAi.angerNearbyPiglins(player, false);
     }
   }
@@ -287,7 +287,7 @@ public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBloc
                                 @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
 
     if (stateIn.getValue(WATERLOGGED)) {
-      worldIn.m_186469_(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+      worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
 
     return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);

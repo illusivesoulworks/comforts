@@ -164,7 +164,7 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
       BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
 
     if (stateIn.getValue(ComfortsBaseBlock.WATERLOGGED)) {
-      worldIn.m_186469_(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+      worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
     return facing.getOpposite() == stateIn.getValue(HORIZONTAL_FACING) && !stateIn
         .canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;

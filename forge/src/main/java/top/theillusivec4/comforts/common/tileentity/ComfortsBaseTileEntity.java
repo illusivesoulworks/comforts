@@ -48,8 +48,8 @@ public class ComfortsBaseTileEntity extends BlockEntity {
   }
 
   @Override
-  public ClientboundBlockEntityDataPacket m_183216_() {
-    return ClientboundBlockEntityDataPacket.m_195640_(this);
+  public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    return ClientboundBlockEntityDataPacket.create(this);
   }
 
   @Override

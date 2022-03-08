@@ -2,7 +2,8 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "comforts:rope_and_nail"
+      "comforts:rope_and_nail",
+      "comforts:rope_and_nail_shapeless"
     ]
   },
   "criteria": {
@@ -11,7 +12,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/iron"
+            "tag": "c:iron_ingots"
           }
         ]
       }
