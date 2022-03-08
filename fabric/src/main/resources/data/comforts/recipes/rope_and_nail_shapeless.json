@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "rope_and_nail",
+  "ingredients": [
+    {
+      "tag": "c:rope"
+    },
+    {
+      "tag": "c:iron_ingots"
+    }
+  ],
+  "result": {
+    "item": "comforts:rope_and_nail",
+    "count": 2
+  }
+}
