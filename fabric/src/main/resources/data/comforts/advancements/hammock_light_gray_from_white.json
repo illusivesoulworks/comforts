@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "comforts:hammock_white"
+            "items": ["comforts:hammock_white"]
           }
         ]
       }
