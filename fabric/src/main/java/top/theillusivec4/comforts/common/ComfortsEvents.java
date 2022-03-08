@@ -120,7 +120,7 @@ public class ComfortsEvents {
     return ActionResult.PASS;
   }
 
-  public static long getWakeTime(ServerWorld serverWorld, long newTime, long curTime) {
+  public static void setWakeTime(ServerWorld serverWorld, long curTime) {
     final boolean[] activeHammock = {false};
     List<? extends PlayerEntity> players = serverWorld.getPlayers();
 
@@ -139,8 +139,7 @@ public class ComfortsEvents {
 
     if (activeHammock[0] && serverWorld.isDay()) {
       final long i = curTime + 24000L;
-      return (i - i % 24000L) - 12001L;
+      serverWorld.setTimeOfDay((i - i % 24000L) - 12001L);
     }
-    return newTime;
   }
 }
