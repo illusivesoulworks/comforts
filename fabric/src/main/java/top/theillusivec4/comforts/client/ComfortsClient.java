@@ -38,7 +38,8 @@ public class ComfortsClient {
     }
   }
 
-  public static void resetSleepingTranslate(AbstractClientPlayerEntity player, MatrixStack matrixStack) {
+  public static void resetSleepingTranslate(AbstractClientPlayerEntity player,
+                                            MatrixStack matrixStack) {
 
     if (player instanceof OtherClientPlayerEntity && player.getPose() == EntityPose.SLEEPING) {
       player.getSleepingPosition().ifPresent(pos -> {
@@ -63,8 +64,7 @@ public class ComfortsClient {
           .ifPresent(tracker -> tracker.getAutoSleepPos().ifPresent(pos -> {
             final BlockState state = world.getBlockState(pos);
 
-            if (pos.getSquaredDistance(player.getX(), player.getY(), player.getZ(), true) < 20 &&
-                state.getBlock() instanceof SleepingBagBlock) {
+            if (world.isRegionLoaded(pos, pos) && state.getBlock() instanceof SleepingBagBlock) {
               BlockHitResult hit = new BlockHitResult(new Vec3d(0, 0, 0),
                   player.getHorizontalFacing(), pos, false);
               ClientPlayerInteractionManager interactionManager =
