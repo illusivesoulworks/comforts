@@ -38,6 +38,9 @@
   "block.comforts.hammock.too_far_away": "Vous ne pouvez pas faire la sieste pour l'instant, le hamac est trop loin",
   "block.comforts.sleeping_bag.too_far_away": "Vous ne pouvez pas dormir pour l'instant, le sac de couchage est trop loin",
   "block.comforts.hammock.no_sleep": "Vous ne pouvez faire la sieste que durant le jour",
-  "block.comforts.sleeping_bag.broke": "Le sac de couchage a cassé",
+  "block.comforts.hammock.no_rope": "Vous devez accrocher un hamac avec une paire de cordes et de clous",
+  "block.comforts.hammock.no_space": "Il n'y a pas assez de place pour accrocher le hamac",
+  "block.comforts.hammock.missing_rope": "Il doit aussi y avoir une corde et un clou de l'autre côté du hamac pour l'accrocher",
+  "block.comforts.sleeping_bag.broke": "Le sac de couchage a été cassé",
   "capability.comforts.not_sleepy": "Vous ne pouvez pas dormir pour l'instant, vous n'avez pas encore sommeil"
 }
