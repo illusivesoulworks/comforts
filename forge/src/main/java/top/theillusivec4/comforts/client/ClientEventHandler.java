@@ -60,7 +60,7 @@ public class ClientEventHandler {
             final BlockState state = world.getBlockState(pos);
 
             if (world.isAreaLoaded(pos, 1) && state.getBlock() instanceof SleepingBagBlock) {
-              BlockHitResult hit = new BlockHitResult(new Vec3(0, 0, 0),
+              BlockHitResult hit = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()),
                   player.getDirection(), pos, false);
               MultiPlayerGameMode playerController = Minecraft.getInstance().gameMode;
 
