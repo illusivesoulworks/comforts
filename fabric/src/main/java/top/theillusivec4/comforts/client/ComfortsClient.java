@@ -65,8 +65,9 @@ public class ComfortsClient {
             final BlockState state = world.getBlockState(pos);
 
             if (world.isRegionLoaded(pos, pos) && state.getBlock() instanceof SleepingBagBlock) {
-              BlockHitResult hit = new BlockHitResult(new Vec3d(0, 0, 0),
-                  player.getHorizontalFacing(), pos, false);
+              BlockHitResult hit =
+                  new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()),
+                      player.getHorizontalFacing(), pos, false);
               ClientPlayerInteractionManager interactionManager =
                   MinecraftClient.getInstance().interactionManager;
 
