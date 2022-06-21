@@ -32,7 +32,6 @@ public class ComfortsBaseItem extends BlockItem {
 
   public ComfortsBaseItem(Block block) {
     super(block, new Item.Properties().tab(ComfortsMod.CREATIVE_TAB));
-    this.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
   }
 
   @Override

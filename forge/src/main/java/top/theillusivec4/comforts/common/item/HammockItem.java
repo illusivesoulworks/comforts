@@ -25,7 +25,7 @@ import static top.theillusivec4.comforts.common.block.RopeAndNailBlock.SUPPORTIN
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -66,7 +66,7 @@ public class HammockItem extends ComfortsBaseItem {
 
           if (player != null) {
             player.displayClientMessage(
-                new TranslatableComponent("block.comforts.hammock.no_space"), true);
+                Component.translatable("block.comforts.hammock.no_space"), true);
           }
         }
         return result;
@@ -76,14 +76,14 @@ public class HammockItem extends ComfortsBaseItem {
 
         if (flag) {
           player.displayClientMessage(
-              new TranslatableComponent("block.comforts.hammock.no_space"), true);
+              Component.translatable("block.comforts.hammock.no_space"), true);
         } else {
           player.displayClientMessage(
-              new TranslatableComponent("block.comforts.hammock.missing_rope"), true);
+              Component.translatable("block.comforts.hammock.missing_rope"), true);
         }
       }
     } else if (player != null) {
-      player.displayClientMessage(new TranslatableComponent("block.comforts.hammock.no_rope"),
+      player.displayClientMessage(Component.translatable("block.comforts.hammock.no_rope"),
           true);
     }
     return InteractionResult.FAIL;

@@ -33,6 +33,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
+
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
@@ -68,7 +70,7 @@ public class ComfortsLootProvider extends LootTableProvider {
   }
 
   @Override
-  public void run(@Nonnull HashCache cache) {
+  public void run(@Nonnull CachedOutput cache) {
     final Path path = this.dataGenerator.getOutputFolder();
     Map<ResourceLocation, LootTable> map = Maps.newHashMap();
     this.lootTables
@@ -92,7 +94,7 @@ public class ComfortsLootProvider extends LootTableProvider {
         final Path path1 = getPath(path, resourceLocation);
 
         try {
-          DataProvider.save(GSON, cache, LootTables.serialize(lootTable), path1);
+          DataProvider.saveStable(cache, LootTables.serialize(lootTable), path1);
         } catch (IOException ioexception) {
           LOGGER.error("Couldn't save loot table {}", path1, ioexception);
         }

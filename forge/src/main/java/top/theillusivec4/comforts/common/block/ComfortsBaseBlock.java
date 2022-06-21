@@ -28,7 +28,6 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -124,7 +123,7 @@ public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBloc
 
         if (!this.kickVillagerOutOfBed(worldIn, pos)) {
           player.displayClientMessage(
-              new TranslatableComponent("block.comforts." + this.type.name + ".occupied"), true);
+              Component.translatable("block.comforts." + this.type.name + ".occupied"), true);
         }
         return InteractionResult.SUCCESS;
       } else if (player instanceof ServerPlayer) {
@@ -134,12 +133,12 @@ public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBloc
             final Component text;
             switch (result) {
               case NOT_POSSIBLE_NOW:
-                text = type == BedType.HAMMOCK ? new TranslatableComponent(
+                text = type == BedType.HAMMOCK ? Component.translatable(
                     "block.comforts." + type.name + ".no_sleep")
-                    : new TranslatableComponent("block.minecraft.bed.no_sleep");
+                    : Component.translatable("block.minecraft.bed.no_sleep");
                 break;
               case TOO_FAR_AWAY:
-                text = new TranslatableComponent(
+                text = Component.translatable(
                     "block.comforts." + type.name + ".too_far_away");
                 break;
               default:

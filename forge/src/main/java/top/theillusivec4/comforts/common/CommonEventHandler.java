@@ -21,6 +21,8 @@ package top.theillusivec4.comforts.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -30,7 +32,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
@@ -147,7 +148,7 @@ public class CommonEventHandler {
                   world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
                   world.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
                   player.displayClientMessage(
-                      new TranslatableComponent("block.comforts.sleeping_bag.broke"), true);
+                      Component.translatable("block.comforts.sleeping_bag.broke"), true);
                   world.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
                       1.0F, 1.0F);
                   player.clearSleepingPos();
@@ -186,7 +187,7 @@ public class CommonEventHandler {
           }
 
           if (sleepdata.getTiredTime() > dayTime) {
-            player.displayClientMessage(new TranslatableComponent("capability.comforts.not_sleepy"),
+            player.displayClientMessage(Component.translatable("capability.comforts.not_sleepy"),
                 true);
             evt.setResult(Player.BedSleepingProblem.OTHER_PROBLEM);
           }

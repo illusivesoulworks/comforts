@@ -26,7 +26,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
@@ -66,7 +65,7 @@ public class ClientEventHandler {
 
               if (playerController != null) {
                 playerController
-                    .useItemOn((LocalPlayer) player, (ClientLevel) player.level,
+                    .useItemOn((LocalPlayer) player,
                         InteractionHand.MAIN_HAND, hit);
               }
             }

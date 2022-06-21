@@ -43,7 +43,6 @@ public class SleepingBagBlock extends ComfortsBaseBlock {
     super(BedType.SLEEPING_BAG, color,
         Block.Properties.of(Material.WOOL).sound(SoundType.WOOL).strength(0.1F));
     this.color = color;
-    this.setRegistryName(ComfortsMod.MOD_ID, "sleeping_bag_" + color.getName());
   }
 
   @Nonnull

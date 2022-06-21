@@ -65,7 +65,6 @@ public class HammockBlock extends ComfortsBaseBlock {
     super(BedType.HAMMOCK, color,
         Block.Properties.of(Material.WOOL).sound(SoundType.WOOL).strength(0.1F));
     this.color = color;
-    this.setRegistryName(ComfortsMod.MOD_ID, "hammock_" + color.getName());
   }
 
   public static Direction getDirectionToOther(BedPart part, Direction facing) {

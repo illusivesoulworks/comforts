@@ -73,7 +73,6 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
   public RopeAndNailBlock() {
     super(
         Block.Properties.of(Material.WOOL).sound(SoundType.METAL).strength(0.2F));
-    this.setRegistryName(ComfortsMod.MOD_ID, "rope_and_nail");
     this.registerDefaultState(this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH)
         .setValue(SUPPORTING, false));
   }

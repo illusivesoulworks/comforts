@@ -19,7 +19,6 @@
 
 package top.theillusivec4.comforts;
 
-import java.util.Arrays;
 import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -28,17 +27,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -49,7 +44,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.comforts.client.ClientEventHandler;
@@ -57,18 +51,12 @@ import top.theillusivec4.comforts.client.renderer.ComfortsBaseTileEntityRenderer
 import top.theillusivec4.comforts.client.renderer.HammockTileEntityRenderer;
 import top.theillusivec4.comforts.client.renderer.SleepingBagTileEntityRenderer;
 import top.theillusivec4.comforts.common.ComfortsConfig;
-import top.theillusivec4.comforts.common.ComfortsRegistry;
 import top.theillusivec4.comforts.common.CommonEventHandler;
-import top.theillusivec4.comforts.common.block.HammockBlock;
-import top.theillusivec4.comforts.common.block.RopeAndNailBlock;
-import top.theillusivec4.comforts.common.block.SleepingBagBlock;
 import top.theillusivec4.comforts.common.capability.CapabilitySleepData;
-import top.theillusivec4.comforts.common.item.ComfortsBaseItem;
-import top.theillusivec4.comforts.common.item.HammockItem;
-import top.theillusivec4.comforts.common.item.SleepingBagItem;
 import top.theillusivec4.comforts.common.network.ComfortsNetwork;
-import top.theillusivec4.comforts.common.tileentity.HammockTileEntity;
-import top.theillusivec4.comforts.common.tileentity.SleepingBagTileEntity;
+import top.theillusivec4.comforts.common.registry.ComfortsBlocks;
+import top.theillusivec4.comforts.common.registry.ComfortsItems;
+import top.theillusivec4.comforts.common.registry.ComfortsTileEntities;
 import top.theillusivec4.comforts.data.ComfortsLootProvider;
 
 @Mod(ComfortsMod.MOD_ID)
@@ -80,7 +68,7 @@ public final class ComfortsMod {
     @Nonnull
     @OnlyIn(Dist.CLIENT)
     public ItemStack makeIcon() {
-      return new ItemStack(ComfortsRegistry.SLEEPING_BAGS.get(DyeColor.RED));
+      return new ItemStack(ComfortsBlocks.SLEEPING_BAG_COLORS.get(DyeColor.RED).get());
     }
   };
 
@@ -88,6 +76,9 @@ public final class ComfortsMod {
 
   public ComfortsMod() {
     final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    ComfortsBlocks.register(eventBus);
+    ComfortsItems.register(eventBus);
+    ComfortsTileEntities.register(eventBus);
     eventBus.addListener(this::setup);
     eventBus.addListener(this::gatherData);
     eventBus.addListener(this::config);
@@ -104,10 +95,7 @@ public final class ComfortsMod {
 
   private void gatherData(final GatherDataEvent evt) {
     DataGenerator generator = evt.getGenerator();
-
-    if (evt.includeServer()) {
-      generator.addProvider(new ComfortsLootProvider(generator));
-    }
+    generator.addProvider(evt.includeServer(), new ComfortsLootProvider(generator));
   }
 
   private void registerCapabilities(final RegisterCapabilitiesEvent evt) {
@@ -126,14 +114,14 @@ public final class ComfortsMod {
     @SubscribeEvent
     public static void setupClient(final FMLClientSetupEvent evt) {
       MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-      ItemBlockRenderTypes.setRenderLayer(ComfortsRegistry.ROPE_AND_NAIL, RenderType.translucent());
+      ItemBlockRenderTypes.setRenderLayer(ComfortsBlocks.ROPE_AND_NAIL.get(), RenderType.translucent());
     }
 
     @SubscribeEvent
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers evt) {
-      evt.registerBlockEntityRenderer(ComfortsRegistry.SLEEPING_BAG_TE,
+      evt.registerBlockEntityRenderer(ComfortsTileEntities.SLEEPING_BAG.get(),
           SleepingBagTileEntityRenderer::new);
-      evt.registerBlockEntityRenderer(ComfortsRegistry.HAMMOCK_TE, HammockTileEntityRenderer::new);
+      evt.registerBlockEntityRenderer(ComfortsTileEntities.HAMMOCK.get(), HammockTileEntityRenderer::new);
     }
 
     @SubscribeEvent
@@ -160,44 +148,6 @@ public final class ComfortsMod {
               "entity/sleeping_bag/" + color.getName()));
         }
       }
-    }
-  }
-
-  @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-  public static class RegistryEvents {
-
-    @SubscribeEvent
-    public static void onBlocksRegistry(final RegistryEvent.Register<Block> evt) {
-      IForgeRegistry<Block> registry = evt.getRegistry();
-      Arrays.stream(DyeColor.values()).forEach(color -> {
-        SleepingBagBlock sleepingBag = new SleepingBagBlock(color);
-        ComfortsRegistry.SLEEPING_BAGS.put(color, sleepingBag);
-        HammockBlock hammock = new HammockBlock(color);
-        ComfortsRegistry.HAMMOCKS.put(color, hammock);
-        registry.registerAll(sleepingBag, hammock);
-      });
-      registry.register(new RopeAndNailBlock());
-    }
-
-    @SubscribeEvent
-    public static void onItemsRegistry(final RegistryEvent.Register<Item> evt) {
-      IForgeRegistry<Item> registry = evt.getRegistry();
-      ComfortsRegistry.SLEEPING_BAGS.values()
-          .forEach(block -> registry.register(new SleepingBagItem(block)));
-      ComfortsRegistry.HAMMOCKS.values()
-          .forEach(block -> registry.register(new HammockItem(block)));
-      registry.register(new ComfortsBaseItem(ComfortsRegistry.ROPE_AND_NAIL));
-    }
-
-    @SubscribeEvent
-    public static void onTileEntityRegistry(final RegistryEvent.Register<BlockEntityType<?>> evt) {
-      BlockEntityType<?> sleepingBag = BlockEntityType.Builder.of(SleepingBagTileEntity::new,
-              ComfortsRegistry.SLEEPING_BAGS.values().toArray(new Block[0])).build(null)
-          .setRegistryName(ComfortsMod.MOD_ID, "sleeping_bag");
-      BlockEntityType<?> hammock = BlockEntityType.Builder
-          .of(HammockTileEntity::new, ComfortsRegistry.HAMMOCKS.values().toArray(new Block[0]))
-          .build(null).setRegistryName(ComfortsMod.MOD_ID, "hammock");
-      evt.getRegistry().registerAll(sleepingBag, hammock);
     }
   }
 }

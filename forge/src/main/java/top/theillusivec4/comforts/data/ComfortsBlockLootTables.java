@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +43,8 @@ import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.registries.ForgeRegistries;
-import top.theillusivec4.comforts.common.ComfortsRegistry;
+import net.minecraftforge.registries.RegistryObject;
+import top.theillusivec4.comforts.common.registry.ComfortsBlocks;
 
 public class ComfortsBlockLootTables extends BlockLoot {
 
@@ -59,8 +62,8 @@ public class ComfortsBlockLootTables extends BlockLoot {
   @Override
   public void accept(BiConsumer<ResourceLocation, Builder> lootBuilder) {
     List<Block> blocks = new ArrayList<>();
-    blocks.addAll(ComfortsRegistry.SLEEPING_BAGS.values());
-    blocks.addAll(ComfortsRegistry.HAMMOCKS.values());
+    blocks.addAll(ComfortsBlocks.SLEEPING_BAGS.getEntries().stream().map(RegistryObject::get).toList());
+    blocks.addAll(ComfortsBlocks.HAMMOCKS.getEntries().stream().map(RegistryObject::get).toList());
     blocks.forEach(block -> this.add(block, ComfortsBlockLootTables::getLootBuilder));
 
     Set<ResourceLocation> set = Sets.newHashSet();
