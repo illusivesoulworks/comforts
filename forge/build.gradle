@@ -26,7 +26,7 @@ archivesBaseName = "comforts-forge"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: '1.18.1-2022.03.06-1.18.2'
+    mappings channel: 'parchment', version: '1.18.2-2022.06.19-1.19'
 
     runs {
         client {
