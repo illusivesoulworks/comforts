@@ -73,7 +73,7 @@ public class ComfortsClient {
 
               if (interactionManager != null) {
                 interactionManager
-                    .interactBlock((ClientPlayerEntity) player, (ClientWorld) player.world,
+                    .interactBlock((ClientPlayerEntity) player, /*(ClientWorld) player.world,*/
                         Hand.MAIN_HAND, hit);
               }
             }

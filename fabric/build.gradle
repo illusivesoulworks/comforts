@@ -29,6 +29,7 @@ dependencies {
 
     // Required
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 //    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
 //    modImplementation fabricApi.module("fabric-item-groups-v0", project.fabric_version)
 //    modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)

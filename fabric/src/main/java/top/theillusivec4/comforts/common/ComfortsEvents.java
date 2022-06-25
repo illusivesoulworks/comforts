@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -58,7 +58,7 @@ public class ComfortsEvents {
 
                   if (livingEntity instanceof PlayerEntity) {
                     ((PlayerEntity) livingEntity).sendMessage(
-                        new TranslatableText("block.comforts.sleeping_bag.broke"), true);
+                            Text.translatable("block.comforts.sleeping_bag.broke"), true);
                   }
                   world.playSound(null, bedPos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS,
                       1.0F, 1.0F);
@@ -96,7 +96,7 @@ public class ComfortsEvents {
         }
 
         if (tracker.getTiredTime() > dayTime) {
-          player.sendMessage(new TranslatableText("capability.comforts.not_sleepy"), true);
+          player.sendMessage(Text.translatable("capability.comforts.not_sleepy"), true);
           return PlayerEntity.SleepFailureReason.OTHER_PROBLEM;
         }
       }

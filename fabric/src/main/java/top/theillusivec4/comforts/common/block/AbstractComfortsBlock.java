@@ -34,7 +34,6 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
@@ -99,7 +98,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (state.get(OCCUPIED)) {
 
         if (!this.isFree(world, pos)) {
-          player.sendMessage(new TranslatableText("block.comforts." + this.type.name + ".occupied"),
+          player.sendMessage(Text.translatable("block.comforts." + this.type.name + ".occupied"),
               true);
         }
         return ActionResult.SUCCESS;
@@ -107,10 +106,10 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
         trySleep((ServerPlayerEntity) player, pos).ifLeft((sleepFailureReason) -> {
           if (sleepFailureReason != null) {
             final Text text = switch (sleepFailureReason) {
-              case NOT_POSSIBLE_NOW -> type == BedType.HAMMOCK ? new TranslatableText(
+              case NOT_POSSIBLE_NOW -> type == BedType.HAMMOCK ? Text.translatable(
                   "block.comforts." + type.name + ".no_sleep")
-                  : new TranslatableText("block.minecraft.bed.no_sleep");
-              case TOO_FAR_AWAY -> new TranslatableText(
+                  : Text.translatable("block.minecraft.bed.no_sleep");
+              case TOO_FAR_AWAY -> Text.translatable(
                   "block.comforts." + type.name + ".too_far_away");
               default -> sleepFailureReason.getMessage();
             };
@@ -199,7 +198,7 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
 
     if (!player.isSleeping() && player.isAlive()) {
 
-      if (!player.world.getDimension().isNatural()) {
+      if (!player.world.getDimension().natural()) {
         return Either.left(PlayerEntity.SleepFailureReason.NOT_POSSIBLE_HERE);
       } else if (!isBedTooFarAway(player, pos, direction)) {
         return Either.left(TOO_FAR_AWAY);
