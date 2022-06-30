@@ -1,87 +1,101 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'maven-publish'
+    id 'idea'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = "${project.archives_base_name}-fabric"
-version = project.mod_version
-group = project.maven_group
-
-minecraft {
-}
+archivesBaseName = "${mod_id}-fabric"
 
 repositories {
     maven {
         name = "Ladysnake Libs"
         url = "https://ladysnake.jfrog.io/artifactory/mods"
     }
-    maven {
-        url = "https://maven.terraformersmc.com/"
-    }
-    maven {
-        url "https://maven.shedaniel.me/"
-    }
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${fabric_parchment_mc_version}:${fabric_parchment_version}@zip")
+    })
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation project(":common")
 
-    // Required
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
-    modImplementation fabricApi.module("fabric-item-groups-v0", project.fabric_version)
-    modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
-    modImplementation fabricApi.module("fabric-renderer-registries-v1", project.fabric_version)
-    modImplementation fabricApi.module("fabric-textures-v0", project.fabric_version)
-    modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
-    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
-    modImplementation fabricApi.module("fabric-object-builder-api-v1", project.fabric_version)
-    modImplementation fabricApi.module("fabric-entity-events-v1", project.fabric_version)
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}"
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    modImplementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_range}"
 
     // Embedded
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}"
-
-    // Optional
-    modCompileOnly "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}", {
-        exclude group: "net.fabricmc.fabric-api"
-    }
-    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}", {
-        exclude group: "net.fabricmc.fabric-api"
-    }
-    modRuntimeOnly "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
-    modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_version}"
 }
 
-processResources {
-    from("CHANGELOG.md")
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+loom {
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    it.options.release = 17
-}
-
-java {
-    withSourcesJar()
 }
 
 sourceSets {
     main {
         resources {
-            srcDirs += '../docs'
+            srcDirs += '../licenses'
+        }
+    }
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand 'version': project.version, 'fabric_mc_version_range': project.fabric_mc_version_range, 'license': project.license,
+                'mod_id': project.mod_id, 'mod_author': project.mod_author, 'mod_description': project.mod_description,
+                'mod_name': project.mod_name, 'issue_tracker': project.issue_tracker
+    }
+
+    filesMatching("pack.mcmeta") {
+        expand 'mod_name': project.mod_name
+    }
+
+    filesMatching('*.mixins.json') {
+        expand "refmap_target": "${archivesBaseName}-"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    source(project(":common").sourceSets.main.allSource)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
         }
     }
 }
@@ -89,13 +103,13 @@ sourceSets {
 curseforge {
     project {
         apiKey = findProperty('curseKey') ?: 0
-        id = "${curse_id}"
-        releaseType = "${curse_release}"
+        id = "${cf_fabric_id}"
+        releaseType = "${cf_release}"
         changelogType = 'markdown'
-        changelog = file('CHANGELOG.md')
+        changelog = file("../CHANGELOG_LATEST.md")
         addGameVersion "Java 17"
         addGameVersion "Fabric"
-        "${curse_versions}".split(',').each {
+        "${cf_versions}".split(',').each {
             addGameVersion "${it}"
         }
         addArtifact(sourcesJar)
@@ -103,8 +117,6 @@ curseforge {
 
         relations {
             requiredDependency 'fabric-api'
-            optionalDependency 'cloth-config'
-            optionalDependency 'modmenu'
             embeddedLibrary 'cardinal-components'
         }
 

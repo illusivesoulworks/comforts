@@ -1,30 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "comforts",
+  "id": "${mod_id}",
   "version": "${version}",
-  "name": "Comforts",
-  "description": "Adds sleeping bags and hammocks for, respectively, portability and turning day to night, without setting new spawns. Comes in 16 different colors!",
-  "authors": ["C4"],
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}"
+  ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/comforts-fabric",
-    "sources": "https://github.com/TheIllusiveC4/Comforts",
-    "issues": "https://github.com/TheIllusiveC4/Comforts/issues"
+    "issues": "${issue_tracker}"
   },
-  "license": "LGPL-3.0-or-later",
-  "icon": "assets/comforts/comforts_icon.png",
+  "license": "${license}",
+  "icon": "${mod_id}_icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "top.theillusivec4.comforts.common.ComfortsMod"
+      "com.illusivesoulworks.comforts.ComfortsFabricMod"
     ],
     "client": [
-      "top.theillusivec4.comforts.client.ComfortsClientMod"
+      "com.illusivesoulworks.comforts.ComfortsFabricClientMod"
     ],
     "cardinal-components-entity": [
-      "top.theillusivec4.comforts.common.ComfortsComponents"
-    ],
-    "modmenu": [
-      "top.theillusivec4.comforts.common.integration.ComfortsModMenu"
+      "com.illusivesoulworks.comforts.common.ComfortsComponents"
     ]
   },
   "custom": {
@@ -33,12 +30,14 @@
     ]
   },
   "mixins": [
-    "comforts.mixins.json"
+    "comforts.mixins.json",
+    "comforts.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": "*",
-    "minecraft": "1.18.x",
-    "fabric": ">=0.39.0",
-    "cardinal-components-entity": ">=4.0.0"
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": "${fabric_mc_version_range}",
+    "java": ">=17"
   }
 }
+  

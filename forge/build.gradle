@@ -1,85 +1,122 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://plugins.gradle.org/m2/' }
         maven {
-            url = "https://repo.spongepowered.org/repository/maven-public/"
-            content { includeGroup "org.spongepowered" }
+            name = 'ParchmentMC'
+            url = 'https://maven.parchmentmc.org/'
+        }
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: '1.4.0'
-		classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
     }
 }
+apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'com.matthewprenger.cursegradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'com.matthewprenger.cursegradle'
 
-version = "${mod_version}"
-group = "top.theillusivec4.comforts"
-archivesBaseName = "comforts-forge"
+archivesBaseName = "${mod_id}-forge"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+
+    config "${mod_id}.mixins.json"
+}
 
 minecraft {
-    mappings channel: 'parchment', version: '1.18.1-2022.03.06-1.18.2'
+    mappings channel: 'parchment', version: "${forge_parchment_version}"
+
+    if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
+        // This location is hardcoded in Forge and can not be changed.
+        // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+        project.logger.debug('Forge Access Transformers are enabled for this project.')
+    }
 
     runs {
         client {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Client'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=${mod_id}.mixins.json"
             mods {
-                comforts {
+                modClientRun {
                     source sourceSets.main
+                    source project(":common").sourceSets.main
                 }
             }
         }
 
         server {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Server'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=${mod_id}.mixins.json"
             mods {
-                comforts {
+                modServerRun {
                     source sourceSets.main
+                    source project(":common").sourceSets.main
                 }
             }
         }
 
         data {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'comforts', '--all', '--output', file('src/generated/resources/')
-
+            ideaModule "${rootProject.name}.${project.name}.main"
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            taskName 'Data'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=${mod_id}.mixins.json"
             mods {
-                comforts {
+                modDataRun {
                     source sourceSets.main
+                    source project(":common").sourceSets.main
                 }
             }
         }
     }
 }
 
-repositories {
-    maven {
-        url = "https://www.cursemaven.com"
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly project(":common")
+    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+
+    implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
+    jarJar fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {
+        jarJar.pin(it, "${spectrelib_version}")
     }
 }
 
-dependencies {
-    minecraft "net.minecraftforge:forge:${forge_version}"
+tasks.withType(JavaCompile) {
+    source(project(":common").sourceSets.main.allSource)
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += '../licenses'
+        }
+    }
 }
 
 def replaceResources = tasks.register("replaceResources", Copy) {
@@ -87,60 +124,71 @@ def replaceResources = tasks.register("replaceResources", Copy) {
 
     it.from(sourceSets.main.resources) {
         include "META-INF/mods.toml"
-        expand 'version': version, 'mc_version_range': mc_version_range, 'forge_version_range': forge_version_range, "loader_version": loader_version
+        expand 'version': version, 'forge_mc_version_range': forge_mc_version_range, 'forge_version_range': forge_version_range,
+                'license': license, 'mod_id': mod_id, 'mod_author': mod_author, 'mod_description': mod_description,
+                'mod_name': mod_name, 'issue_tracker': issue_tracker
+    }
+    it.from(project(":common").sourceSets.main.resources) {
+        include "pack.mcmeta"
+        expand 'mod_name': mod_name
     }
     it.into "$buildDir/resources/main/"
 }
 
 processResources {
-    from("CHANGELOG.md")
-    from("../LICENSE")
+    from project(":common").sourceSets.main.resources
     duplicatesStrategy(DuplicatesStrategy.FAIL)
     exclude('META-INF/mods.toml')
+    exclude('pack.mcmeta')
+
+    filesMatching('*.mixins.json') {
+        expand "refmap_target": "${mod_id}."
+    }
     configure { finalizedBy(replaceResources) }
-}
-
-sourceSets {
-    main {
-        resources {
-            srcDirs += '../docs'
-        }
-    }
-}
-
-jar {
-    manifest {
-        attributes(["Specification-Title"     : "Comforts",
-                    "Specification-Vendor"    : "C4",
-                    "Specification-Version"   : "1",
-                    "Implementation-Title"    : "Comforts",
-                    "Implementation-Version"  : "${getArchiveVersion()}",
-                    "Implementation-Vendor"   : "C4",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
-    }
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from sourceSets.main.allJava
-}
-
-artifacts {
-    archives sourcesJar
 }
 
 jar.finalizedBy('reobfJar')
 
-curseforge {
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+            jarJar.component(it, tasks.jarJar)
+        }
+    }
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}
 
+tasks.jarJar.configure {
+    archiveClassifier.set("")
+    from(rootProject.file("LICENSE"))
+    from(rootProject.file("COPYING"))
+    from(rootProject.file("COPYING.LESSER"))
+    from(rootProject.file("README.md"))
+    from(rootProject.file("CHANGELOG.md"))
+}
+
+jarJar {
+    enable()
+}
+
+curseforge {
     project {
         apiKey = findProperty('curseKey') ?: 0
-        id = '276951'
-        releaseType = "${curse_release}"
+        id = "${cf_forge_id}"
+        releaseType = "${cf_release}"
         changelogType = 'markdown'
-        changelog = file('CHANGELOG.md')
+        changelog = file("../CHANGELOG_LATEST.md")
+        mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
         addArtifact(sourcesJar)
-        "${curse_versions}".split(',').each {
+        "${cf_versions}".split(',').each {
             addGameVersion "${it}"
         }
     }
