@@ -1,4 +1,5 @@
 {
+	"render_type": "translucent",
 	"textures": {
 		"particle": "minecraft:entity/lead_knot",
 		"texture": "minecraft:entity/lead_knot",
