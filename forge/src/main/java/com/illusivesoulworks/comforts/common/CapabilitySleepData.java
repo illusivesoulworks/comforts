@@ -100,7 +100,7 @@ public class CapabilitySleepData {
     public void onPlayerClone(final PlayerEvent.Clone evt) {
 
       if (evt.isWasDeath()) {
-        final Player player = evt.getPlayer();
+        final Player player = evt.getEntity();
         final Player original = evt.getOriginal();
         original.reviveCaps();
         CapabilitySleepData.getCapability(player).ifPresent(

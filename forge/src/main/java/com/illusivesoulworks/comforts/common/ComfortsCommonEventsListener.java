@@ -24,7 +24,7 @@ import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.world.SleepFinishedTimeEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -33,7 +33,7 @@ public class ComfortsCommonEventsListener {
   @SubscribeEvent
   public void onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
 
-    if (!ComfortsEvents.canSetSpawn(evt.getPlayer(), evt.getNewSpawn())) {
+    if (!ComfortsEvents.canSetSpawn(evt.getEntity(), evt.getNewSpawn())) {
       evt.setCanceled(true);
     }
   }
@@ -41,19 +41,19 @@ public class ComfortsCommonEventsListener {
   @SubscribeEvent
   public void onSleepTimeCheck(final SleepingTimeCheckEvent evt) {
     evt.getSleepingLocation().ifPresent(pos -> {
-      ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getPlayer().getLevel(), pos);
+      ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getEntity().getLevel(), pos);
 
       switch (result) {
         case DEFAULT -> evt.setResult(Event.Result.DEFAULT);
         case ALLOW -> evt.setResult(Event.Result.ALLOW);
-        case DENY ->  evt.setResult(Event.Result.DENY);
+        case DENY -> evt.setResult(Event.Result.DENY);
       }
     });
   }
 
   @SubscribeEvent
   public void onSleepFinished(final SleepFinishedTimeEvent evt) {
-    LevelAccessor levelAccessor = evt.getWorld();
+    LevelAccessor levelAccessor = evt.getLevel();
 
     if (levelAccessor instanceof ServerLevel serverLevel) {
       long newTime = evt.getNewTime();
@@ -67,12 +67,12 @@ public class ComfortsCommonEventsListener {
 
   @SubscribeEvent
   public void onPlayerWakeUp(final PlayerWakeUpEvent evt) {
-    ComfortsEvents.onWakeUp(evt.getPlayer());
+    ComfortsEvents.onWakeUp(evt.getEntity());
   }
 
   @SubscribeEvent
   public void onPlayerSleep(final PlayerSleepInBedEvent evt) {
-    Player.BedSleepingProblem result = ComfortsEvents.onSleep(evt.getPlayer());
+    Player.BedSleepingProblem result = ComfortsEvents.onSleep(evt.getEntity());
 
     if (result != null) {
       evt.setResult(result);
