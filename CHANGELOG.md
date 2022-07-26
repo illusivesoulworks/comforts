@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.0.0-beta.5+1.19] - 2022.07.26
+### Added
+- Added Kazakh (`kk_kz`) localization (thanks AlibekAytjan!) [#94](https://github.com/illusivesoulworks/comforts/pull/94)
+- Added Vietnamese (`vi_vn`) localization (thanks baooduy!) [#95](https://github.com/illusivesoulworks/comforts/pull/95)
+
 ## [6.0.0-beta.4+1.19] - 2022.07.17
 ### Changed
 - [Forge] Updated to and requires Forge 41.0.94 or above
