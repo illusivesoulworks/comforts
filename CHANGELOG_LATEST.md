@@ -2,8 +2,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.19.x/CHANGELOG.md).
 
-## [6.0.0+1.19.2] - 2022.08.10
-### Changed
-- Updated to Minecraft 1.19.2
-- [Forge] Updated to Forge 43+
-- [Fabric] Updated to Fabric API 0.59.0+
+## [6.0.1+1.19.2] - 2022.09.18
+### Added
+- Added Ukrainian localization (thanks Altegar!)
+### Fixed
+- Fixed server config files not updating when changed in-game and reloading worlds
+- Fixed `sleepingBagBreakage` configuration option not actually breaking sleeping bags upon activation
