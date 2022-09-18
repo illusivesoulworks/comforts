@@ -122,8 +122,8 @@ public class ComfortsEvents {
                   broke = true;
                   final BlockPos blockpos = bedPos
                       .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
-                  level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-                  level.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
+                  level.removeBlock(bedPos, false);
+                  level.removeBlock(blockpos, false);
                   player.displayClientMessage(
                       Component.translatable("block.comforts.sleeping_bag.broke"), true);
                   level.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
@@ -135,8 +135,8 @@ public class ComfortsEvents {
               if (!broke && data.getAutoSleepPos() != null) {
                 final BlockPos blockpos = bedPos
                     .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
-                level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-                level.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
+                level.removeBlock(blockpos, false);
+                level.removeBlock(bedPos, false);
                 player.clearSleepingPos();
               }
             }
