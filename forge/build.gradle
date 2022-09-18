@@ -149,6 +149,10 @@ processResources {
 
 jar.finalizedBy('reobfJar')
 
+reobf {
+    jarJar {}
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
