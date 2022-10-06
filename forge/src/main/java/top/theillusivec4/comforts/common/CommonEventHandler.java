@@ -144,8 +144,8 @@ public class CommonEventHandler {
                   broke = true;
                   final BlockPos blockpos = bedPos
                       .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
-                  world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-                  world.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
+                  world.removeBlock(bedPos, false);
+                  world.removeBlock(blockpos, false);
                   player.displayClientMessage(
                       new TranslatableComponent("block.comforts.sleeping_bag.broke"), true);
                   world.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
@@ -157,8 +157,8 @@ public class CommonEventHandler {
               if (!broke && sleepdata.getAutoSleepPos() != null) {
                 final BlockPos blockpos = bedPos
                     .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
-                world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-                world.setBlock(bedPos, Blocks.AIR.defaultBlockState(), 35);
+                world.removeBlock(blockpos, false);
+                world.removeBlock(bedPos, false);
                 player.clearSleepingPos();
               }
             }

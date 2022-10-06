@@ -82,16 +82,28 @@ public class ClientEventHandler {
   public void onPlayerRenderPre(final RenderPlayerEvent.Pre evt) {
     final Player player = evt.getPlayer();
 
-    if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
-      player.getSleepingPos().ifPresent(bedPos -> {
-        PoseStack matrixStack = evt.getPoseStack();
-        final Block bed = player.level.getBlockState(bedPos).getBlock();
-        if (bed instanceof SleepingBagBlock) {
-          matrixStack.translate(0.0f, -0.375F, 0.0f);
-        } else if (bed instanceof HammockBlock) {
-          matrixStack.translate(0.0f, -0.5F, 0.0f);
-        }
-      });
+    if (player.getPose() == Pose.SLEEPING) {
+
+      if (player instanceof RemotePlayer) {
+        player.getSleepingPos().ifPresent(bedPos -> {
+          PoseStack matrixStack = evt.getPoseStack();
+          final Block bed = player.level.getBlockState(bedPos).getBlock();
+          if (bed instanceof SleepingBagBlock) {
+            matrixStack.translate(0.0f, -0.375F, 0.0f);
+          } else if (bed instanceof HammockBlock) {
+            matrixStack.translate(0.0f, -0.5F, 0.0f);
+          }
+        });
+      } else if (player instanceof LocalPlayer) {
+        player.getSleepingPos().ifPresent(bedPos -> {
+          final Block bed = player.level.getBlockState(bedPos).getBlock();
+
+          if (bed instanceof SleepingBagBlock) {
+            player.attackAnim = 0.0f;
+            player.oAttackAnim = 0.0f;
+          }
+        });
+      }
     }
   }
 

@@ -66,6 +66,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import top.theillusivec4.comforts.ComfortsMod;
+import top.theillusivec4.comforts.common.ComfortsConfig;
 
 public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBlock {
 
@@ -134,9 +135,16 @@ public class ComfortsBaseBlock extends BedBlock implements SimpleWaterloggedBloc
             final Component text;
             switch (result) {
               case NOT_POSSIBLE_NOW:
-                text = type == BedType.HAMMOCK ? new TranslatableComponent(
-                    "block.comforts." + type.name + ".no_sleep")
-                    : new TranslatableComponent("block.minecraft.bed.no_sleep");
+                if (type == BedType.HAMMOCK) {
+                  String key = "block.comforts." + type.name + ".no_sleep";
+
+                  if (ComfortsConfig.nightHammocks) {
+                    key += ".2";
+                  }
+                  text = new TranslatableComponent(key);
+                } else {
+                  text = new TranslatableComponent("block.minecraft.bed.no_sleep");
+                }
                 break;
               case TOO_FAR_AWAY:
                 text = new TranslatableComponent(
