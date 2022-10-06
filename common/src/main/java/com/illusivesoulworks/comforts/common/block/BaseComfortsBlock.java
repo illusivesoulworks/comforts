@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.datafixers.util.Either;
@@ -123,9 +124,17 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
 
           if (result != null) {
             final Component text = switch (result) {
-              case NOT_POSSIBLE_NOW -> type == BedType.HAMMOCK ?
-                  Component.translatable("block.comforts." + type.name + ".no_sleep") :
-                  Component.translatable("block.minecraft.bed.no_sleep");
+              case NOT_POSSIBLE_NOW -> {
+                if (type == BedType.HAMMOCK) {
+                  String key = "block.comforts." + type.name + ".no_sleep";
+
+                  if (ComfortsConfig.SERVER.nightHammocks.get()) {
+                    key += ".2";
+                  }
+                  yield Component.translatable(key);
+                }
+                yield Component.translatable("block.minecraft.bed.no_sleep");
+              }
               case TOO_FAR_AWAY -> Component.translatable(
                   "block.comforts." + type.name + ".too_far_away");
               default -> result.getMessage();

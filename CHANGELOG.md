@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.0.2+1.19.2] - 2022.10.05
+### Fixed
+- Fixed hammock "cannot sleep now" message to include nights and thunderstorms when the `nightHammocks` configuration is
+true [#87](https://github.com/illusivesoulworks/comforts/issues/87)
+
 ## [6.0.1+1.19.2] - 2022.09.18
 ### Added
 - Added Ukrainian localization (thanks Altegar!)
