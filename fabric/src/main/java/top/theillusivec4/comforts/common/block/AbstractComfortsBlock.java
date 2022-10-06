@@ -47,6 +47,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
+import top.theillusivec4.comforts.common.config.ComfortsConfig;
 import top.theillusivec4.comforts.mixin.AccessorPlayerEntity;
 
 public abstract class AbstractComfortsBlock extends BedBlock implements Waterloggable {
@@ -107,9 +108,17 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
         trySleep((ServerPlayerEntity) player, pos).ifLeft((sleepFailureReason) -> {
           if (sleepFailureReason != null) {
             final Text text = switch (sleepFailureReason) {
-              case NOT_POSSIBLE_NOW -> type == BedType.HAMMOCK ? new TranslatableText(
-                  "block.comforts." + type.name + ".no_sleep")
-                  : new TranslatableText("block.minecraft.bed.no_sleep");
+              case NOT_POSSIBLE_NOW -> {
+                if (type == BedType.HAMMOCK) {
+                  String key = "block.comforts." + type.name + ".no_sleep";
+
+                  if (ComfortsConfig.nightHammocks) {
+                    key += ".2";
+                  }
+                  yield new TranslatableText(key);
+                }
+                yield new TranslatableText("block.minecraft.bed.no_sleep");
+              }
               case TOO_FAR_AWAY -> new TranslatableText(
                   "block.comforts." + type.name + ".too_far_away");
               default -> sleepFailureReason.getMessage();
@@ -206,7 +215,8 @@ public abstract class AbstractComfortsBlock extends BedBlock implements Waterlog
       } else if (isBedObstructed(player, pos, direction)) {
         return Either.left(PlayerEntity.SleepFailureReason.OBSTRUCTED);
       } else {
-        ActionResult sleep = EntitySleepEvents.ALLOW_SLEEP_TIME.invoker().allowSleepTime(player, pos, !player.world.isDay());
+        ActionResult sleep = EntitySleepEvents.ALLOW_SLEEP_TIME.invoker()
+            .allowSleepTime(player, pos, !player.world.isDay());
         boolean canSleep = sleep == ActionResult.PASS ? !player.world.isDay() : sleep.isAccepted();
 
         if (!canSleep) {

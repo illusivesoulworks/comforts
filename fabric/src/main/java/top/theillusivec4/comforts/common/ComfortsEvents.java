@@ -53,8 +53,8 @@ public class ComfortsEvents {
                   broke = true;
                   final BlockPos blockpos = bedPos
                       .offset(state.get(HorizontalFacingBlock.FACING).getOpposite());
-                  world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                  world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+                  world.removeBlock(bedPos, false);
+                  world.removeBlock(blockpos, false);
 
                   if (livingEntity instanceof PlayerEntity) {
                     ((PlayerEntity) livingEntity).sendMessage(
@@ -70,8 +70,8 @@ public class ComfortsEvents {
                 tracker.getAutoSleepPos().ifPresent(pos -> {
                   final BlockPos blockpos = bedPos
                       .offset(state.get(HorizontalFacingBlock.FACING).getOpposite());
-                  world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                  world.setBlockState(bedPos, Blocks.AIR.getDefaultState(), 35);
+                  world.removeBlock(blockpos, false);
+                  world.removeBlock(bedPos, false);
                   livingEntity.clearSleepingPosition();
                 });
               }

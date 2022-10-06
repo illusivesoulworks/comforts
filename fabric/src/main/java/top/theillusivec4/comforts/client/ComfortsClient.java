@@ -23,18 +23,30 @@ public class ComfortsClient {
 
   public static void sleepingTranslate(AbstractClientPlayerEntity player, MatrixStack matrixStack) {
 
-    if (player instanceof OtherClientPlayerEntity && player.getPose() == EntityPose.SLEEPING) {
-      player.getSleepingPosition().ifPresent(pos -> {
-        final Block bed = player.world.getBlockState(pos).getBlock();
-        float translate = 0.0F;
+    if (player.getPose() == EntityPose.SLEEPING) {
 
-        if (bed instanceof SleepingBagBlock) {
-          translate = -0.375F;
-        } else if (bed instanceof HammockBlock) {
-          translate = -0.5F;
-        }
-        matrixStack.translate(0.0F, translate, 0.0F);
-      });
+      if (player instanceof OtherClientPlayerEntity) {
+        player.getSleepingPosition().ifPresent(pos -> {
+          final Block bed = player.world.getBlockState(pos).getBlock();
+          float translate = 0.0F;
+
+          if (bed instanceof SleepingBagBlock) {
+            translate = -0.375F;
+          } else if (bed instanceof HammockBlock) {
+            translate = -0.5F;
+          }
+          matrixStack.translate(0.0F, translate, 0.0F);
+        });
+      } else if (player instanceof ClientPlayerEntity) {
+        player.getSleepingPosition().ifPresent(bedPos -> {
+          final Block bed = player.world.getBlockState(bedPos).getBlock();
+
+          if (bed instanceof SleepingBagBlock) {
+            player.lastHandSwingProgress = 0.0f;
+            player.handSwingProgress = 0.0f;
+          }
+        });
+      }
     }
   }
 
