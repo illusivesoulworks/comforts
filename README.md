@@ -13,21 +13,21 @@ an inverse bed, turning day to night.
 ### Sleeping Bag
 The recipe for the sleeping bag is simply three pieces of matching color wool in a straight line.
 
-![](https://i.imgur.com/XuvhkEw.gif)
+![](https://i.ibb.co/LCNV0HS/sleepingbagrecipe.gif)
 
 You can also dye a regular White Sleeping Bag into any of the other colors!
 
-![](https://i.imgur.com/Swms44J.gif)
+![](https://i.ibb.co/R24frvM/sleepingbagrecipe2.gif)
 
 ### Hammock
 The recipe for the hammock cloth is simply a piece of colored wool in the center, sticks to the top
 and bottom, and the rest of the slots are strings.
 
-![](https://i.imgur.com/UzFmh8S.gif)
+![](https://i.ibb.co/nQZH5Ld/hammockrecipe.gif)
 
 You can also dye a regular White Hammock Cloth into any of the other colors!
 
-![](https://i.imgur.com/KaFHstQ.gif)
+![](https://i.ibb.co/Jd5JcWf/hammockrecipe2.gif)
 
 **Please refer to [this](https://github.com/TheIllusiveC4/Comforts/wiki/Hammocks#building) guide for
 instructions on how to build the hammock.**
