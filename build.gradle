@@ -53,6 +53,11 @@ subprojects {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org/'
         }
+
+        maven {
+            name = 'Illusive Soulworks'
+            url = 'https://maven.theillusivec4.top/'
+        }
         mavenLocal()
     }
 
