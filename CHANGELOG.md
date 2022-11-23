@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.0.3+1.19.2] - 2022.11.22
+### Added
+- Added `sleepingBagBreakageLuckMultiplier` for Luck-based sleeping bag break chance modifiers [#102](https://github.com/illusivesoulworks/comforts/issues/102)
+### Changed
+- Updated `uk_ua.json` Ukranian localization (thanks Altegar!) [#103](https://github.com/illusivesoulworks/comforts/pull/103)
+
 ## [6.0.2+1.19.2] - 2022.10.05
 ### Fixed
 - Fixed hammock "cannot sleep now" message to include nights and thunderstorms when the `nightHammocks` configuration is
