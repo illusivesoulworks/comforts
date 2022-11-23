@@ -39,6 +39,7 @@
   "block.comforts.hammock.too_far_away": "Ви не можете відпочити зараз. Гамак надто далеко",
   "block.comforts.sleeping_bag.too_far_away": "Ви не можете відпочити зараз. Спальний мішок надто далеко",
   "block.comforts.hammock.no_sleep": "Ви можете спати лише вдень",
+  "block.comforts.hammock.no_sleep.2": "Ви можете спати лише вдень, вночі або під час грози",
   "block.comforts.hammock.no_rope": "Ви повинні повісити гамак на пару мотузок і цвяхів",
   "block.comforts.hammock.no_space": "Недостатньо місця для розміщення гамака",
   "block.comforts.hammock.missing_rope": "На іншому кінці також має бути мотузка і цвях, щоб повісити гамак",
