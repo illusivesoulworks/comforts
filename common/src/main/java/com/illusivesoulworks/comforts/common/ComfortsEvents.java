@@ -28,6 +28,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -117,8 +119,18 @@ public class ComfortsEvents {
                             effect.getAmplifier()));
                   }
                 }
+                double breakChance = ComfortsConfig.SERVER.sleepingBagBreakage.get();
+                double luckMultiplier = ComfortsConfig.SERVER.sleepingBagBreakageLuckMultiplier.get();
 
-                if (level.random.nextDouble() < ComfortsConfig.SERVER.sleepingBagBreakage.get()) {
+                if (luckMultiplier > 0.0d) {
+                  AttributeInstance attributeInstance = player.getAttribute(Attributes.LUCK);
+
+                  if (attributeInstance != null) {
+                    breakChance -= luckMultiplier * attributeInstance.getValue();
+                  }
+                }
+
+                if (level.random.nextDouble() < breakChance) {
                   broke = true;
                   final BlockPos blockpos = bedPos
                       .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());

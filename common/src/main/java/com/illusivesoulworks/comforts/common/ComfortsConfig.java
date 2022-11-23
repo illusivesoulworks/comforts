@@ -47,6 +47,7 @@ public class ComfortsConfig {
     public final SpectreConfigSpec.DoubleValue sleepyFactor;
     public final SpectreConfigSpec.BooleanValue nightHammocks;
     public final SpectreConfigSpec.DoubleValue sleepingBagBreakage;
+    public final SpectreConfigSpec.DoubleValue sleepingBagBreakageLuckMultiplier;
     public final SpectreConfigSpec.ConfigValue<List<String>> sleepingBagEffects;
 
     public Server(SpectreConfigSpec.Builder builder) {
@@ -70,6 +71,10 @@ public class ComfortsConfig {
       sleepingBagBreakage = builder.comment("The chance that a sleeping bag will break upon usage")
           .translation(CONFIG_PREFIX + "sleepingBagBreakage")
           .defineInRange("sleepingBagBreakage", 0.0D, 0.0D, 1.0D);
+
+      sleepingBagBreakageLuckMultiplier = builder.comment("The value that will be multiplied by a player's luck then added/subtracted from the sleepingBagBreakage value")
+          .translation(CONFIG_PREFIX + "sleepingBagBreakageLuckMultiplier")
+          .defineInRange("sleepingBagBreakageLuckMultiplier", 0.0D, -1.0D, 1.0D);
 
       sleepingBagEffects = builder.comment(
               "List of debuffs to apply to players after using the sleeping bag\n"
