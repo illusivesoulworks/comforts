@@ -1,0 +1,60 @@
+{
+    "type": "crafting_shapeless",
+    "result": {
+        "item": "comforts:sleeping_bag_light_blue",
+        "count": 1
+    },
+    "group": "comfort",
+    "ingredients": [
+        [
+            {
+                "item": "comforts:sleeping_bag_white"
+            },
+            {
+                "item": "comforts:sleeping_bag_orange"
+            },
+            {
+                "item": "comforts:sleeping_bag_magenta"
+            },
+            {
+                "item": "comforts:sleeping_bag_black"
+            },
+            {
+                "item": "comforts:sleeping_bag_yellow"
+            },
+            {
+                "item": "comforts:sleeping_bag_lime"
+            },
+            {
+                "item": "comforts:sleeping_bag_pink"
+            },
+            {
+                "item": "comforts:sleeping_bag_gray"
+            },
+            {
+                "item": "comforts:sleeping_bag_light_gray"
+            },
+            {
+                "item": "comforts:sleeping_bag_cyan"
+            },
+            {
+                "item": "comforts:sleeping_bag_purple"
+            },
+            {
+                "item": "comforts:sleeping_bag_blue"
+            },
+            {
+                "item": "comforts:sleeping_bag_brown"
+            },
+            {
+                "item": "comforts:sleeping_bag_green"
+            },
+            {
+                "item": "comforts:sleeping_bag_red"
+            }
+        ],
+        {
+            "tag": "c:light_blue_dyes"
+        }
+    ]
+}
