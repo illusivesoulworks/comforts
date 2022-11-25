@@ -54,7 +54,7 @@
             }
         ],
         {
-            "item": "minecraft:lime_dye"
+            "tag": "c:lime_dyes"
         }
     ]
 }

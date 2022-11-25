@@ -54,7 +54,7 @@
             }
         ],
         {
-            "item": "minecraft:brown_dye"
+            "tag": "c:brown_dyes"
         }
     ]
 }

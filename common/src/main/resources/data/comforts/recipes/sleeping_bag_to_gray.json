@@ -54,7 +54,7 @@
             }
         ],
         {
-            "item": "minecraft:gray_dye"
+            "tag": "c:gray_dyes"
         }
     ]
 }

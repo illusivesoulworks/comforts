@@ -54,7 +54,7 @@
             }
         ],
         {
-            "item": "minecraft:pink_dye"
+            "tag": "c:pink_dyes"
         }
     ]
 }
