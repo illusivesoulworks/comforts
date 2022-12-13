@@ -20,6 +20,9 @@
     "client": [
       "com.illusivesoulworks.comforts.ComfortsFabricClientMod"
     ],
+    "spectrelib": [
+      "com.illusivesoulworks.comforts.ComfortsFabricConfig"
+    ],
     "cardinal-components-entity": [
       "com.illusivesoulworks.comforts.common.ComfortsComponents"
     ]

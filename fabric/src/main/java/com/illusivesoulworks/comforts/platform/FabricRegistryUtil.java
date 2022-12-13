@@ -17,29 +17,19 @@
 
 package com.illusivesoulworks.comforts.platform;
 
-import com.illusivesoulworks.comforts.ComfortsConstants;
-import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.platform.services.IRegistryUtil;
 import java.util.function.BiFunction;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class FabricRegistryUtil implements IRegistryUtil {
-
-  private static final CreativeModeTab GROUP = FabricItemGroupBuilder
-      .build(new ResourceLocation(ComfortsConstants.MOD_ID, "general"),
-          () -> new ItemStack(ComfortsRegistry.SLEEPING_BAGS.get(DyeColor.RED).get()));
 
   @Override
   public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(
@@ -49,11 +39,6 @@ public class FabricRegistryUtil implements IRegistryUtil {
 
   @Override
   public MobEffect getMobEffect(ResourceLocation resourceLocation) {
-    return Registry.MOB_EFFECT.get(resourceLocation);
-  }
-
-  @Override
-  public CreativeModeTab getCreativeGroup() {
-    return GROUP;
+    return BuiltInRegistries.MOB_EFFECT.get(resourceLocation);
   }
 }

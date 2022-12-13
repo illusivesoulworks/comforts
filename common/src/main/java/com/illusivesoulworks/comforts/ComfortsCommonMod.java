@@ -25,11 +25,14 @@ import com.illusivesoulworks.spectrelib.config.SpectreConfigLoader;
 public class ComfortsCommonMod {
 
   public static void init() {
+    ComfortsRegistry.init();
+  }
+
+  public static void initConfig() {
     SpectreConfig config =
         SpectreConfigLoader.add(SpectreConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC,
             ComfortsConstants.MOD_ID);
     config.addLoadListener(configFile -> ComfortsConfig.reload());
     config.addReloadListener(configFile -> ComfortsConfig.reload());
-    ComfortsRegistry.init();
   }
 }

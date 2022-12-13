@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "sleeping_bag",
+  "group": "comforts:sleeping_bag",
   "pattern": [
     "aaa"
   ],

@@ -21,7 +21,6 @@ import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -33,6 +32,4 @@ public interface IRegistryUtil {
       BiFunction<BlockPos, BlockState, T> builder, Block... blocks);
 
   MobEffect getMobEffect(ResourceLocation resourceLocation);
-
-  CreativeModeTab getCreativeGroup();
 }

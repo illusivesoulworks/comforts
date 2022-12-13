@@ -31,7 +31,7 @@ import com.illusivesoulworks.comforts.common.registry.RegistryProvider;
 import com.illusivesoulworks.comforts.platform.Services;
 import java.util.Arrays;
 import java.util.EnumMap;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -40,11 +40,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 public class ComfortsRegistry {
 
   public static final RegistryProvider<Block> BLOCKS =
-      RegistryProvider.get(Registry.BLOCK_REGISTRY, ComfortsConstants.MOD_ID);
+      RegistryProvider.get(Registries.BLOCK, ComfortsConstants.MOD_ID);
   public static final RegistryProvider<Item> ITEMS =
-      RegistryProvider.get(Registry.ITEM_REGISTRY, ComfortsConstants.MOD_ID);
+      RegistryProvider.get(Registries.ITEM, ComfortsConstants.MOD_ID);
   public static final RegistryProvider<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
-      RegistryProvider.get(Registry.BLOCK_ENTITY_TYPE_REGISTRY, ComfortsConstants.MOD_ID);
+      RegistryProvider.get(Registries.BLOCK_ENTITY_TYPE, ComfortsConstants.MOD_ID);
 
   public static final EnumMap<DyeColor, RegistryObject<Block>> SLEEPING_BAGS =
       new EnumMap<>(DyeColor.class);

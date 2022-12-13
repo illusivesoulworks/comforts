@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "rope_and_nail",
+  "group": "comforts:rope_and_nail",
   "ingredients": [
     {
       "tag": "forge:rope"

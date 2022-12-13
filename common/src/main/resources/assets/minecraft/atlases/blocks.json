@@ -1,0 +1,18 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "entity/hammock",
+      "prefix": "entity/hammock/"
+    },
+    {
+      "type": "directory",
+      "source": "entity/sleeping_bag",
+      "prefix": "entity/sleeping_bag/"
+    },
+    {
+      "type": "single",
+      "resource": "entity/lead_knot"
+    }
+  ]
+}

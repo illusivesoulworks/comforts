@@ -19,11 +19,17 @@ package com.illusivesoulworks.comforts;
 
 import com.illusivesoulworks.comforts.common.CapabilitySleepData;
 import com.illusivesoulworks.comforts.common.ComfortsCommonEventsListener;
+import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.capability.ISleepData;
 import com.illusivesoulworks.comforts.common.network.ComfortsForgeNetwork;
+import com.illusivesoulworks.comforts.common.registry.RegistryObject;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -35,10 +41,12 @@ public class ComfortsForgeMod {
 
   public ComfortsForgeMod() {
     ComfortsCommonMod.init();
+    ComfortsCommonMod.initConfig();
     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ComfortsForgeClientMod::init);
     IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
     eventBus.addListener(this::setup);
     eventBus.addListener(this::registerCapabilities);
+    eventBus.addListener(this::creativeTab);
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
@@ -49,5 +57,24 @@ public class ComfortsForgeMod {
 
   private void registerCapabilities(final RegisterCapabilitiesEvent evt) {
     evt.register(ISleepData.class);
+  }
+
+  private void creativeTab(final CreativeModeTabEvent.BuildContents evt) {
+    CreativeModeTab tab = evt.getTab();
+
+    if (tab == CreativeModeTabs.COLORED_BLOCKS || tab == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+
+      for (RegistryObject<Block> value : ComfortsRegistry.SLEEPING_BAGS.values()) {
+        evt.accept(value);
+      }
+
+      for (RegistryObject<Block> value : ComfortsRegistry.HAMMOCKS.values()) {
+        evt.accept(value);
+      }
+    }
+
+    if (tab == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+      evt.accept(ComfortsRegistry.ROPE_AND_NAIL_ITEM);
+    }
   }
 }

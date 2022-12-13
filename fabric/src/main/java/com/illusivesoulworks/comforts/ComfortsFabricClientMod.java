@@ -21,26 +21,16 @@ import com.illusivesoulworks.comforts.client.ComfortsClientEvents;
 import com.illusivesoulworks.comforts.client.renderer.BaseComfortsBlockEntityRenderer;
 import com.illusivesoulworks.comforts.client.renderer.HammockBlockEntityRenderer;
 import com.illusivesoulworks.comforts.client.renderer.SleepingBagBlockEntityRenderer;
-import com.illusivesoulworks.comforts.common.ComfortsFabricNetwork;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
-import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
 import com.illusivesoulworks.comforts.common.network.ComfortsPackets;
-import com.illusivesoulworks.comforts.common.registry.RegistryObject;
-import java.util.EnumMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class ComfortsFabricClientMod implements ClientModInitializer {
 
@@ -58,15 +48,6 @@ public class ComfortsFabricClientMod implements ClientModInitializer {
         SleepingBagBlockEntityRenderer::new);
     BlockEntityRendererRegistry.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
         HammockBlockEntityRenderer::new);
-    ClientSpriteRegistryCallback.event(InventoryMenu.BLOCK_ATLAS)
-        .register((atlasTexture, registry) -> {
-          for (final DyeColor color : DyeColor.values()) {
-            registry.register(new ResourceLocation(ComfortsConstants.MOD_ID,
-                "entity/hammock/" + color.getName()));
-            registry.register(new ResourceLocation(ComfortsConstants.MOD_ID,
-                "entity/sleeping_bag/" + color.getName()));
-          }
-        });
     BlockRenderLayerMap.INSTANCE.putBlock(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get(),
         RenderType.translucent());
     ClientTickEvents.END_CLIENT_TICK.register(client -> {

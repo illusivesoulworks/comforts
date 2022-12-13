@@ -43,7 +43,6 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BedBlock;
@@ -106,11 +105,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         if (level.getBlockState(blockpos).is(this)) {
           level.removeBlock(blockpos, false);
         }
-        level
-            .explode(null, DamageSource.badRespawnPointExplosion(), null,
-                (double) pos.getX() + 0.5D,
-                (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true,
-                Explosion.BlockInteraction.DESTROY);
+        level.explode(null, DamageSource.badRespawnPointExplosion(pos.getCenter()), null,
+            pos.getCenter(), 5.0F, true, Level.ExplosionInteraction.BLOCK);
         return InteractionResult.SUCCESS;
       } else if (state.getValue(OCCUPIED)) {
 

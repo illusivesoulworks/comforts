@@ -17,17 +17,11 @@
 
 package com.illusivesoulworks.comforts.platform;
 
-import com.illusivesoulworks.comforts.ComfortsConstants;
-import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.platform.services.IRegistryUtil;
 import java.util.function.BiFunction;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -35,14 +29,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ForgeRegistryUtil implements IRegistryUtil {
-
-  private static final CreativeModeTab CREATIVE_TAB =
-      new CreativeModeTab(-1, ComfortsConstants.MOD_ID) {
-        @Nonnull
-        public ItemStack makeIcon() {
-          return new ItemStack(ComfortsRegistry.SLEEPING_BAGS.get(DyeColor.RED).get());
-        }
-      };
 
   @SuppressWarnings("all")
   @Override
@@ -54,10 +40,5 @@ public class ForgeRegistryUtil implements IRegistryUtil {
   @Override
   public MobEffect getMobEffect(ResourceLocation resourceLocation) {
     return ForgeRegistries.MOB_EFFECTS.getValue(resourceLocation);
-  }
-
-  @Override
-  public CreativeModeTab getCreativeGroup() {
-    return CREATIVE_TAB;
   }
 }

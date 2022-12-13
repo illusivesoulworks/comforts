@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "comforts:hammock_dyed",
+  "ingredients": [
+    [
+      {
+        "item": "comforts:hammock_white"
+      },
+      {
+        "item": "comforts:hammock_orange"
+      },
+      {
+        "item": "comforts:hammock_magenta"
+      },
+      {
+        "item": "comforts:hammock_light_blue"
+      },
+      {
+        "item": "comforts:hammock_yellow"
+      },
+      {
+        "item": "comforts:hammock_lime"
+      },
+      {
+        "item": "comforts:hammock_pink"
+      },
+      {
+        "item": "comforts:hammock_gray"
+      },
+      {
+        "item": "comforts:hammock_light_gray"
+      },
+      {
+        "item": "comforts:hammock_cyan"
+      },
+      {
+        "item": "comforts:hammock_purple"
+      },
+      {
+        "item": "comforts:hammock_blue"
+      },
+      {
+        "item": "comforts:hammock_brown"
+      },
+      {
+        "item": "comforts:hammock_green"
+      },
+      {
+        "item": "comforts:hammock_black"
+      }
+    ],
+    {
+      "tag": "c:red_dyes"
+    }
+  ],
+  "result": {
+    "item": "comforts:hammock_red"
+  }
+}

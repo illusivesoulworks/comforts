@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "hammock",
+  "group": "comforts:hammock",
   "pattern": [
     "sws",
     "sas",

@@ -18,10 +18,16 @@
 package com.illusivesoulworks.comforts;
 
 import com.illusivesoulworks.comforts.common.ComfortsEvents;
+import com.illusivesoulworks.comforts.common.ComfortsRegistry;
+import com.illusivesoulworks.comforts.common.registry.RegistryObject;
+import com.illusivesoulworks.spectrelib.config.SpectreConfigInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.block.Block;
 
 public class ComfortsFabricMod implements ModInitializer {
 
@@ -45,6 +51,27 @@ public class ComfortsFabricMod implements ModInitializer {
       if (entity instanceof Player player) {
         ComfortsEvents.onWakeUp(player);
       }
+    });
+    ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COLORED_BLOCKS).register(entries -> {
+
+      for (RegistryObject<Block> value : ComfortsRegistry.SLEEPING_BAGS.values()) {
+        entries.accept(value.get());
+      }
+
+      for (RegistryObject<Block> value : ComfortsRegistry.HAMMOCKS.values()) {
+        entries.accept(value.get());
+      }
+    });
+    ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
+
+      for (RegistryObject<Block> value : ComfortsRegistry.SLEEPING_BAGS.values()) {
+        entries.accept(value.get());
+      }
+
+      for (RegistryObject<Block> value : ComfortsRegistry.HAMMOCKS.values()) {
+        entries.accept(value.get());
+      }
+      entries.accept(ComfortsRegistry.ROPE_AND_NAIL_ITEM.get());
     });
   }
 }

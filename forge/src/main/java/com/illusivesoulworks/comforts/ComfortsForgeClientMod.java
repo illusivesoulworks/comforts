@@ -22,11 +22,7 @@ import com.illusivesoulworks.comforts.client.renderer.BaseComfortsBlockEntityRen
 import com.illusivesoulworks.comforts.client.renderer.HammockBlockEntityRenderer;
 import com.illusivesoulworks.comforts.client.renderer.SleepingBagBlockEntityRenderer;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -39,7 +35,6 @@ public class ComfortsForgeClientMod {
     eventBus.addListener(ComfortsForgeClientMod::clientSetup);
     eventBus.addListener(ComfortsForgeClientMod::entityRenderers);
     eventBus.addListener(ComfortsForgeClientMod::layerDefinitions);
-    eventBus.addListener(ComfortsForgeClientMod::textureStitch);
   }
 
   private static void clientSetup(final FMLClientSetupEvent evt) {
@@ -62,18 +57,5 @@ public class ComfortsForgeClientMod {
         HammockBlockEntityRenderer::createHeadLayer);
     evt.registerLayerDefinition(BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT,
         HammockBlockEntityRenderer::createFootLayer);
-  }
-
-  private static void textureStitch(TextureStitchEvent.Pre evt) {
-
-    if (evt.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
-
-      for (final DyeColor color : DyeColor.values()) {
-        evt.addSprite(
-            new ResourceLocation(ComfortsConstants.MOD_ID, "entity/hammock/" + color.getName()));
-        evt.addSprite(new ResourceLocation(ComfortsConstants.MOD_ID,
-            "entity/sleeping_bag/" + color.getName()));
-      }
-    }
   }
 }

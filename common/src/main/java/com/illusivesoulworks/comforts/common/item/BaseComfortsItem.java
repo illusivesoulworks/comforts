@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BaseComfortsItem extends BlockItem {
 
   public BaseComfortsItem(Block block) {
-    super(block, new Item.Properties().tab(Services.REGISTRY_UTIL.getCreativeGroup()));
+    super(block, new Item.Properties());
   }
 
   @Override
