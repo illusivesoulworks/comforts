@@ -131,6 +131,7 @@ curseforge {
         mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
 
         relations {
+            requiredDependency 'qsl'
             embeddedLibrary 'cardinal-components'
         }
 
