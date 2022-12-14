@@ -36,6 +36,7 @@ dependencies {
     modImplementation("org.quiltmc:qsl:${quilt_stdlib_version}") {
         exclude group: "net.fabricmc"
     }
+    modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}"
 
     implementation group: 'com.electronwill.night-config', name: 'core', version: '3.6.5'
     implementation group: 'com.electronwill.night-config', name: 'toml', version: '3.6.5'

@@ -21,18 +21,19 @@ import com.illusivesoulworks.comforts.common.ComfortsEvents;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigInitializer;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
-public class ComfortsFabricMod implements ModInitializer, SpectreConfigInitializer {
+public class ComfortsQuiltMod implements ModInitializer, SpectreConfigInitializer {
 
   @Override
-  public void onInitialize() {
+  public void onInitialize(ModContainer modContainer) {
     ComfortsCommonMod.init();
     EntitySleepEvents.ALLOW_SLEEPING.register(
         (player, sleepingPos) -> ComfortsEvents.onSleep(player));
@@ -76,7 +77,7 @@ public class ComfortsFabricMod implements ModInitializer, SpectreConfigInitializ
   }
 
   @Override
-  public void onInitializeConfig() {
+  public void onInitializeConfig(ModContainer modContainer) {
     ComfortsCommonMod.initConfig();
   }
 }
