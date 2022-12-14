@@ -43,9 +43,6 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
 
-    include group: 'com.electronwill.night-config', name: 'core', version: '3.6.5'
-    include group: 'com.electronwill.night-config', name: 'toml', version: '3.6.5'
-
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
     modImplementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-quilt', version: "${spectrelib_range}"
