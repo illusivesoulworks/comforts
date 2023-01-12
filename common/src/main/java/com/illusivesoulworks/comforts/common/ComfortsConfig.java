@@ -18,13 +18,9 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
-import com.illusivesoulworks.comforts.platform.Services;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ComfortsConfig {
@@ -72,7 +68,8 @@ public class ComfortsConfig {
           .translation(CONFIG_PREFIX + "sleepingBagBreakage")
           .defineInRange("sleepingBagBreakage", 0.0D, 0.0D, 1.0D);
 
-      sleepingBagBreakageLuckMultiplier = builder.comment("The value that will be multiplied by a player's luck then added/subtracted from the sleepingBagBreakage value")
+      sleepingBagBreakageLuckMultiplier = builder.comment(
+              "The value that will be multiplied by a player's luck then added/subtracted from the sleepingBagBreakage value")
           .translation(CONFIG_PREFIX + "sleepingBagBreakageLuckMultiplier")
           .defineInRange("sleepingBagBreakageLuckMultiplier", 0.0D, -1.0D, 1.0D);
 
@@ -87,24 +84,6 @@ public class ComfortsConfig {
   }
 
   public static void reload() {
-    ComfortsEvents.SLEEPING_BAG_EFFECTS.clear();
-    SERVER.sleepingBagEffects.get().forEach(effect -> {
-      String[] elements = effect.split(";");
-      MobEffect mobEffect = Services.REGISTRY_UTIL.getMobEffect(new ResourceLocation(elements[0]));
-
-      if (mobEffect == null) {
-        return;
-      }
-      int duration = 0;
-      int amp = 0;
-      try {
-        duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
-        amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
-      } catch (Exception e) {
-        ComfortsConstants.LOG.error("Problem parsing sleeping bag effects in config!", e);
-      }
-      ComfortsEvents.SLEEPING_BAG_EFFECTS.add(
-          new MobEffectInstance(mobEffect, duration * 20, amp - 1));
-    });
+    ComfortsEvents.effectsInitialized = false;
   }
 }

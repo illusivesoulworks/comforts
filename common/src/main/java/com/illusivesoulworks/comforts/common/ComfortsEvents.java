@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.block.HammockBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
 import com.illusivesoulworks.comforts.platform.Services;
@@ -24,16 +25,17 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -93,7 +95,8 @@ public class ComfortsEvents {
     return currentTime;
   }
 
-  static final List<MobEffectInstance> SLEEPING_BAG_EFFECTS = new ArrayList<>();
+  private static final List<MobEffectInstance> SLEEPING_BAG_EFFECTS = new ArrayList<>();
+  static boolean effectsInitialized = false;
 
   public static void onWakeUp(Player player) {
     Level level = player.getLevel();
@@ -109,6 +112,11 @@ public class ComfortsEvents {
               boolean broke = false;
 
               if (timeSlept > 500L) {
+
+                if (!effectsInitialized) {
+                  initializeEffects();
+                  effectsInitialized = true;
+                }
                 List<MobEffectInstance> effectInstances = SLEEPING_BAG_EFFECTS;
 
                 if (!effectInstances.isEmpty()) {
@@ -120,7 +128,8 @@ public class ComfortsEvents {
                   }
                 }
                 double breakChance = ComfortsConfig.SERVER.sleepingBagBreakage.get();
-                double luckMultiplier = ComfortsConfig.SERVER.sleepingBagBreakageLuckMultiplier.get();
+                double luckMultiplier =
+                    ComfortsConfig.SERVER.sleepingBagBreakageLuckMultiplier.get();
 
                 if (luckMultiplier > 0.0d) {
                   AttributeInstance attributeInstance = player.getAttribute(Attributes.LUCK);
@@ -158,6 +167,27 @@ public class ComfortsEvents {
             data.setAutoSleepPos(null);
           }));
     }
+  }
+
+  private static void initializeEffects() {
+    SLEEPING_BAG_EFFECTS.clear();
+    ComfortsConfig.SERVER.sleepingBagEffects.get().forEach(effect -> {
+      String[] elements = effect.split(";");
+      MobEffect mobEffect = Services.REGISTRY_UTIL.getMobEffect(new ResourceLocation(elements[0]));
+
+      if (mobEffect == null) {
+        return;
+      }
+      int duration = 0;
+      int amp = 0;
+      try {
+        duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
+        amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
+      } catch (Exception e) {
+        ComfortsConstants.LOG.error("Problem parsing sleeping bag effects in config!", e);
+      }
+      SLEEPING_BAG_EFFECTS.add(new MobEffectInstance(mobEffect, duration * 20, amp - 1));
+    });
   }
 
   public static Player.BedSleepingProblem onSleep(Player player) {
