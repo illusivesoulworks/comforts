@@ -15,6 +15,7 @@ body:
     label: Minecraft Version
     description: What version of Minecraft are you running? (Unlisted versions are unsupported)
     options:
+      - 1.19.3
       - 1.19.2
       - 1.18.2
       - 1.16.5
@@ -45,10 +46,11 @@ body:
   id: loader
   attributes:
     label: Loader
-    description: Are you using Forge or Fabric?
+    description: Are you using Fabric, Forge, or Quilt?
     options:
-      - Forge
       - Fabric
+      - Forge
+      - Quilt
   validations:
     required: true
 - type: input
@@ -61,10 +63,10 @@ body:
   validations:
     required: true
 - type: input
-  id: fabric-api-version
+  id: modloader-api-version
   attributes:
-    label: Fabric API Version
-    description: If you're using Fabric, which version of the Fabric API are you using? Leave blank if you're not using it.
+    label: API Version
+    description: Which API version of the above loader are you using? (Fabric API on Fabric, QSL/QFAPI on Quilt, N/A on Forge)
     placeholder: |
       Example: Fabric API 0.40.1
 - type: input
