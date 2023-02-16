@@ -62,7 +62,6 @@ public class ComfortsBaseTileEntity extends BlockEntity {
     }
   }
 
-  @OnlyIn(Dist.CLIENT)
   public DyeColor getColor() {
 
     if (this.color == null) {

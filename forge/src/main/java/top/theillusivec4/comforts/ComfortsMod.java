@@ -33,7 +33,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,7 +77,6 @@ public final class ComfortsMod {
 
   public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(-1, "comforts") {
     @Nonnull
-    @OnlyIn(Dist.CLIENT)
     public ItemStack makeIcon() {
       return new ItemStack(ComfortsRegistry.SLEEPING_BAGS.get(DyeColor.RED));
     }
