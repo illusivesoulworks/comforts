@@ -6,4 +6,5 @@ This is a copy of the changelog for the most recent version. For the full versio
 ### Changed
 - Updated SpectreLib to 0.12.4+1.19.2
 ### Fixed
+- [Quilt] Fixed mixin crash [#118](https://github.com/illusivesoulworks/comforts/issues/119)
 - Fixed auto-use not working when the sleeping bag replaces a block (i.e. snow layers) [#119](https://github.com/illusivesoulworks/comforts/issues/119)
