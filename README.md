@@ -15,7 +15,7 @@ The recipe for the sleeping bag is simply three pieces of matching color wool in
 
 ![](https://i.ibb.co/LCNV0HS/sleepingbagrecipe.gif)
 
-You can also dye a regular White Sleeping Bag into any of the other colors! As well as re-dye other colored sleeping bags.
+You can also dye a regular White Sleeping Bag into any of the other colors!
 
 ![](https://i.ibb.co/R24frvM/sleepingbagrecipe2.gif)
 
@@ -25,7 +25,7 @@ and bottom, and the rest of the slots are strings.
 
 ![](https://i.ibb.co/nQZH5Ld/hammockrecipe.gif)
 
-You can also dye a regular White Hammock Cloth into any of the other colors! As well as re-dye other colored hammocks.
+You can also dye a regular White Hammock Cloth into any of the other colors!
 
 ![](https://i.ibb.co/Jd5JcWf/hammockrecipe2.gif)
 
