@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.modrinth.minotaur' version '2.+'
 }
 
 archivesBaseName = "${mod_id}-fabric"
@@ -104,12 +105,12 @@ curseforge {
     project {
         apiKey = findProperty('curseKey') ?: 0
         id = "${cf_id}"
-        releaseType = "${cf_release}"
+        releaseType = "${release_type}"
         changelogType = 'markdown'
         changelog = file("../CHANGELOG_LATEST.md")
         addGameVersion "Java 17"
         addGameVersion "Fabric"
-        "${cf_versions}".split(',').each {
+        "${release_versions}".split(',').each {
             addGameVersion "${it}"
         }
         addArtifact(sourcesJar)
@@ -126,5 +127,19 @@ curseforge {
     }
     options {
         forgeGradleIntegration = false
+    }
+}
+
+modrinth {
+    token = findProperty('modrinthKey') ?: 0
+    projectId = "${modrinth_id}"
+    versionName = getArchivesBaseName() + "-" + getVersion()
+    versionType = "${release_type}"
+    changelog = file('../CHANGELOG_LATEST.md').text
+    uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
+    additionalFiles = [sourcesJar]
+    gameVersions = "${release_versions}".split(",") as List<String>
+    dependencies {
+        required.project "fabric-api"
     }
 }
