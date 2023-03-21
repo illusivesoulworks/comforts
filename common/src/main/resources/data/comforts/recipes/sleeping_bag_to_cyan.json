@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:cyan_dyes"
+            "item": "minecraft:cyan_dye"
         }
     ]
 }

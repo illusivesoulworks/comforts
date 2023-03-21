@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:white_dyes"
+            "item": "minecraft:white_dye"
         }
     ]
 }

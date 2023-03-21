@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:purple_dyes"
+            "item": "minecraft:purple_dye"
         }
     ]
 }

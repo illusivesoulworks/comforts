@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:red_dyes"
+            "item": "minecraft:red_dye"
         }
     ]
 }

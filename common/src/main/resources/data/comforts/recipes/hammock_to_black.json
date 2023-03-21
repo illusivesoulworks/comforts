@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:black_dyes"
+            "item": "minecraft:black_dye"
         }
     ]
 }

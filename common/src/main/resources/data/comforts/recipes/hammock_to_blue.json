@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:blue_dyes"
+            "item": "minecraft:blue_dye"
         }
     ]
 }

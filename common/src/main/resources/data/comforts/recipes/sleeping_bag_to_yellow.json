@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:yellow_dyes"
+            "item": "minecraft:yellow_dye"
         }
     ]
 }

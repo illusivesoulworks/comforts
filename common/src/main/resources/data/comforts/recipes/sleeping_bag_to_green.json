@@ -54,7 +54,7 @@
             }
         ],
         {
-            "tag": "c:green_dyes"
+            "item": "minecraft:green_dye"
         }
     ]
 }
