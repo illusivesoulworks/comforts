@@ -85,19 +85,28 @@ public class ComfortsClientEvents {
 
     if (!player.isSleeping()) {
       Services.SLEEP_EVENTS.getSleepData(player).ifPresent(data -> {
-        final BlockPos pos = data.getAutoSleepPos();
+        BlockPos pos = data.getAutoSleepPos();
 
         if (pos != null) {
           final Level level = player.level;
           final BlockState state = level.getBlockState(pos);
 
-          if (level.isLoaded(pos) && state.getBlock() instanceof SleepingBagBlock) {
-            BlockHitResult hit = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()),
-                Direction.UP, pos, false);
-            MultiPlayerGameMode playerController = Minecraft.getInstance().gameMode;
+          if (level.isLoaded(pos)) {
+            boolean flag = state.getBlock() instanceof SleepingBagBlock;
 
-            if (playerController != null) {
-              playerController.useItemOn((LocalPlayer) player, InteractionHand.MAIN_HAND, hit);
+            if (!flag) {
+              pos = pos.below();
+              flag = level.getBlockState(pos).getBlock() instanceof SleepingBagBlock;
+            }
+
+            if (flag) {
+              BlockHitResult hit = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()),
+                  Direction.UP, pos, false);
+              MultiPlayerGameMode playerController = Minecraft.getInstance().gameMode;
+
+              if (playerController != null) {
+                playerController.useItemOn((LocalPlayer) player, InteractionHand.MAIN_HAND, hit);
+              }
             }
           }
           data.setAutoSleepPos(null);
