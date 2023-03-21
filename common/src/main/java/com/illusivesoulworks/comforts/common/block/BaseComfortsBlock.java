@@ -35,7 +35,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -105,8 +104,9 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         if (level.getBlockState(blockpos).is(this)) {
           level.removeBlock(blockpos, false);
         }
-        level.explode(null, DamageSource.badRespawnPointExplosion(pos.getCenter()), null,
-            pos.getCenter(), 5.0F, true, Level.ExplosionInteraction.BLOCK);
+        Vec3 vec3 = pos.getCenter();
+        level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3, 5.0F,
+            true, Level.ExplosionInteraction.BLOCK);
         return InteractionResult.SUCCESS;
       } else if (state.getValue(OCCUPIED)) {
 
