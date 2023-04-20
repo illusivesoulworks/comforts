@@ -6,7 +6,7 @@ Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATC
 
 ## [6.0.5+1.19.2] - 2023.04.20
 ### Fixed
-- Fixed Comforts overriding other mods' sleep results [#122](https://github.com/illusivesoulworks/comforts/issues/122)
+- [Forge] Fixed Comforts overriding other mods' sleep results [#122](https://github.com/illusivesoulworks/comforts/issues/122)
 
 ## [6.0.4+1.19.2] - 2023.03.21
 ### Changed

@@ -4,4 +4,4 @@ This is a copy of the changelog for the most recent version. For the full versio
 
 ## [6.0.5+1.19.2] - 2023.04.20
 ### Fixed
-- Fixed Comforts overriding other mods' sleep results [#122](https://github.com/illusivesoulworks/comforts/issues/122)
+- [Forge] Fixed Comforts overriding other mods' sleep results [#122](https://github.com/illusivesoulworks/comforts/issues/122)
