@@ -44,7 +44,6 @@ public class ComfortsCommonEventsListener {
       ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getEntity().getLevel(), pos);
 
       switch (result) {
-        case DEFAULT -> evt.setResult(Event.Result.DEFAULT);
         case ALLOW -> evt.setResult(Event.Result.ALLOW);
         case DENY -> evt.setResult(Event.Result.DENY);
       }
