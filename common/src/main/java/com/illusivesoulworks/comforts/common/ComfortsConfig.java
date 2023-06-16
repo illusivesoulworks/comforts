@@ -21,7 +21,6 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;

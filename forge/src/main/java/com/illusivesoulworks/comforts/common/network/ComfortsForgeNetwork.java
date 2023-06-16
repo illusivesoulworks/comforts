@@ -34,5 +34,7 @@ public class ComfortsForgeNetwork {
   public static void setup() {
     INSTANCE.registerMessage(0, SPacketAutoSleep.class, SPacketAutoSleep::encode,
         SPacketAutoSleep::decode, SPacketAutoSleep::handle);
+    INSTANCE.registerMessage(1, SPacketPlaceBag.class, SPacketPlaceBag::encode,
+        SPacketPlaceBag::decode, SPacketPlaceBag::handle);
   }
 }

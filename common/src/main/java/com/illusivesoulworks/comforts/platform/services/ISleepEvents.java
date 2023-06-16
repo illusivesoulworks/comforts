@@ -22,6 +22,7 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.UseOnContext;
 
 public interface ISleepEvents {
 
@@ -32,4 +33,6 @@ public interface ISleepEvents {
   Optional<? extends ISleepData> getSleepData(Player player);
 
   void sendAutoSleepPacket(ServerPlayer player, BlockPos pos);
+
+  void sendPlaceBagPacket(ServerPlayer serverPlayer, UseOnContext context);
 }

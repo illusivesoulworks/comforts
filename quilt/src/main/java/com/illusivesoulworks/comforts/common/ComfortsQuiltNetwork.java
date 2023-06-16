@@ -19,8 +19,11 @@ package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.common.network.ComfortsPackets;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
@@ -30,5 +33,16 @@ public class ComfortsQuiltNetwork {
     FriendlyByteBuf buf = PacketByteBufs.create();
     buf.writeBlockPos(pos);
     ServerPlayNetworking.send(player, ComfortsPackets.AUTO_SLEEP, buf);
+  }
+
+  public static void sendPlaceBag(ServerPlayer player, InteractionHand hand, Vec3 clickLocation,
+                                  Direction clickedFace, BlockPos clickedPos, boolean inside) {
+    FriendlyByteBuf buf = PacketByteBufs.create();
+    buf.writeEnum(hand);
+    buf.writeVector3f(clickLocation.toVector3f());
+    buf.writeEnum(clickedFace);
+    buf.writeBlockPos(clickedPos);
+    buf.writeBoolean(inside);
+    ServerPlayNetworking.send(player, ComfortsPackets.PLACE_BAG, buf);
   }
 }

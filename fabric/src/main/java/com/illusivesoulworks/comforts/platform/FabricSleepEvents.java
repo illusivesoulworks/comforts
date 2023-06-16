@@ -27,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.UseOnContext;
 
 public class FabricSleepEvents implements ISleepEvents {
 
@@ -55,5 +56,11 @@ public class FabricSleepEvents implements ISleepEvents {
   @Override
   public void sendAutoSleepPacket(ServerPlayer player, BlockPos pos) {
     ComfortsFabricNetwork.sendAutoSleep(player, pos);
+  }
+
+  @Override
+  public void sendPlaceBagPacket(ServerPlayer serverPlayer, UseOnContext context) {
+    ComfortsFabricNetwork.sendPlaceBag(serverPlayer, context.getHand(), context.getClickLocation(),
+        context.getClickedFace(), context.getClickedPos(), context.isInside());
   }
 }

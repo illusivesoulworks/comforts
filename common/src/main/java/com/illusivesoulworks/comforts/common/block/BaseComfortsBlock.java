@@ -116,7 +116,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         }
         return InteractionResult.SUCCESS;
       } else if (player instanceof ServerPlayer serverPlayer) {
-        trySleep(serverPlayer, pos).ifLeft((result) -> {
+        trySleep(serverPlayer, pos, false).ifLeft((result) -> {
 
           if (result != null) {
             final Component text = switch (result) {
@@ -145,14 +145,15 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     return InteractionResult.SUCCESS;
   }
 
-  public static Either<Player.BedSleepingProblem, Unit> trySleep(ServerPlayer player, BlockPos at) {
+  public static Either<Player.BedSleepingProblem, Unit> trySleep(ServerPlayer player, BlockPos at,
+                                                                 boolean dryRun) {
     final Player.BedSleepingProblem ret = Services.SLEEP_EVENTS.getSleepResult(player, at);
 
     if (ret != null) {
       return Either.left(ret);
     }
     final Direction direction = player.level().getBlockState(at)
-        .getValue(HorizontalDirectionalBlock.FACING);
+        .getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(player.getDirection());
 
     if (!player.isSleeping() && player.isAlive()) {
 
@@ -181,11 +182,14 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
               return Either.left(Player.BedSleepingProblem.NOT_SAFE);
             }
           }
-          player.startSleeping(at);
-          ((AccessorPlayer) player).setSleepCounter(0);
-          player.awardStat(Stats.SLEEP_IN_BED);
-          CriteriaTriggers.SLEPT_IN_BED.trigger(player);
-          ((ServerLevel) player.level()).updateSleepingPlayerList();
+
+          if (!dryRun) {
+            player.startSleeping(at);
+            ((AccessorPlayer) player).setSleepCounter(0);
+            player.awardStat(Stats.SLEEP_IN_BED);
+            CriteriaTriggers.SLEPT_IN_BED.trigger(player);
+            ((ServerLevel) player.level()).updateSleepingPlayerList();
+          }
           return Either.right(Unit.INSTANCE);
         }
       }

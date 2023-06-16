@@ -18,16 +18,31 @@
 package com.illusivesoulworks.comforts.common.network;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
+import com.illusivesoulworks.comforts.common.item.SleepingBagItem;
 import com.illusivesoulworks.comforts.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class ComfortsPackets {
 
-  public static ResourceLocation AUTO_SLEEP = new ResourceLocation(ComfortsConstants.MOD_ID, "auto_sleep");
+  public static ResourceLocation AUTO_SLEEP =
+      new ResourceLocation(ComfortsConstants.MOD_ID, "auto_sleep");
+  public static ResourceLocation PLACE_BAG =
+      new ResourceLocation(ComfortsConstants.MOD_ID, "place_bag");
 
   public static void handleAutoSleep(Player player, BlockPos pos) {
     Services.SLEEP_EVENTS.getSleepData(player).ifPresent(data -> data.setAutoSleepPos(pos));
+  }
+
+  public static void handlePlaceBag(Player player, InteractionHand hand,
+                                    BlockHitResult blockHitResult) {
+
+    if (player.getItemInHand(hand).getItem() instanceof SleepingBagItem sleepingBagItem) {
+      sleepingBagItem.syncedUseOn(new UseOnContext(player, hand, blockHitResult));
+    }
   }
 }

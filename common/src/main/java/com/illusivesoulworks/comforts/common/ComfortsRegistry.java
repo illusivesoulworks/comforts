@@ -25,6 +25,7 @@ import com.illusivesoulworks.comforts.common.block.entity.HammockBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
 import com.illusivesoulworks.comforts.common.item.BaseComfortsItem;
 import com.illusivesoulworks.comforts.common.item.HammockItem;
+import com.illusivesoulworks.comforts.common.item.RopeAndNailItem;
 import com.illusivesoulworks.comforts.common.item.SleepingBagItem;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import com.illusivesoulworks.comforts.common.registry.RegistryProvider;
@@ -54,7 +55,7 @@ public class ComfortsRegistry {
   public static final RegistryObject<Block> ROPE_AND_NAIL_BLOCK =
       BLOCKS.register("rope_and_nail", RopeAndNailBlock::new);
   public static final RegistryObject<Item> ROPE_AND_NAIL_ITEM =
-      ITEMS.register("rope_and_nail", () -> new BaseComfortsItem(ROPE_AND_NAIL_BLOCK.get()));
+      ITEMS.register("rope_and_nail", () -> new RopeAndNailItem(ROPE_AND_NAIL_BLOCK.get()));
 
   public static final RegistryObject<BlockEntityType<SleepingBagBlockEntity>>
       SLEEPING_BAG_BLOCK_ENTITY;

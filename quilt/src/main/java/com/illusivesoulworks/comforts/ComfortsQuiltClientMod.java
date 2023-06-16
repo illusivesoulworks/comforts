@@ -23,11 +23,14 @@ import com.illusivesoulworks.comforts.client.renderer.HammockBlockEntityRenderer
 import com.illusivesoulworks.comforts.client.renderer.SleepingBagBlockEntityRenderer;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.network.ComfortsPackets;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
@@ -61,6 +64,16 @@ public class ComfortsQuiltClientMod implements ClientModInitializer {
         (client, handler, buf, responseSender) -> {
           BlockPos pos = buf.readBlockPos();
           client.execute(() -> ComfortsPackets.handleAutoSleep(client.player, pos));
+        });
+    ClientPlayNetworking.registerGlobalReceiver(ComfortsPackets.PLACE_BAG,
+        (client, handler, buf, responseSender) -> {
+          InteractionHand hand = buf.readEnum(InteractionHand.class);
+          Vec3 location = new Vec3(buf.readVector3f());
+          Direction direction = buf.readEnum(Direction.class);
+          BlockPos pos = buf.readBlockPos();
+          boolean inside = buf.readBoolean();
+          client.execute(() -> ComfortsPackets.handlePlaceBag(client.player, hand,
+              new BlockHitResult(location, direction, pos, inside)));
         });
   }
 }

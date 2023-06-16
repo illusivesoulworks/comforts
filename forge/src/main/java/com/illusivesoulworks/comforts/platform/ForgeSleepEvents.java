@@ -21,11 +21,13 @@ import com.illusivesoulworks.comforts.common.CapabilitySleepData;
 import com.illusivesoulworks.comforts.common.capability.ISleepData;
 import com.illusivesoulworks.comforts.common.network.ComfortsForgeNetwork;
 import com.illusivesoulworks.comforts.common.network.SPacketAutoSleep;
+import com.illusivesoulworks.comforts.common.network.SPacketPlaceBag;
 import com.illusivesoulworks.comforts.platform.services.ISleepEvents;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -50,5 +52,13 @@ public class ForgeSleepEvents implements ISleepEvents {
   public void sendAutoSleepPacket(ServerPlayer player, BlockPos pos) {
     ComfortsForgeNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
         new SPacketAutoSleep(player.getId(), pos));
+  }
+
+  @Override
+  public void sendPlaceBagPacket(ServerPlayer player, UseOnContext context) {
+    ComfortsForgeNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+        new SPacketPlaceBag(player.getId(), context.getHand(), context.getClickLocation(),
+            context.getClickedFace(), context.getClickedPos(),
+            context.isInside()));
   }
 }
