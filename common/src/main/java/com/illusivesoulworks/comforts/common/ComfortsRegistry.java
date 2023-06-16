@@ -23,7 +23,6 @@ import com.illusivesoulworks.comforts.common.block.RopeAndNailBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
 import com.illusivesoulworks.comforts.common.block.entity.HammockBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
-import com.illusivesoulworks.comforts.common.item.BaseComfortsItem;
 import com.illusivesoulworks.comforts.common.item.HammockItem;
 import com.illusivesoulworks.comforts.common.item.RopeAndNailItem;
 import com.illusivesoulworks.comforts.common.item.SleepingBagItem;

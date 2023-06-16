@@ -59,7 +59,11 @@
       "contributors": {
         "${mod_author}": "Owner"
       },
-      "license": "${license}"
+      "contact": {
+        "issues": "${issue_tracker}"
+      },
+      "license": "${license}",
+      "icon": "${mod_id}_icon.png"
     }
   },
   "cardinal-components": [

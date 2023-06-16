@@ -86,7 +86,7 @@ processResources {
     filesMatching("quilt.mod.json") {
         expand 'version': project.version, 'quilt_mc_version_range': project.quilt_mc_version_range, 'license': project.license,
                 'mod_id': project.mod_id, 'mod_author': project.mod_author, 'mod_description': project.mod_description,
-                'mod_name': project.mod_name
+                'mod_name': project.mod_name, 'issue_tracker': project.issue_tracker
     }
 
     filesMatching("pack.mcmeta") {
