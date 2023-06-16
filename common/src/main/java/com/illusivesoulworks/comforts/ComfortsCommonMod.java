@@ -32,7 +32,6 @@ public class ComfortsCommonMod {
     SpectreConfig config =
         SpectreConfigLoader.add(SpectreConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC,
             ComfortsConstants.MOD_ID);
-    config.addLoadListener(configFile -> ComfortsConfig.reload());
-    config.addReloadListener(configFile -> ComfortsConfig.reload());
+    config.addLoadListener((config1, firstLoad) -> ComfortsConfig.reload());
   }
 }

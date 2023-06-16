@@ -45,7 +45,7 @@ public class ComfortsClientEvents {
 
       if (player instanceof RemotePlayer) {
         player.getSleepingPos().ifPresent(bedPos -> {
-          final Block bed = player.level.getBlockState(bedPos).getBlock();
+          final Block bed = player.level().getBlockState(bedPos).getBlock();
 
           if (bed instanceof SleepingBagBlock) {
             poseStack.translate(0.0f, -0.375F, 0.0f);
@@ -55,7 +55,7 @@ public class ComfortsClientEvents {
         });
       } else if (player instanceof LocalPlayer) {
         player.getSleepingPos().ifPresent(bedPos -> {
-          final Block bed = player.level.getBlockState(bedPos).getBlock();
+          final Block bed = player.level().getBlockState(bedPos).getBlock();
 
           if (bed instanceof SleepingBagBlock) {
             player.attackAnim = 0.0f;
@@ -70,7 +70,7 @@ public class ComfortsClientEvents {
 
     if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
       player.getSleepingPos().ifPresent(bedPos -> {
-        final Block bed = player.level.getBlockState(bedPos).getBlock();
+        final Block bed = player.level().getBlockState(bedPos).getBlock();
 
         if (bed instanceof SleepingBagBlock) {
           poseStack.translate(0.0f, 0.375F, 0.0f);
@@ -88,7 +88,7 @@ public class ComfortsClientEvents {
         BlockPos pos = data.getAutoSleepPos();
 
         if (pos != null) {
-          final Level level = player.level;
+          final Level level = player.level();
           final BlockState state = level.getBlockState(pos);
 
           if (level.isLoaded(pos)) {

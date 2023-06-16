@@ -50,7 +50,7 @@ public class CapabilitySleepData {
   public static LazyOptional<ISleepData> getCapability(final Player player) {
     UUID key = player.getUUID();
     Map<UUID, LazyOptional<ISleepData>> cache =
-        player.getLevel().isClientSide() ? CLIENT_CACHE : SERVER_CACHE;
+        player.level().isClientSide() ? CLIENT_CACHE : SERVER_CACHE;
     return cache.computeIfAbsent(key, (k) -> {
       LazyOptional<ISleepData> opt = player.getCapability(SLEEP_DATA_CAP);
       opt.addListener((v) -> cache.remove(key));

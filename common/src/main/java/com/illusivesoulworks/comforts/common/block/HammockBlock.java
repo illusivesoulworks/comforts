@@ -33,7 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -58,7 +58,8 @@ public class HammockBlock extends BaseComfortsBlock {
 
   public HammockBlock(DyeColor color) {
     super(BaseComfortsBlock.BedType.HAMMOCK, color,
-        Block.Properties.of(Material.WOOL).sound(SoundType.WOOL).strength(0.1F));
+        Block.Properties.of().ignitedByLava().mapColor(MapColor.WOOL).sound(SoundType.WOOL)
+            .strength(0.1F));
     this.color = color;
   }
 

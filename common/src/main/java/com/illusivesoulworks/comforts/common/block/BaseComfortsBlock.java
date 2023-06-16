@@ -121,15 +121,14 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           if (result != null) {
             final Component text = switch (result) {
               case NOT_POSSIBLE_NOW -> {
-                if (type == BedType.HAMMOCK) {
-                  String key = "block.comforts." + type.name + ".no_sleep";
+                Component message = ComfortsConfig.ComfortsTimeUse.NIGHT.getMessage();
 
-                  if (ComfortsConfig.SERVER.nightHammocks.get()) {
-                    key += ".2";
-                  }
-                  yield Component.translatable(key);
+                if (type == BedType.HAMMOCK) {
+                  message = ComfortsConfig.SERVER.hammockUse.get().getMessage();
+                } else if (type == BedType.SLEEPING_BAG) {
+                  message = ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
                 }
-                yield Component.translatable("block.minecraft.bed.no_sleep");
+                yield message;
               }
               case TOO_FAR_AWAY -> Component.translatable(
                   "block.comforts." + type.name + ".too_far_away");
@@ -152,12 +151,12 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     if (ret != null) {
       return Either.left(ret);
     }
-    final Direction direction = player.level.getBlockState(at)
+    final Direction direction = player.level().getBlockState(at)
         .getValue(HorizontalDirectionalBlock.FACING);
 
     if (!player.isSleeping() && player.isAlive()) {
 
-      if (!player.level.dimensionType().natural()) {
+      if (!player.level().dimensionType().natural()) {
         return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
       } else if (!bedInRange(player, at, direction)) {
         return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
@@ -173,7 +172,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
             final double d0 = 8.0D;
             final double d1 = 5.0D;
             final Vec3 vector3d = Vec3.atBottomCenterOf(at);
-            List<Monster> list = player.level.getEntitiesOfClass(Monster.class,
+            List<Monster> list = player.level().getEntitiesOfClass(Monster.class,
                 new AABB(vector3d.x() - d0, vector3d.y() - d1, vector3d.z() - d0, vector3d.x() + d0,
                     vector3d.y() + d1, vector3d.z() + d0),
                 (monster) -> monster.isPreventingPlayerRest(player));
@@ -186,7 +185,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           ((AccessorPlayer) player).setSleepCounter(0);
           player.awardStat(Stats.SLEEP_IN_BED);
           CriteriaTriggers.SLEPT_IN_BED.trigger(player);
-          ((ServerLevel) player.level).updateSleepingPlayerList();
+          ((ServerLevel) player.level()).updateSleepingPlayerList();
           return Either.right(Unit.INSTANCE);
         }
       }
@@ -214,7 +213,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
   private static boolean bedBlocked(ServerPlayer playerEntity, BlockPos blockPos,
                                     Direction direction) {
     final BlockPos blockpos = blockPos.above();
-    return isAbnormalCube(playerEntity.level, blockpos) || isAbnormalCube(playerEntity.level,
+    return isAbnormalCube(playerEntity.level(), blockpos) || isAbnormalCube(playerEntity.level(),
         blockpos.relative(direction.getOpposite()));
   }
 

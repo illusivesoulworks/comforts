@@ -26,6 +26,7 @@ import com.illusivesoulworks.comforts.common.network.ComfortsPackets;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
@@ -45,9 +46,9 @@ public class ComfortsQuiltClientMod implements ClientModInitializer {
         HammockBlockEntityRenderer::createHeadLayer);
     EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT,
         HammockBlockEntityRenderer::createFootLayer);
-    BlockEntityRendererRegistry.register(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(),
+    BlockEntityRenderers.register(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(),
         SleepingBagBlockEntityRenderer::new);
-    BlockEntityRendererRegistry.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
+    BlockEntityRenderers.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
         HammockBlockEntityRenderer::new);
     BlockRenderLayerMap.put(RenderType.translucent(), ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get());
     ClientTickEvents.END.register(client -> {

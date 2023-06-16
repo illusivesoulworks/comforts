@@ -20,7 +20,6 @@ package com.illusivesoulworks.comforts;
 import com.illusivesoulworks.comforts.common.ComfortsEvents;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
-import com.illusivesoulworks.spectrelib.config.SpectreConfigInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.world.InteractionResult;
@@ -30,7 +29,7 @@ import net.minecraft.world.level.block.Block;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
-public class ComfortsQuiltMod implements ModInitializer, SpectreConfigInitializer {
+public class ComfortsQuiltMod implements ModInitializer {
 
   @Override
   public void onInitialize(ModContainer modContainer) {
@@ -38,7 +37,7 @@ public class ComfortsQuiltMod implements ModInitializer, SpectreConfigInitialize
     EntitySleepEvents.ALLOW_SLEEPING.register(
         (player, sleepingPos) -> ComfortsEvents.onSleep(player));
     EntitySleepEvents.ALLOW_SLEEP_TIME.register((player, sleepingPos, vanillaResult) -> {
-      ComfortsEvents.Result result = ComfortsEvents.checkTime(player.getLevel(), sleepingPos);
+      ComfortsEvents.Result result = ComfortsEvents.checkTime(player.level(), sleepingPos);
 
       if (result == ComfortsEvents.Result.DENY) {
         return InteractionResult.FAIL;
@@ -74,10 +73,5 @@ public class ComfortsQuiltMod implements ModInitializer, SpectreConfigInitialize
       }
       entries.accept(ComfortsRegistry.ROPE_AND_NAIL_ITEM.get());
     });
-  }
-
-  @Override
-  public void onInitializeConfig(ModContainer modContainer) {
-    ComfortsCommonMod.initConfig();
   }
 }

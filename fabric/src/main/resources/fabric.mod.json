@@ -21,7 +21,7 @@
       "com.illusivesoulworks.comforts.ComfortsFabricClientMod"
     ],
     "spectrelib": [
-      "com.illusivesoulworks.comforts.ComfortsFabricMod"
+      "com.illusivesoulworks.comforts.ComfortsConfigInitializer"
     ],
     "cardinal-components-entity": [
       "com.illusivesoulworks.comforts.common.ComfortsComponents"

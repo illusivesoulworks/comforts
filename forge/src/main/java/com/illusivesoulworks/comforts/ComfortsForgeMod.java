@@ -23,13 +23,14 @@ import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.capability.ISleepData;
 import com.illusivesoulworks.comforts.common.network.ComfortsForgeNetwork;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -59,8 +60,8 @@ public class ComfortsForgeMod {
     evt.register(ISleepData.class);
   }
 
-  private void creativeTab(final CreativeModeTabEvent.BuildContents evt) {
-    CreativeModeTab tab = evt.getTab();
+  private void creativeTab(final BuildCreativeModeTabContentsEvent evt) {
+    ResourceKey<CreativeModeTab> tab = evt.getTabKey();
 
     if (tab == CreativeModeTabs.COLORED_BLOCKS || tab == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
 

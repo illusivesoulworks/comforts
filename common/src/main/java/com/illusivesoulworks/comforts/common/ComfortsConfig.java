@@ -21,6 +21,9 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ComfortsConfig {
@@ -39,51 +42,74 @@ public class ComfortsConfig {
   public static class Server {
 
     public final SpectreConfigSpec.BooleanValue autoUse;
-    public final SpectreConfigSpec.BooleanValue wellRested;
-    public final SpectreConfigSpec.DoubleValue sleepyFactor;
-    public final SpectreConfigSpec.BooleanValue nightHammocks;
-    public final SpectreConfigSpec.DoubleValue sleepingBagBreakage;
-    public final SpectreConfigSpec.DoubleValue sleepingBagBreakageLuckMultiplier;
-    public final SpectreConfigSpec.ConfigValue<List<String>> sleepingBagEffects;
+    public final SpectreConfigSpec.BooleanValue restrictSleeping;
+    public final SpectreConfigSpec.DoubleValue restMultiplier;
+    public final SpectreConfigSpec.EnumValue<ComfortsTimeUse> hammockUse;
+    public final SpectreConfigSpec.EnumValue<ComfortsTimeUse> sleepingBagUse;
+    public final SpectreConfigSpec.IntValue sleepingBagBreakChance;
+    public final SpectreConfigSpec.DoubleValue sleepingBagBreakChanceLuckMultiplier;
+    public final SpectreConfigSpec.ConfigValue<List<? extends String>> sleepingBagEffects;
 
     public Server(SpectreConfigSpec.Builder builder) {
-      builder.push("server");
 
-      autoUse = builder.comment("Set to true to automatically use sleeping bags when placed")
+      autoUse = builder.comment(
+              "If enabled, players automatically attempt to use sleeping bags when placed.")
           .translation(CONFIG_PREFIX + "autoUse").define("autoUse", true);
 
-      wellRested = builder
-          .comment("Set to true to prevent sleeping depending on how long you previously slept")
-          .translation(CONFIG_PREFIX + "wellRested").define("wellRested", false);
+      restrictSleeping = builder
+          .comment("If enabled, players cannot sleep again for a period of time after sleeping.")
+          .translation(CONFIG_PREFIX + "restrictSleeping").define("restrictSleeping", false);
 
-      sleepyFactor = builder.comment(
-              "If well rested is true, this value is used to determine how long you need before being able to sleep again (larger numbers = can sleep sooner)")
-          .translation(CONFIG_PREFIX + "sleepyFactor")
-          .defineInRange("sleepyFactor", 2.0D, 1.0D, 20.0D);
+      restMultiplier = builder.comment(
+              "If restrictSleeping is true, this value will determine the length of wait time (larger numbers sleep sooner).")
+          .translation(CONFIG_PREFIX + "restMultiplier")
+          .defineInRange("restMultiplier", 2.0D, 1.0D, 20.0D);
 
-      nightHammocks = builder.comment("Set to true to enable sleeping in hammocks at night")
-          .translation(CONFIG_PREFIX + "nightHammocks").define("nightHammocks", false);
+      hammockUse = builder.comment("The time of day that hammocks can be used.")
+          .translation(CONFIG_PREFIX + "hammockUse").defineEnum("hammockUse", ComfortsTimeUse.DAY);
 
-      sleepingBagBreakage = builder.comment("The chance that a sleeping bag will break upon usage")
-          .translation(CONFIG_PREFIX + "sleepingBagBreakage")
-          .defineInRange("sleepingBagBreakage", 0.0D, 0.0D, 1.0D);
+      sleepingBagUse = builder.comment("The time of day that sleeping bags can be used.")
+          .translation(CONFIG_PREFIX + "sleepingBagUse")
+          .defineEnum("sleepingBagUse", ComfortsTimeUse.NIGHT);
 
-      sleepingBagBreakageLuckMultiplier = builder.comment(
-              "The value that will be multiplied by a player's luck then added/subtracted from the sleepingBagBreakage value")
-          .translation(CONFIG_PREFIX + "sleepingBagBreakageLuckMultiplier")
-          .defineInRange("sleepingBagBreakageLuckMultiplier", 0.0D, -1.0D, 1.0D);
+      sleepingBagBreakChance =
+          builder.comment("The percentage chance that a sleeping bag will break upon use.")
+              .translation(CONFIG_PREFIX + "sleepingBagBreakChance")
+              .defineInRange("sleepingBagBreakChance", 0, 0, 100);
+
+      sleepingBagBreakChanceLuckMultiplier = builder.comment(
+              "The value that will be multiplied by a player's luck then added to sleepingBagBreakChance.")
+          .translation(CONFIG_PREFIX + "sleepingBagBreakChanceLuckMultiplier")
+          .defineInRange("sleepingBagBreakChanceLuckMultiplier", 0.0D, -1.0D, 1.0D);
 
       sleepingBagEffects = builder.comment(
-              "List of debuffs to apply to players after using the sleeping bag\n"
+              "The status effects to apply to players after using the sleeping bag.\n"
                   + "Format: effect;duration(secs);power")
-          .translation(CONFIG_PREFIX + "sleepingBagDebuffs")
-          .define("sleepingBagDebuffs", new ArrayList<>());
-
-      builder.pop();
+          .translation(CONFIG_PREFIX + "sleepingBagEffects")
+          .defineListAllowEmpty(List.of("sleepingBagEffects"), ArrayList::new,
+              s -> s instanceof String str && ResourceLocation.isValidResourceLocation(str) &&
+                  str.split(";").length == 3);
     }
   }
 
   public static void reload() {
     ComfortsEvents.effectsInitialized = false;
+  }
+
+  public enum ComfortsTimeUse {
+    NONE(Component.translatable("block.comforts.no_sleep")),
+    DAY(Component.translatable("block.comforts.hammock.no_sleep")),
+    NIGHT(Component.translatable("block.minecraft.bed.no_sleep")),
+    DAY_OR_NIGHT(Component.translatable("block.comforts.hammock.no_sleep.2"));
+
+    private final Component message;
+
+    ComfortsTimeUse(Component message) {
+      this.message = message;
+    }
+
+    public Component getMessage() {
+      return this.message;
+    }
   }
 }

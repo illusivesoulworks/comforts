@@ -41,7 +41,7 @@ public class ComfortsCommonEventsListener {
   @SubscribeEvent
   public void onSleepTimeCheck(final SleepingTimeCheckEvent evt) {
     evt.getSleepingLocation().ifPresent(pos -> {
-      ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getEntity().getLevel(), pos);
+      ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getEntity().level(), pos);
 
       switch (result) {
         case ALLOW -> evt.setResult(Event.Result.ALLOW);

@@ -27,9 +27,9 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 
 public class ComfortsFabricClientMod implements ClientModInitializer {
@@ -44,9 +44,9 @@ public class ComfortsFabricClientMod implements ClientModInitializer {
         HammockBlockEntityRenderer::createHeadLayer);
     EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT,
         HammockBlockEntityRenderer::createFootLayer);
-    BlockEntityRendererRegistry.register(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(),
+    BlockEntityRenderers.register(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(),
         SleepingBagBlockEntityRenderer::new);
-    BlockEntityRendererRegistry.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
+    BlockEntityRenderers.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
         HammockBlockEntityRenderer::new);
     BlockRenderLayerMap.INSTANCE.putBlock(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get(),
         RenderType.translucent());

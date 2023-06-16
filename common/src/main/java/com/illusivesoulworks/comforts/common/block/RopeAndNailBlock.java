@@ -46,7 +46,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -68,8 +68,8 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
           Direction.EAST, Block.box(0.0D, 3.0D, 6.0D, 7.0D, 8.0D, 10.0D)));
 
   public RopeAndNailBlock() {
-    super(
-        Block.Properties.of(Material.WOOL).sound(SoundType.METAL).strength(0.2F));
+    super(Block.Properties.of().ignitedByLava().mapColor(MapColor.WOOL).sound(SoundType.METAL)
+        .strength(0.2F));
     this.registerDefaultState(
         this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH)
             .setValue(SUPPORTING, false));

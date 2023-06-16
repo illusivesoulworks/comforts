@@ -13,7 +13,7 @@
         "com.illusivesoulworks.comforts.ComfortsQuiltClientMod"
       ],
       "spectrelib": [
-        "com.illusivesoulworks.comforts.ComfortsQuiltMod"
+        "com.illusivesoulworks.comforts.ComfortsConfigInitializer"
       ],
       "cardinal-components-entity": [
         "com.illusivesoulworks.comforts.common.ComfortsComponents"

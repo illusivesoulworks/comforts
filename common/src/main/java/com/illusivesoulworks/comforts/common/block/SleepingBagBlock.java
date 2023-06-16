@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -38,7 +38,8 @@ public class SleepingBagBlock extends BaseComfortsBlock {
 
   public SleepingBagBlock(DyeColor color) {
     super(BedType.SLEEPING_BAG, color,
-        Block.Properties.of(Material.WOOL).sound(SoundType.WOOL).strength(0.1F));
+        Block.Properties.of().ignitedByLava().mapColor(MapColor.WOOL).sound(SoundType.WOOL)
+            .strength(0.1F));
     this.color = color;
   }
 

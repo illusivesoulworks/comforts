@@ -42,9 +42,9 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ComfortsEvents {
 
   public static boolean canSetSpawn(Player player, BlockPos pos) {
-    final Level level = player.getLevel();
+    final Level level = player.level();
 
-    if (pos != null && !player.getLevel().isClientSide) {
+    if (pos != null && !player.level().isClientSide()) {
       final Block block = level.getBlockState(pos).getBlock();
 
       return !(block instanceof SleepingBagBlock) && !(block instanceof HammockBlock);
@@ -54,41 +54,56 @@ public class ComfortsEvents {
 
   public static Result checkTime(Level level, BlockPos pos) {
     final long time = level.getDayTime() % 24000L;
+    ComfortsConfig.ComfortsTimeUse timeUse = ComfortsConfig.ComfortsTimeUse.NIGHT;
+    Block block = level.getBlockState(pos).getBlock();
 
-    if (level.getBlockState(pos).getBlock() instanceof HammockBlock) {
-
-      if (time > 500L && time < 11500L) {
-        return Result.ALLOW;
-      } else {
-
-        if (ComfortsConfig.SERVER.nightHammocks.get()) {
-          return Result.DEFAULT;
-        } else {
-          return Result.DENY;
-        }
-      }
+    if (block instanceof HammockBlock) {
+      timeUse = ComfortsConfig.SERVER.hammockUse.get();
+    } else if (block instanceof SleepingBagBlock) {
+      timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
     }
-    return Result.DEFAULT;
+
+    if (time > 500L && time < 11500L && (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
+        timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT)) {
+      return Result.ALLOW;
+    }
+
+    if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT ||
+        timeUse == ComfortsConfig.ComfortsTimeUse.NIGHT) {
+      return Result.DEFAULT;
+    }
+    return Result.DENY;
   }
 
   public static long getWakeTime(ServerLevel level, long currentTime) {
-    final boolean[] activeHammock = {false};
+    final boolean[] daySleeping = {false};
     List<? extends Player> players = level.players();
 
     for (Player player : players) {
       player.getSleepingPos().ifPresent(bedPos -> {
-        if (player.isSleepingLongEnough() && level.getBlockState(bedPos)
-            .getBlock() instanceof HammockBlock) {
-          activeHammock[0] = true;
+        if (player.isSleepingLongEnough()) {
+          ComfortsConfig.ComfortsTimeUse timeUse = ComfortsConfig.ComfortsTimeUse.NIGHT;
+          Block block = level.getBlockState(bedPos).getBlock();
+
+          if (block instanceof HammockBlock) {
+            timeUse = ComfortsConfig.SERVER.hammockUse.get();
+          } else if (block instanceof SleepingBagBlock) {
+            timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
+          }
+
+          if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
+              timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT) {
+            daySleeping[0] = true;
+          }
         }
       });
 
-      if (activeHammock[0]) {
+      if (daySleeping[0]) {
         break;
       }
     }
 
-    if (activeHammock[0] && level.getLevel().isDay()) {
+    if (daySleeping[0] && level.getLevel().isDay()) {
       final long i = level.getDayTime() + 24000L;
       return (i - i % 24000L) - 12001L;
     }
@@ -99,7 +114,7 @@ public class ComfortsEvents {
   static boolean effectsInitialized = false;
 
   public static void onWakeUp(Player player) {
-    Level level = player.getLevel();
+    Level level = player.level();
 
     if (!level.isClientSide) {
       Services.SLEEP_EVENTS.getSleepData(player)
@@ -127,9 +142,10 @@ public class ComfortsEvents {
                             effect.getAmplifier()));
                   }
                 }
-                double breakChance = ComfortsConfig.SERVER.sleepingBagBreakage.get();
+                double breakChance =
+                    ((double) ComfortsConfig.SERVER.sleepingBagBreakChance.get()) / 100D;
                 double luckMultiplier =
-                    ComfortsConfig.SERVER.sleepingBagBreakageLuckMultiplier.get();
+                    ComfortsConfig.SERVER.sleepingBagBreakChanceLuckMultiplier.get();
 
                 if (luckMultiplier > 0.0d) {
                   AttributeInstance attributeInstance = player.getAttribute(Attributes.LUCK);
@@ -163,7 +179,7 @@ public class ComfortsEvents {
             }
             data.setWakeTime(wakeTime);
             data.setTiredTime(
-                wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.sleepyFactor.get()));
+                wakeTime + (long) (timeSlept / ComfortsConfig.SERVER.restMultiplier.get()));
             data.setAutoSleepPos(null);
           }));
     }
@@ -192,12 +208,12 @@ public class ComfortsEvents {
 
   public static Player.BedSleepingProblem onSleep(Player player) {
 
-    if (!player.getLevel().isClientSide()) {
+    if (!player.level().isClientSide()) {
       return Services.SLEEP_EVENTS.getSleepData(player).map(data -> {
         final long dayTime = player.getCommandSenderWorld().getDayTime();
         data.setSleepTime(dayTime);
 
-        if (ComfortsConfig.SERVER.wellRested.get()) {
+        if (ComfortsConfig.SERVER.restrictSleeping.get()) {
           if (data.getWakeTime() > dayTime) {
             data.setWakeTime(0);
             data.setTiredTime(0);

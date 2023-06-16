@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[41,)"
+loaderVersion="[46,)"
 license="${license}"
 logoBlur=false
 issueTrackerURL="${issue_tracker}"
