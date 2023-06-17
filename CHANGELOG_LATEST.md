@@ -2,6 +2,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.20.x/CHANGELOG.md).
 
-## [6.3.1+1.20.1] - 2023.06.16
+## [6.3.2+1.20.1] - 2023.06.17
 ### Fixed
-- Fixed `sleepingBagEffects` not parsing entries correctly
+- Fixed `sleepingBagEffects` invalidating entries erroneously in the config GUI

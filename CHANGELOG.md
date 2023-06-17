@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.3.2+1.20.1] - 2023.06.17
+### Fixed
+- Fixed `sleepingBagEffects` invalidating entries erroneously in the config GUI
+
 ## [6.3.1+1.20.1] - 2023.06.16
 ### Fixed
 - Fixed `sleepingBagEffects` not parsing entries correctly
