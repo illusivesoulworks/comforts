@@ -86,8 +86,14 @@ public class ComfortsConfig {
                   + "Format: effect;duration(secs);power")
           .translation(CONFIG_PREFIX + "sleepingBagEffects")
           .defineListAllowEmpty(List.of("sleepingBagEffects"), ArrayList::new,
-              s -> s instanceof String str && ResourceLocation.isValidResourceLocation(str) &&
-                  str.split(";").length == 3);
+              s -> {
+                if (s instanceof String str) {
+                  String[] split = str.split(";");
+                  return split.length == 3 && ResourceLocation.isValidResourceLocation(split[0]) &&
+                      split[1].matches("\\d+") && split[2].matches("\\d+");
+                }
+                return false;
+              });
     }
   }
 
