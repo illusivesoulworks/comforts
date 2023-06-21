@@ -17,7 +17,6 @@
 
 package com.illusivesoulworks.comforts.mixin;
 
-import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsEvents;
 import java.util.function.BooleanSupplier;
 import net.minecraft.server.level.ServerLevel;

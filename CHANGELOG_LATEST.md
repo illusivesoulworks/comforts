@@ -2,6 +2,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.20.x/CHANGELOG.md).
 
-## [6.3.2+1.20.1] - 2023.06.17
+## [6.3.3+1.20.1] - 2023.06.20
+### Changed
+- Placing sleeping bags while `autoUse` is enabled in Creative mode will no longer pick back up a new stack
 ### Fixed
-- Fixed `sleepingBagEffects` invalidating entries erroneously in the config GUI
+- [Fabric/Quilt] Fixed days incrementing erroneously when skipping daytime

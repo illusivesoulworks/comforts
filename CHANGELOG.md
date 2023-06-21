@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.3.3+1.20.1] - 2023.06.20
+### Changed
+- Placing sleeping bags while `autoUse` is enabled in Creative mode will no longer pick back up a new stack
+### Fixed
+- [Fabric/Quilt] Fixed days incrementing erroneously when skipping daytime
+
 ## [6.3.2+1.20.1] - 2023.06.17
 ### Fixed
 - Fixed `sleepingBagEffects` invalidating entries erroneously in the config GUI
