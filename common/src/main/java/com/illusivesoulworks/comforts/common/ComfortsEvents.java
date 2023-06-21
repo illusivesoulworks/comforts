@@ -75,7 +75,7 @@ public class ComfortsEvents {
     return Result.DENY;
   }
 
-  public static long getWakeTime(ServerLevel level, long currentTime) {
+  public static long getWakeTime(ServerLevel level, long currentTime, long newTime) {
     final boolean[] daySleeping = {false};
     List<? extends Player> players = level.players();
 
@@ -104,10 +104,10 @@ public class ComfortsEvents {
     }
 
     if (daySleeping[0] && level.getLevel().isDay()) {
-      final long i = level.getDayTime() + 24000L;
+      final long i = currentTime + 24000L;
       return (i - i % 24000L) - 12001L;
     }
-    return currentTime;
+    return newTime;
   }
 
   private static final List<MobEffectInstance> SLEEPING_BAG_EFFECTS = new ArrayList<>();
@@ -172,8 +172,14 @@ public class ComfortsEvents {
               if (!broke && data.getAutoSleepPos() != null) {
                 final BlockPos blockpos = bedPos
                     .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
-                level.removeBlock(blockpos, false);
-                level.removeBlock(bedPos, false);
+
+                if (!player.isCreative()) {
+                  level.removeBlock(blockpos, false);
+                  level.removeBlock(bedPos, false);
+                } else {
+                  level.removeBlock(bedPos, false);
+                  level.removeBlock(blockpos, false);
+                }
                 player.clearSleepingPos();
               }
             }

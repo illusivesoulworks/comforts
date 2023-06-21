@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.mixin;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsEvents;
 import java.util.function.BooleanSupplier;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +40,7 @@ public class MixinServerLevel {
   @Inject(at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.setDayTime(J)V", shift = At.Shift.AFTER), method = "tick")
   private void comforts$setTimeOfDayPost(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
     ServerLevel world = (ServerLevel) (Object) this;
-    long newTime = ComfortsEvents.getWakeTime(world, curTime);
+    long newTime = ComfortsEvents.getWakeTime(world, curTime, world.getDayTime());
 
     if (newTime != curTime) {
       world.setDayTime(newTime);
