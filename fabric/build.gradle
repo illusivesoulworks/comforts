@@ -117,7 +117,7 @@ curseforge {
 
         relations {
             requiredDependency 'fabric-api'
-            embeddedLibrary 'cardinal-components'
+            embeddedLibrary 'cardinal-components-api'
         }
 
         afterEvaluate {
