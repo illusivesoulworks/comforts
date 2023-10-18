@@ -112,7 +112,7 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
         mainFile.addGameVersion("${it}")
     }
     mainFile.addRequirement("fabric-api")
-    mainFile.addEmbedded("cardinal-components")
+    mainFile.addEmbedded("cardinal-components-api")
     mainFile.withAdditionalFile(sourcesJar)
 
     doLast {

@@ -131,7 +131,7 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
         mainFile.addGameVersion("${it}")
     }
     mainFile.addRequirement("qsl")
-    mainFile.addEmbedded("cardinal-components")
+    mainFile.addEmbedded("cardinal-components-api")
     mainFile.withAdditionalFile(sourcesJar)
 
     doLast {
