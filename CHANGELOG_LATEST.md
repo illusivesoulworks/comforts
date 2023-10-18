@@ -6,3 +6,4 @@ This is a copy of the changelog for the most recent version. For the full versio
 ### Changed
 - Updated SpectreLib to 0.13.14
 - [Fabric] Updated to Fabric Loader 0.14.23
+- Updated `sv_se` localization (thanks Regnander!) [#125](https://github.com/illusivesoulworks/comforts/pull/125)

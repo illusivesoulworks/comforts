@@ -8,6 +8,7 @@ Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATC
 ### Changed
 - Updated SpectreLib to 0.13.14
 - [Fabric] Updated to Fabric Loader 0.14.23
+- Updated `sv_se` localization (thanks Regnander!) [#125](https://github.com/illusivesoulworks/comforts/pull/125)
 
 ## [6.3.3+1.20.1] - 2023.06.20
 ### Changed
