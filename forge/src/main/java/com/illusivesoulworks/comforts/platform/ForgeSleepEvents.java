@@ -40,7 +40,7 @@ public class ForgeSleepEvents implements ISleepEvents {
 
   @Override
   public boolean isAwakeTime(Player player, BlockPos pos) {
-    return !ForgeEventFactory.fireSleepingTimeCheck(player, Optional.of(pos));
+    return !ForgeEventFactory.onSleepingTimeCheck(player, Optional.of(pos));
   }
 
   @Override
@@ -50,15 +50,15 @@ public class ForgeSleepEvents implements ISleepEvents {
 
   @Override
   public void sendAutoSleepPacket(ServerPlayer player, BlockPos pos) {
-    ComfortsForgeNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-        new SPacketAutoSleep(player.getId(), pos));
+    ComfortsForgeNetwork.INSTANCE.send(new SPacketAutoSleep(player.getId(), pos),
+        PacketDistributor.PLAYER.with(player));
   }
 
   @Override
   public void sendPlaceBagPacket(ServerPlayer player, UseOnContext context) {
-    ComfortsForgeNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+    ComfortsForgeNetwork.INSTANCE.send(
         new SPacketPlaceBag(player.getId(), context.getHand(), context.getClickLocation(),
-            context.getClickedFace(), context.getClickedPos(),
-            context.isInside()));
+            context.getClickedFace(), context.getClickedPos(), context.isInside()),
+        PacketDistributor.PLAYER.with(player));
   }
 }

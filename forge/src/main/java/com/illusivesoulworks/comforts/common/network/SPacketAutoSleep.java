@@ -17,14 +17,13 @@
 
 package com.illusivesoulworks.comforts.common.network;
 
-import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class SPacketAutoSleep {
 
@@ -45,8 +44,8 @@ public class SPacketAutoSleep {
     return new SPacketAutoSleep(buf.readInt(), buf.readBlockPos());
   }
 
-  public static void handle(SPacketAutoSleep msg, Supplier<NetworkEvent.Context> ctx) {
-    ctx.get().enqueueWork(() -> {
+  public static void handle(SPacketAutoSleep msg, CustomPayloadEvent.Context ctx) {
+    ctx.enqueueWork(() -> {
       ClientLevel level = Minecraft.getInstance().level;
 
       if (level != null) {
@@ -57,6 +56,6 @@ public class SPacketAutoSleep {
         }
       }
     });
-    ctx.get().setPacketHandled(true);
+    ctx.setPacketHandled(true);
   }
 }

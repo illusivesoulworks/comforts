@@ -186,6 +186,15 @@ tasks.getByPath(':forge:publishCurseForge').configure {
 tasks.getByPath(':fabric:modrinth').mustRunAfter(':quilt:modrinth')
 tasks.getByPath(':forge:modrinth').mustRunAfter(':fabric:modrinth')
 
+tasks.register('publishFabricForge') {
+    dependsOn ':fabric:modrinth', ':forge:modrinth'
+    dependsOn ':fabric:publishCurseForge', ':forge:publishCurseForge'
+
+    doLast {
+        publishDiscord()
+    }
+}
+
 tasks.register('publishFabricForgeQuilt') {
     dependsOn ':fabric:modrinth', ':forge:modrinth', ':quilt:modrinth'
     dependsOn ':fabric:publishCurseForge', ':forge:publishCurseForge', ':quilt:publishCurseForge'

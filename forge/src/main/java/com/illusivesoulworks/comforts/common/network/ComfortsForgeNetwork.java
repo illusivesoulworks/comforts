@@ -19,22 +19,31 @@ package com.illusivesoulworks.comforts.common.network;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.Channel;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.SimpleChannel;
 
 public class ComfortsForgeNetwork {
 
-  private static final String PROTOCOL_VERSION = "1";
+  private static final int PTC_VERSION = 1;
 
-  public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-      new ResourceLocation(ComfortsConstants.MOD_ID, "main"), () -> PROTOCOL_VERSION,
-      PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals
-  );
+  public static SimpleChannel INSTANCE;
 
   public static void setup() {
-    INSTANCE.registerMessage(0, SPacketAutoSleep.class, SPacketAutoSleep::encode,
-        SPacketAutoSleep::decode, SPacketAutoSleep::handle);
-    INSTANCE.registerMessage(1, SPacketPlaceBag.class, SPacketPlaceBag::encode,
-        SPacketPlaceBag::decode, SPacketPlaceBag::handle);
+    INSTANCE = ChannelBuilder.named(new ResourceLocation(ComfortsConstants.MOD_ID, "main"))
+        .networkProtocolVersion(PTC_VERSION)
+        .clientAcceptedVersions(Channel.VersionTest.exact(PTC_VERSION))
+        .serverAcceptedVersions(Channel.VersionTest.exact(PTC_VERSION)).simpleChannel();
+
+    INSTANCE.messageBuilder(SPacketAutoSleep.class)
+        .encoder(SPacketAutoSleep::encode)
+        .decoder(SPacketAutoSleep::decode)
+        .consumerNetworkThread(SPacketAutoSleep::handle)
+        .add();
+    INSTANCE.messageBuilder(SPacketPlaceBag.class)
+        .encoder(SPacketPlaceBag::encode)
+        .decoder(SPacketPlaceBag::decode)
+        .consumerNetworkThread(SPacketPlaceBag::handle)
+        .add();
   }
 }
