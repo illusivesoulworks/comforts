@@ -2,8 +2,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.20.x/CHANGELOG.md).
 
-## [6.3.3+1.20.1] - 2023.06.20
+## [6.3.4+1.20.1] - 2023.10.17
 ### Changed
-- Placing sleeping bags while `autoUse` is enabled in Creative mode will no longer pick back up a new stack
-### Fixed
-- [Fabric/Quilt] Fixed days incrementing erroneously when skipping daytime
+- Updated SpectreLib to 0.13.14
+- [Fabric] Updated to Fabric Loader 0.14.23

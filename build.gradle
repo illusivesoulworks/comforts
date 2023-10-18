@@ -1,3 +1,6 @@
+import javax.net.ssl.HttpsURLConnection
+import java.nio.charset.StandardCharsets
+
 subprojects {
     apply plugin: 'java'
     
@@ -75,5 +78,119 @@ subprojects {
 
     tasks.withType(Jar).all {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
+
+def publishDiscord() {
+    try {
+        def cfLinks = new StringJoiner('\\n')
+
+        if (project(':fabric').hasProperty('curse_link')) {
+            cfLinks.add("[Fabric](${project(':fabric').findProperty('curse_link')})")
+        }
+
+        if (project(':forge').hasProperty('curse_link')) {
+            cfLinks.add("[Forge](${project(':forge').findProperty('curse_link')})")
+        }
+
+        if (project(':quilt').hasProperty('curse_link')) {
+            cfLinks.add("[Quilt](${project(':quilt').findProperty('curse_link')})")
+        }
+        def modrinthLinks = new StringJoiner('\\n')
+
+        if (project(':fabric').hasProperty('modrinth_link')) {
+            modrinthLinks.add("[Fabric](${project(':fabric').findProperty('modrinth_link')})")
+        }
+
+        if (project(':forge').hasProperty('modrinth_link')) {
+            modrinthLinks.add("[Forge](${project(':forge').findProperty('modrinth_link')})")
+        }
+
+        if (project(':quilt').hasProperty('modrinth_link')) {
+            modrinthLinks.add("[Quilt](${project(':quilt').findProperty('modrinth_link')})")
+        }
+        println(cfLinks)
+        println(modrinthLinks)
+        def changelog = file("CHANGELOG_LATEST.md").getText()
+        changelog = changelog.substring(changelog.indexOf("##"))
+        changelog = changelog.replaceAll("\n","\\\\n")
+
+        if (changelog.length() >= 1024) {
+            changelog = changelog.substring(0, changelog.length() - 100)
+            changelog = changelog + "...[(See more)](${changelog_link})"
+        }
+        println(changelog)
+        final String message = """
+            {
+              "embeds": [
+                {
+                  "title": "${mod_name} ${version}",
+                  "color": 65392,
+                  "fields": [
+                    {
+                      "name": "Minecraft Versions",
+                      "value": "${release_versions.replaceAll(",", ", ")}"
+                    },
+                    {
+                      "name": "CurseForge",
+                      "value": "${cfLinks}",
+                      "inline": true
+                    },
+                    {
+                      "name": "Modrinth",
+                      "value": "${modrinthLinks}",
+                      "inline": true
+                    },
+                    {
+                      "name": "Changelog",
+                      "value": "${changelog}"
+                    }
+                  ],
+                  "thumbnail": {
+                    "url": "${discord_thumbnail}"
+                  }
+                }
+              ]
+            }
+            """
+        println(message)
+        final URL url = new URL("${discordWebhook}")
+        final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection()
+        connection.addRequestProperty("Content-Type", "application/json; charset=UTF-8")
+        connection.addRequestProperty("User-Agent", "${mod_name} Gradle Upload")
+        connection.setDoOutput(true)
+        connection.setRequestMethod("POST")
+        connection.connect()
+
+        try (OutputStream out = connection.getOutputStream()) {
+            out.write(message.getBytes(StandardCharsets.UTF_8))
+        }
+        connection.getInputStream().close()
+        connection.disconnect()
+    } catch (IOException e) {
+        e.printStackTrace()
+    }
+}
+
+tasks.getByPath(':quilt:publishCurseForge').configure {
+    mustRunAfter(':quilt:assemble')
+}
+tasks.getByPath(':fabric:publishCurseForge').configure {
+    mustRunAfter(':fabric:assemble')
+    mustRunAfter(':quilt:publishCurseForge')
+}
+tasks.getByPath(':forge:publishCurseForge').configure {
+    mustRunAfter(':forge:assemble')
+    mustRunAfter(':fabric:publishCurseForge')
+}
+tasks.getByPath(':fabric:modrinth').mustRunAfter(':quilt:modrinth')
+tasks.getByPath(':forge:modrinth').mustRunAfter(':fabric:modrinth')
+
+tasks.register('publishFabricForgeQuilt') {
+    dependsOn ':fabric:modrinth', ':forge:modrinth', ':quilt:modrinth'
+    dependsOn ':fabric:publishCurseForge', ':forge:publishCurseForge', ':quilt:publishCurseForge'
+
+    doLast {
+        publishDiscord()
     }
 }

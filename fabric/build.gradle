@@ -10,8 +10,8 @@ archivesBaseName = "${mod_id}-fabric"
 
 repositories {
     maven {
-        name = "Ladysnake Libs"
-        url = "https://ladysnake.jfrog.io/artifactory/mods"
+        name = 'Ladysnake Mods'
+        url = 'https://maven.ladysnake.org/releases'
     }
 }
 
@@ -114,6 +114,13 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     mainFile.addRequirement("fabric-api")
     mainFile.addEmbedded("cardinal-components")
     mainFile.withAdditionalFile(sourcesJar)
+
+    doLast {
+
+        if (project.hasProperty('cf_page') && mainFile.curseFileId != null) {
+            project.ext.curse_link = "${cf_page}/files/${mainFile.curseFileId}"
+        }
+    }
 }
 
 modrinth {
@@ -128,5 +135,12 @@ modrinth {
     dependencies {
         required.project "fabric-api"
         embedded.project "cardinal-components-api"
+    }
+}
+
+tasks.modrinth.doLast {
+
+    if (project.hasProperty('modrinth_page') && tasks.modrinth.newVersion != null) {
+        project.ext.modrinth_link = "${modrinth_page}/version/${tasks.modrinth.newVersion.id}"
     }
 }
