@@ -6,6 +6,12 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            }
+          ],
           "conditions": [
             {
               "condition": "minecraft:block_state_property",
