@@ -18,6 +18,7 @@
 package com.illusivesoulworks.comforts.common.block;
 
 import com.illusivesoulworks.comforts.common.ComfortsConfig;
+import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.datafixers.util.Either;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -51,6 +53,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -303,6 +306,20 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false)
         : super.getFluidState(state);
   }
+
+  @Override
+  public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                          @Nullable LivingEntity livingEntity, @Nonnull ItemStack stack) {
+    super.setPlacedBy(level, pos, state, livingEntity, stack);
+    BlockPos blockPos = pos.relative(state.getValue(FACING));
+
+    if (stack.hasCustomHoverName()) {
+      level.getBlockEntity(blockPos, this.getBlockEntityType())
+          .ifPresent((blockEntity) -> blockEntity.setName(stack.getHoverName()));
+    }
+  }
+
+  public abstract BlockEntityType<? extends BaseComfortsBlockEntity> getBlockEntityType();
 
   enum BedType {
     HAMMOCK("hammock"), SLEEPING_BAG("sleeping_bag");

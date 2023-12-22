@@ -17,6 +17,8 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.common.ComfortsRegistry;
+import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
@@ -25,6 +27,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -52,5 +55,10 @@ public class SleepingBagBlock extends BaseComfortsBlock {
   @Override
   public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
     return new SleepingBagBlockEntity(pos, state, this.color);
+  }
+
+  @Override
+  public BlockEntityType<? extends BaseComfortsBlockEntity> getBlockEntityType() {
+    return ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get();
   }
 }
