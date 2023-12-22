@@ -17,6 +17,8 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.common.ComfortsRegistry;
+import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.HammockBlockEntity;
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
@@ -29,6 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.material.FluidState;
@@ -52,7 +55,7 @@ public class HammockBlock extends BaseComfortsBlock {
       .or(Block.box(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
           Block.box(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 16.0D));
   private static final VoxelShape EAST_SHAPE = Shapes
-      .or(Block.box(1.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
+      .or(Block.box(0.0D, 0.0D, 1.0D, 16.0D, 1.0D, 15.0D),
           Block.box(15.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D));
   private final DyeColor color;
 
@@ -120,5 +123,10 @@ public class HammockBlock extends BaseComfortsBlock {
   @Override
   public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
     return new HammockBlockEntity(pos, state, this.color);
+  }
+
+  @Override
+  public BlockEntityType<? extends BaseComfortsBlockEntity> getBlockEntityType() {
+    return ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get();
   }
 }

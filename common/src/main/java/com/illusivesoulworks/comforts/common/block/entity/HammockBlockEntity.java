@@ -18,7 +18,9 @@
 package com.illusivesoulworks.comforts.common.block.entity;
 
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -30,5 +32,12 @@ public class HammockBlockEntity extends BaseComfortsBlockEntity {
 
   public HammockBlockEntity(BlockPos pos, BlockState state, DyeColor colorIn) {
     super(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(), pos, state, colorIn);
+  }
+
+  @Nonnull
+  @Override
+  public Component getName() {
+    return this.name != null ? this.name :
+        Component.translatable("block.comforts.hammmock_" + this.getColor().getSerializedName());
   }
 }
