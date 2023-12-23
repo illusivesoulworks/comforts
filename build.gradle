@@ -1,10 +1,13 @@
+import javax.net.ssl.HttpsURLConnection
+import java.nio.charset.StandardCharsets
+
 subprojects {
     apply plugin: 'java'
-    
+
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
     java.withJavadocJar()
-        
+
     jar {
         archiveClassifier.set("slim")
         from(rootProject.file("LICENSE"))
@@ -14,16 +17,16 @@ subprojects {
         from(rootProject.file("CHANGELOG.md"))
         manifest {
             attributes([
-                'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_author,
-                'Specification-Version'   : project.jar.archiveVersion,
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_author,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'Timestampe'              : System.currentTimeMillis(),
-                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                'Build-On-Minecraft'      : minecraft_version
+                    'Specification-Title'     : mod_name,
+                    'Specification-Vendor'    : mod_author,
+                    'Specification-Version'   : project.jar.archiveVersion,
+                    'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : project.jar.archiveVersion,
+                    'Implementation-Vendor'   : mod_author,
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Timestampe'              : System.currentTimeMillis(),
+                    'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                    'Build-On-Minecraft'      : minecraft_version
             ])
         }
     }
@@ -48,8 +51,8 @@ subprojects {
             name = 'BlameJared Maven (CrT / Bookshelf)'
             url = 'https://maven.blamejared.com'
         }
-		
-		maven {
+
+        maven {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org/'
         }
@@ -75,5 +78,143 @@ subprojects {
 
     tasks.withType(Jar).all {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
+
+def publishDiscord() {
+    try {
+        def cfLinks = new StringJoiner('\\n')
+
+        if (project(':fabric').hasProperty('curse_link')) {
+            cfLinks.add("[Fabric](${project(':fabric').findProperty('curse_link')})")
+        }
+
+        if (project(':forge').hasProperty('curse_link')) {
+            cfLinks.add("[Forge](${project(':forge').findProperty('curse_link')})")
+        }
+
+        if (project(':quilt').hasProperty('curse_link')) {
+            cfLinks.add("[Quilt](${project(':quilt').findProperty('curse_link')})")
+        }
+        def modrinthLinks = new StringJoiner('\\n')
+
+        if (project(':fabric').hasProperty('curse_link')) {
+            modrinthLinks.add("[Fabric](${project(':fabric').findProperty('modrinth_link')})")
+        }
+
+        if (project(':forge').hasProperty('modrinth_link')) {
+            modrinthLinks.add("[Forge](${project(':forge').findProperty('modrinth_link')})")
+        }
+
+        if (project(':quilt').hasProperty('modrinth_link')) {
+            cfLinks.add("[Quilt](${project(':quilt').findProperty('modrinth_link')})")
+        }
+        println(cfLinks)
+        println(modrinthLinks)
+        def changelog = file("CHANGELOG_LATEST.md").getText()
+        changelog = changelog.substring(changelog.indexOf("##"))
+        changelog = changelog.replaceAll("\n", "\\\\n")
+
+        if (changelog.length() >= 1024) {
+            changelog = changelog.substring(0, changelog.length() - 100)
+            changelog = changelog + "...[(See more)](${changelog_link})"
+        }
+        println(changelog)
+        int color = 65392
+
+        if (release_type == "beta") {
+            color = 16763904
+        } else if (release_type == "alpha") {
+            color = 16724273
+        }
+        final String message = """
+            {
+              "embeds": [
+                {
+                  "title": "${mod_name} ${version}",
+                  "color": ${color},
+                  "fields": [
+                    {
+                      "name": "Minecraft Versions",
+                      "value": "${release_versions.replaceAll(",", ", ")}"
+                    },
+                    {
+                      "name": "CurseForge",
+                      "value": "${cfLinks}",
+                      "inline": true
+                    },
+                    {
+                      "name": "Modrinth",
+                      "value": "${modrinthLinks}",
+                      "inline": true
+                    },
+                    {
+                      "name": "Changelog",
+                      "value": "${changelog}"
+                    }
+                  ],
+                  "thumbnail": {
+                    "url": "${discord_thumbnail}"
+                  }
+                }
+              ]
+            }
+            """
+        println(message)
+        final URL url = new URL("${discordWebhook}")
+        final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection()
+        connection.addRequestProperty("Content-Type", "application/json; charset=UTF-8")
+        connection.addRequestProperty("User-Agent", "${mod_name} Gradle Upload")
+        connection.setDoOutput(true)
+        connection.setRequestMethod("POST")
+        connection.connect()
+
+        try (OutputStream out = connection.getOutputStream()) {
+            out.write(message.getBytes(StandardCharsets.UTF_8))
+        }
+        connection.getInputStream().close()
+        connection.disconnect()
+    } catch (IOException e) {
+        e.printStackTrace()
+    }
+}
+
+def ordered(String... dependencyPaths) {
+    def dependencies = dependencyPaths.collect { tasks.getByPath(it) }
+    for (int i = 0; i < dependencies.size() - 1; i++) {
+        dependencies[i + 1].mustRunAfter(dependencies[i])
+    }
+    return dependencies
+}
+
+tasks.register('publishForge') {
+    dependsOn ordered(':forge:modrinth', ':forge:publishCurseForge')
+
+    doLast {
+        publishDiscord()
+    }
+}
+
+tasks.register('publishFabric') {
+    dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge')
+
+    doLast {
+        publishDiscord()
+    }
+}
+
+tasks.register('publishFabricForge') {
+    dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge', ':forge:modrinth', ':forge:publishCurseForge')
+
+    doLast {
+        publishDiscord()
+    }
+}
+
+tasks.register('publishFabricForgeQuilt') {
+    dependsOn ordered(':quilt:modrinth', ':quilt:publishCurseForge', ':fabric:modrinth', ':fabric:publishCurseForge', ':forge:modrinth', ':forge:publishCurseForge')
+
+    doLast {
+        publishDiscord()
     }
 }
