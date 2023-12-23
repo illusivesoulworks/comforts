@@ -1,0 +1,11 @@
+{
+  "blocks": ["#comforts:sleeping_bags"],
+  "blockstates": {
+    "part": ["head"]
+  },
+  "directions": ["east", "north", "west", "south"],
+  "connecting_blocks": ["#comforts:sleeping_bags"],
+  "connecting_blockstates": {
+    "part": ["foot"]
+  }
+}
