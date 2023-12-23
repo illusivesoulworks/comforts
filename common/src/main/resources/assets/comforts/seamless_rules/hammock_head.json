@@ -1,0 +1,11 @@
+{
+  "blocks": ["#comforts:hammocks"],
+  "blockstates": {
+    "part": ["head"]
+  },
+  "directions": ["east", "north", "west", "south"],
+  "connecting_blocks": ["#comforts:hammocks"],
+  "connecting_blockstates": {
+    "part": ["foot"]
+  }
+}
