@@ -2,7 +2,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.19.x/CHANGELOG.md).
 
-## [6.0.6+1.19.2] - 2023.10.16
+## [6.0.7+1.19.2] - 2023.12.22
+### Added
+- Added Seamless compatibility [#134](https://github.com/illusivesoulworks/comforts/issues/134)
 ### Changed
-- Updated SpectreLib to 0.12.6+1.19.2
-- [Fabric] Require Fabric Loader >=0.14.23
+- Updated SpectreLib to 0.12.8+1.19.2
+- [Fabric] No longer requires Fabric Loader 0.14.23+
+- Hammocks and sleeping bags will keep their names after being placed if renamed [#133](https://github.com/illusivesoulworks/comforts/issues/133)
+### Fixed
+- Fixed inaccurate hammock outline

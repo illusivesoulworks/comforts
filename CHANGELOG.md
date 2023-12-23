@@ -4,10 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.0.7+1.19.2] - 2023.12.22
+### Added
+- Added Seamless compatibility [#134](https://github.com/illusivesoulworks/comforts/issues/134)
+### Changed
+- Updated SpectreLib to 0.12.8+1.19.2
+- [Fabric] No longer requires Fabric Loader 0.14.23+
+- Hammocks and sleeping bags will keep their names after being placed if renamed [#133](https://github.com/illusivesoulworks/comforts/issues/133)
+### Fixed
+- Fixed inaccurate hammock outline
+
 ## [6.0.6+1.19.2] - 2023.10.16
 ### Changed
 - Updated SpectreLib to 0.12.6+1.19.2
-- [Fabric] Require Fabric Loader >=0.14.23
+- [Fabric] Requires Fabric Loader 0.14.23+
 
 ## [6.0.5+1.19.2] - 2023.04.20
 ### Fixed
