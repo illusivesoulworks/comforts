@@ -98,7 +98,7 @@ def publishDiscord() {
         }
         def modrinthLinks = new StringJoiner('\\n')
 
-        if (project(':fabric').hasProperty('curse_link')) {
+        if (project(':fabric').hasProperty('modrinth_link')) {
             modrinthLinks.add("[Fabric](${project(':fabric').findProperty('modrinth_link')})")
         }
 
@@ -107,7 +107,7 @@ def publishDiscord() {
         }
 
         if (project(':quilt').hasProperty('modrinth_link')) {
-            cfLinks.add("[Quilt](${project(':quilt').findProperty('modrinth_link')})")
+            modrinthLinks.add("[Quilt](${project(':quilt').findProperty('modrinth_link')})")
         }
         println(cfLinks)
         println(modrinthLinks)
