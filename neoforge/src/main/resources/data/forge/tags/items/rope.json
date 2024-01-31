@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "quark:rope",
+      "required": false
+    },
+    {
+      "id": "supplementaries:rope",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:rope",
+      "required": false
+    }
+  ]
+}

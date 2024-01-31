@@ -1,23 +1,16 @@
 plugins {
+    id 'idea'
     id 'java'
-    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
     id 'maven-publish'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
 }
-
-archivesBaseName = "${mod_id}-common"
-
+base {
+    archivesName = "${mod_id}-common"
+}
 minecraft {
     version(minecraft_version)
-    runs {
-        if (project.hasProperty('common_runs_enabled') ? project.findProperty('common_runs_enabled').toBoolean() : true) {
-
-            server(project.hasProperty('common_server_run_name') ? project.findProperty('common_server_run_name') : 'vanilla_server') {
-                workingDirectory(this.file("run"))
-            }
-            client(project.hasProperty('common_client_run_name') ? project.findProperty('common_client_run_name') : 'vanilla_client') {
-                workingDirectory(this.file("run"))
-            }
-        }
+    if (file("src/main/resources/${mod_id}.accesswidener").exists()) {
+        accessWideners(file("src/main/resources/${mod_id}.accesswidener"))
     }
 }
 
@@ -27,23 +20,13 @@ dependencies {
     implementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-common', version: "${spectrelib_range}"
 }
 
-processResources {
-
-    filesMatching("pack.mcmeta") {
-        expand 'mod_name': project.mod_name
-    }
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
+            artifactId base.archivesName.get()
             from components.java
         }
     }
-
     repositories {
         maven {
             url "file://" + System.getenv("local_maven")

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "comforts:hammock",
+  "pattern": [
+    "sws",
+    "sas",
+    "sws"
+  ],
+  "key": {
+    "a": {
+      "item": "minecraft:orange_wool"
+    },
+    "s": {
+      "tag": "forge:string"
+    },
+    "w": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "result": {
+    "item": "comforts:hammock_orange"
+  }
+}

@@ -1,35 +1,31 @@
 plugins {
-    id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
     id 'com.modrinth.minotaur' version '2.+'
-    id 'org.spongepowered.mixin' version '0.7.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-
-version = "${version}"
-group = "top.theillusivec4.${mod_id}"
-
 base {
     archivesName = "${mod_id}-forge"
 }
-
 mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
+    add(sourceSets.main, "${mod_id}.refmap.json")
 
-    config "${mod_id}.mixins.json"
+    config("${mod_id}.mixins.json")
 }
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_mc_version}-${parchment_version}-${minecraft_version}"
 
-    if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
-        // This location is hardcoded in Forge and can not be changed.
-        // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
+    copyIdeResources = true //Calls processResources when in dev
+
+    // Automatically enable forge AccessTransformers if the file exists
+    // This location is hardcoded in Forge and can not be changed.
+    // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
+    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
         accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-        project.logger.debug('Forge Access Transformers are enabled for this project.')
     }
 
     runs {
@@ -39,7 +35,6 @@ minecraft {
             taskName 'Client'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -54,7 +49,6 @@ minecraft {
             taskName 'Server'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -70,7 +64,6 @@ minecraft {
             taskName 'Data'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
             mods {
                 modDataRun {
                     source sourceSets.main
@@ -86,62 +79,17 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
     jarJar fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {
         jarJar.pin(it, "${spectrelib_version}")
     }
 }
 
-tasks.withType(JavaCompile) {
-    source(project(":common").sourceSets.main.allSource)
-}
-
 sourceSets {
     main {
         resources {
             srcDirs += '../licenses'
-        }
-    }
-}
-
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', '*.mixins.json']
-def replaceProperties = [
-        forge_version: forge_version, forge_version_range: forge_version_range, version: version,
-        forge_mc_version_range: forge_mc_version_range, license: license, mod_id: mod_id, mod_author: mod_author,
-        mod_description: mod_description, mod_name: mod_name, issue_tracker: issue_tracker, refmap_target: "${mod_id}."
-]
-processResources {
-    from project(":common").sourceSets.main.resources
-    duplicatesStrategy(DuplicatesStrategy.FAIL)
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
-
-    filesMatching(resourceTargets) {
-        expand replaceProperties
-    }
-}
-
-jar.finalizedBy('reobfJar')
-
-reobf {
-    jarJar {}
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            from components.java
-            jarJar.component(it, tasks.jarJar)
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
         }
     }
 }
@@ -155,8 +103,35 @@ tasks.jarJar.configure {
     from(rootProject.file("CHANGELOG.md"))
 }
 
-jarJar {
-    enable()
+tasks.withType(JavaCompile).configureEach {
+    source(project(":common").sourceSets.main.allSource)
+}
+tasks.withType(Javadoc).configureEach {
+    source(project(":common").sourceSets.main.allJava)
+}
+tasks.named("sourcesJar", Jar) {
+    from(project(":common").sourceSets.main.allSource)
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+            fg.component(it)
+        }
+    }
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
 }
 
 task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
@@ -197,6 +172,8 @@ tasks.modrinth.doLast {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
 }

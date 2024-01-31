@@ -92,8 +92,8 @@ public class HammockBlock extends BaseComfortsBlock {
   }
 
   @Override
-  public void playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
-                                @Nonnull Player player) {
+  public BlockState playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                                      @Nonnull Player player) {
     super.playerWillDestroy(level, pos, state, player);
     final BedPart bedpart = state.getValue(PART);
     final boolean isHead = bedpart == BedPart.HEAD;
@@ -101,6 +101,7 @@ public class HammockBlock extends BaseComfortsBlock {
     final BlockPos otherPos = pos.relative(getDirectionToOther(bedpart, direction));
     dropRopeSupport(pos, direction, isHead, level);
     dropRopeSupport(otherPos, direction, !isHead, level);
+    return state;
   }
 
   @Override

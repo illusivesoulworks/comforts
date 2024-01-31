@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "comforts:rope_and_nail",
+  "pattern": [
+    "aa ",
+    "ax ",
+    "  a"
+  ],
+  "key": {
+    "a": {
+      "tag": "forge:string"
+    },
+    "x": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "comforts:rope_and_nail",
+    "count": 2
+  }
+}

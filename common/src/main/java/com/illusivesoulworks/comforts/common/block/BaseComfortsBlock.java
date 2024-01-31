@@ -238,8 +238,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
   }
 
   @Override
-  public void playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
-                                @Nonnull Player player) {
+  public BlockState playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                                      @Nonnull Player player) {
 
     if (!level.isClientSide && player.isCreative()) {
       final BedPart bedpart = state.getValue(PART);
@@ -265,6 +265,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     if (state.is(BlockTags.GUARDED_BY_PIGLINS)) {
       PiglinAi.angerNearbyPiglins(player, false);
     }
+    return state;
   }
 
   @Nonnull

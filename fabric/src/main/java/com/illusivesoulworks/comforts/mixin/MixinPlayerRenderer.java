@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerRenderer.class)
 public class MixinPlayerRenderer {
 
-  @Inject(at = @At("HEAD"), method = "render")
+  @Inject(at = @At("HEAD"), method = "render*")
   private void comforts$sleepingTranslate(AbstractClientPlayer entity, float entityYaw,
                                           float partialTicks, PoseStack matrixStack,
                                           MultiBufferSource buffer, int packedLight,
@@ -39,7 +39,7 @@ public class MixinPlayerRenderer {
     ComfortsClientEvents.onPlayerRenderPre(entity, matrixStack);
   }
 
-  @Inject(at = @At("TAIL"), method = "render")
+  @Inject(at = @At("TAIL"), method = "render*")
   private void comforts$resetSleepingTranslate(AbstractClientPlayer entity, float entityYaw,
                                                float partialTicks, PoseStack matrixStack,
                                                MultiBufferSource buffer, int packedLight,

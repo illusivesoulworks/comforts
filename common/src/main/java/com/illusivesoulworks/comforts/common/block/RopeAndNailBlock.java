@@ -123,10 +123,10 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
   }
 
   @Override
-  public void playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos,
-                                @Nonnull BlockState state, @Nonnull Player player) {
+  public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos,
+                                      @Nonnull BlockState state, @Nonnull Player player) {
     dropHammock(level, pos, state);
-    super.playerWillDestroy(level, pos, state, player);
+    return super.playerWillDestroy(level, pos, state, player);
   }
 
   @Nullable

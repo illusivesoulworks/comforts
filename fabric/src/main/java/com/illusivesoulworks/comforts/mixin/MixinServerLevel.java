@@ -21,6 +21,7 @@ import com.illusivesoulworks.comforts.common.ComfortsEvents;
 import java.util.function.BooleanSupplier;
 import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = ServerLevel.class, priority = 1100)
 public class MixinServerLevel {
 
+  @Unique
   private long curTime;
 
   @Inject(at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.setDayTime(J)V"), method = "tick")
