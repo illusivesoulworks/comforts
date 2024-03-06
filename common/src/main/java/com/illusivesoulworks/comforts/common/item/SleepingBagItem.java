@@ -93,7 +93,9 @@ public class SleepingBagItem extends BaseComfortsItem {
                               @Nonnull TooltipFlag flag) {
 
     if (ComfortsConfig.SERVER.autoUse.get()) {
-      components.add(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip")
+      components.add(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.0")
+          .withStyle(ChatFormatting.GRAY));
+      components.add(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.1")
           .withStyle(ChatFormatting.GRAY));
     }
   }

@@ -34,7 +34,8 @@
   "block.comforts.sleeping_bag_red": "Красный спальный мешок",
   "block.comforts.sleeping_bag_white": "Белый спальный мешок",
   "block.comforts.sleeping_bag_yellow": "Жёлтый спальный мешок",
-  "item.comforts.sleeping_bag.auto_use.tooltip": "Автоматически пытается заснуть.\nЧтобы разместить, используйте, присев.",
+  "item.comforts.sleeping_bag.auto_use.tooltip.0": "Автоматически пытается заснуть.",
+  "item.comforts.sleeping_bag.auto_use.tooltip.1": "Чтобы разместить, используйте, присев.",
   "item.comforts.hammock.placement.tooltip": "Для размещения требуется %s.",
   "item.comforts.rope_and_nail.placement.tooltip": "Используется для размещения гамаков.",
   "block.comforts.hammock.occupied": "Этот гамак занят",
@@ -48,7 +49,7 @@
   "block.comforts.hammock.no_space": "Недостаточно места для установки гамака",
   "block.comforts.hammock.missing_rope": "На другом конце также должна быть веревка и гвоздь, чтобы повесить гамак.",
   "block.comforts.sleeping_bag.broke": "Спальный мешок сломан",
-  "capability.comforts.not_sleepy": "Вы недостаточно устали для отдыха"
+  "capability.comforts.not_sleepy": "Вы недостаточно устали для отдыха",
   "gui.comforts.config.autoUse.name": "Автоматически использовать спальные мешки",
   "gui.comforts.config.autoUse.description": "Если эта опция включена, игроки автоматически пытаются использовать спальные мешки при их размещении.",
   "gui.comforts.config.restrictSleeping.name": "Ограничить последовательный сон",
