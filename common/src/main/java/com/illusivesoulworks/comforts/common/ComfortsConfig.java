@@ -45,6 +45,8 @@ public class ComfortsConfig {
     public final SpectreConfigSpec.DoubleValue restMultiplier;
     public final SpectreConfigSpec.EnumValue<ComfortsTimeUse> hammockUse;
     public final SpectreConfigSpec.EnumValue<ComfortsTimeUse> sleepingBagUse;
+    public final SpectreConfigSpec.BooleanValue sleepingBagsStopPhantoms;
+    public final SpectreConfigSpec.BooleanValue hammocksStopPhantoms;
     public final SpectreConfigSpec.IntValue sleepingBagBreakChance;
     public final SpectreConfigSpec.DoubleValue sleepingBagBreakChanceLuckMultiplier;
     public final SpectreConfigSpec.ConfigValue<List<? extends String>> sleepingBagEffects;
@@ -70,6 +72,15 @@ public class ComfortsConfig {
       sleepingBagUse = builder.comment("The time of day that sleeping bags can be used.")
           .translation(CONFIG_PREFIX + "sleepingBagUse")
           .defineEnum("sleepingBagUse", ComfortsTimeUse.NIGHT);
+
+      hammocksStopPhantoms = builder.comment(
+              "If enabled, attempting to sleep in hammocks stops phantoms from spawning.")
+          .translation(CONFIG_PREFIX + "hammocksStopPhantoms").define("hammocksStopPhantoms", true);
+
+      sleepingBagsStopPhantoms = builder.comment(
+              "If enabled, attempting to sleep in sleeping bags stops phantoms from spawning.")
+          .translation(CONFIG_PREFIX + "sleepingBagsStopPhantoms")
+          .define("sleepingBagsStopPhantoms", true);
 
       sleepingBagBreakChance =
           builder.comment("The percentage chance that a sleeping bag will break upon use.")

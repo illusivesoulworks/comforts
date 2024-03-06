@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
@@ -56,6 +57,11 @@ public class SleepingBagBlock extends BaseComfortsBlock {
   @Override
   public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
     return new SleepingBagBlockEntity(pos, state, this.color);
+  }
+
+  @Override
+  protected boolean canRest() {
+    return ComfortsConfig.SERVER.sleepingBagsStopPhantoms.get();
   }
 
   @Override

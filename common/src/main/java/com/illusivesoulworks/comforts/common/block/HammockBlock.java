@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.HammockBlockEntity;
@@ -68,6 +69,11 @@ public class HammockBlock extends BaseComfortsBlock {
 
   public static Direction getDirectionToOther(BedPart part, Direction facing) {
     return part == BedPart.FOOT ? facing : facing.getOpposite();
+  }
+
+  @Override
+  protected boolean canRest() {
+    return ComfortsConfig.SERVER.hammocksStopPhantoms.get();
   }
 
   public static void dropRopeSupport(BlockPos pos, Direction direction, boolean isHead,

@@ -187,7 +187,15 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           }
 
           if (!dryRun) {
-            player.startSleeping(at);
+            Block block = player.level().getBlockState(at).getBlock();
+
+            if (block instanceof BaseComfortsBlock comfortsBlock && !comfortsBlock.canRest()) {
+              int time = player.getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+              player.startSleeping(at);
+              player.getStats().setValue(player, Stats.CUSTOM.get(Stats.TIME_SINCE_REST), time);
+            } else {
+              player.startSleeping(at);
+            }
             ((AccessorPlayer) player).setSleepCounter(0);
             player.awardStat(Stats.SLEEP_IN_BED);
             CriteriaTriggers.SLEPT_IN_BED.trigger(player);
@@ -200,6 +208,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
     }
   }
+
+  protected abstract boolean canRest();
 
   private static boolean bedInRange(ServerPlayer playerEntity, BlockPos blockPos,
                                     Direction direction) {
