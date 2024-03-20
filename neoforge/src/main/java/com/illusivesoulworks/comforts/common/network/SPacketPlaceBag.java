@@ -26,9 +26,9 @@ public record SPacketPlaceBag(int entityId, InteractionHand hand, Direction dire
   public void write(@Nonnull FriendlyByteBuf buf) {
     buf.writeInt(this.entityId());
     buf.writeEnum(this.hand());
-    buf.writeVector3f(this.location().toVector3f());
     buf.writeEnum(this.direction());
     buf.writeBlockPos(this.blockPos());
+    buf.writeVector3f(this.location().toVector3f());
     buf.writeBoolean(this.inside());
   }
 
