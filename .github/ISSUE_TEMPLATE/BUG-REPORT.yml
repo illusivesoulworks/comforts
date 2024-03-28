@@ -46,10 +46,11 @@ body:
   id: loader
   attributes:
     label: Loader
-    description: Are you using Fabric, Forge, or Quilt?
+    description: Are you using Fabric, Forge, NeoForge, or Quilt?
     options:
       - Fabric
       - Forge
+      - NeoForge
       - Quilt
   validations:
     required: true
