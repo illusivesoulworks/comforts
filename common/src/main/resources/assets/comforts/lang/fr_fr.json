@@ -2,7 +2,6 @@
   "itemGroup.comforts": "Comforts",
   "itemGroup.comforts.general": "Comforts",
   "comforts.skipping_day": "Dort pour passer la journée",
-  "comforts.networking.failed": "Comforts Networking Failure: %s",																  
   "block.comforts.hammock_black": "Hamac noir",
   "block.comforts.hammock_blue": "Hamac bleu",
   "block.comforts.hammock_brown": "Hamac marron",
@@ -36,8 +35,7 @@
   "block.comforts.sleeping_bag_red": "Sac de couchage rouge",
   "block.comforts.sleeping_bag_white": "Sac de couchage blanc",
   "block.comforts.sleeping_bag_yellow": "Sac de couchage jaune",
-  "item.comforts.sleeping_bag.auto_use.tooltip.0": "Essaie automatiquement de dormir.",
-  "item.comforts.sleeping_bag.auto_use.tooltip.1": "Pour le placer, l'utiliser en s'accroupissant.",
+  "item.comforts.sleeping_bag.auto_use.tooltip": "Essaie automatiquement de dormir.\nPour le placer, l'utiliser en s'accroupissant.",
   "item.comforts.hammock.placement.tooltip": "Nécessite %s pour être placé.",
   "item.comforts.rope_and_nail.placement.tooltip": "Utilisé pour placer les hamacs.",
   "block.comforts.hammock.occupied": "Ce hamac est occupé",
@@ -77,9 +75,5 @@
   "gui.comforts.config.dayWakeTimeOffset.name": "Décalage de l'heure de réveil de la nuit au jour",
   "gui.comforts.config.dayWakeTimeOffset.description": "Le temps, en ticks, à ajouter ou à retirer de la nouvelle heure après avoir dormi durant la nuit.",
   "gui.comforts.config.nightWakeTimeOffset.name": "Décalage de l'heure de réveil du jour à la nuit",
-  "gui.comforts.config.nightWakeTimeOffset.description": "Le temps, en ticks, à ajouter ou à retirer de la nouvelle heure après avoir dormi durant le jour.",
-  "gui.comforts.config.enableHammockRecipes.name": "Recettes de hamacs activées",
-  "gui.comforts.config.enableHammockRecipes.description": "Si cette option est activée, par défaut les recettes de hamac seront disponibles.",
-  "gui.comforts.config.enableSleepingBagRecipes.name": "Recettes de sacs de couchage activées",
-  "gui.comforts.config.enableSleepingBagRecipes.description": "Si cette option est activée, par défaut les recettesdes sacs de couchage seront disponibles."
-  }
+  "gui.comforts.config.nightWakeTimeOffset.description": "Le temps, en ticks, à ajouter ou à retirer de la nouvelle heure après avoir dormi durant le jour."
+}
