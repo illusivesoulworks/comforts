@@ -1,6 +1,8 @@
 {
   "itemGroup.comforts": "Comforts",
   "itemGroup.comforts.general": "Comforts",
+  "comforts.skipping_day": "Проспати весь день",
+  "comforts.networking.failed": "Comforts Несправність мережі: %s",
   "block.comforts.hammock_black": "Чорний гамак",
   "block.comforts.hammock_blue": "Синій гамак",
   "block.comforts.hammock_brown": "Коричневий гамак",
@@ -65,5 +67,19 @@
   "gui.comforts.config.sleepingBagBreakChanceLuckMultiplier.name": "Множник удачі спального мішка",
   "gui.comforts.config.sleepingBagBreakChanceLuckMultiplier.description": "Значення, яке буде помножено на вдачу гравця, а потім додано до sleepingBagBreakChance.",
   "gui.comforts.config.sleepingBagEffects.name": "Ефекти спального мішка",
-  "gui.comforts.config.sleepingBagEffects.description": "Статусні ефекти, які застосовуються до гравців після використання спального мішка.\nФормат: effect;duration(секунд);power"
+  "gui.comforts.config.sleepingBagEffects.description": "Статусні ефекти, які застосовуються до гравців після використання спального мішка.\nФормат: effect;duration(секунд);power",
+  "gui.comforts.config.hammocksStopPhantoms.name": "Гамаки зупиняють фантомів",
+  "gui.comforts.config.hammocksStopPhantoms.description": "Якщо увімкнено, спроби спати в гамаках зупиняють появу фантомів.",
+  "gui.comforts.config.sleepingBagsStopPhantoms.name": "Спальні мішки зупиняють фантомів",
+  "gui.comforts.config.sleepingBagsStopPhantoms.description": "Якщо увімкнено, спроба спати в спальниках зупиняє появу фантомів.",
+  "gui.comforts.config.daySleepingPercentage.name": "Відсоток денного сну",
+  "gui.comforts.config.daySleepingPercentage.description": "Який відсоток гравців повинен спати, щоб пропустити день.\nЗначення відсотка 0 дозволить пропустити день лише 1 гравцю, а значення відсотка 100 вимагатиме, щоб усі гравці спали перед тим, як пропустити день.\nЗначення відсотка менше 0 за замовчуванням призведе до правила гри playerSleepingPercentage.",
+  "gui.comforts.config.dayWakeTimeOffset.name": "Зміщення часу нічного та денного пробудження",
+  "gui.comforts.config.dayWakeTimeOffset.description": "Кількість часу в тиках, яку потрібно додати або відняти від нового часу після того, як ви проспали всю ніч.",
+  "gui.comforts.config.nightWakeTimeOffset.name": "Зміщення часу пробудження з денного на нічний",
+  "gui.comforts.config.nightWakeTimeOffset.description": "Кількість часу в тиках, яку потрібно додати або відняти від нового часу після того, як ви проспали цілий день.",
+  "gui.comforts.config.enableHammockRecipes.name": "Увімкнути рецепти гамаків",
+  "gui.comforts.config.enableHammockRecipes.description": "Якщо увімкнено, будуть доступні рецепти гамаків за замовчуванням.",
+  "gui.comforts.config.enableSleepingBagRecipes.name": "Увімкнути рецепти спальних мішків",
+  "gui.comforts.config.enableSleepingBagRecipes.description": "Якщо увімкнено, будуть доступні рецепти спальних мішків за замовчуванням."
 }
