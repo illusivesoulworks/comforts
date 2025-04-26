@@ -34,6 +34,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,7 +46,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -62,6 +64,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterloggedBlock {
 
@@ -177,14 +180,18 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
             final double d0 = 8.0D;
             final double d1 = 5.0D;
             final Vec3 vector3d = Vec3.atBottomCenterOf(at);
+
+
             List<Monster> list = player.level().getEntitiesOfClass(Monster.class,
                 new AABB(vector3d.x() - d0, vector3d.y() - d1, vector3d.z() - d0, vector3d.x() + d0,
                     vector3d.y() + d1, vector3d.z() + d0),
-                (monster) -> monster.isPreventingPlayerRest(player));
+                (monster) -> monster.isPreventingPlayerRest((ServerLevel) player.level(),player));
+                if (!list.isEmpty()) {
+                  result = Either.left(Player.BedSleepingProblem.NOT_SAFE);
+                }
 
-            if (!list.isEmpty()) {
-              result = Either.left(Player.BedSleepingProblem.NOT_SAFE);
-            }
+
+
           }
 
           if (result == null) {
@@ -282,22 +289,19 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     level.levelEvent(player, 2001, pos, getId(state));
 
     if (state.is(BlockTags.GUARDED_BY_PIGLINS)) {
-      PiglinAi.angerNearbyPiglins(player, false);
+      PiglinAi.angerNearbyPiglins((ServerLevel) player.level(),player, false);
     }
     return state;
   }
 
-  @Nonnull
+  @NotNull
   @Override
-  public BlockState updateShape(BlockState stateIn, @Nonnull Direction facing,
-                                @Nonnull BlockState facingState, @Nonnull LevelAccessor level,
-                                @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
-
+  protected BlockState updateShape(BlockState stateIn, @NotNull LevelReader levelReader, @NotNull ScheduledTickAccess tickAccess, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, @NotNull RandomSource randomSource) {
     if (stateIn.getValue(WATERLOGGED)) {
-      level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+      tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
     }
 
-    return super.updateShape(stateIn, facing, facingState, level, currentPos, facingPos);
+    return super.updateShape(stateIn, levelReader,tickAccess, currentPos, facing, facingPos, facingState, randomSource);
   }
 
   @Nullable

@@ -25,12 +25,10 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -43,16 +41,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
 
-  public static final DirectionProperty HORIZONTAL_FACING = HorizontalDirectionalBlock.FACING;
+  public static final EnumProperty<Direction> HORIZONTAL_FACING = HorizontalDirectionalBlock.FACING;
   public static final BooleanProperty SUPPORTING = BooleanProperty.create("supporting");
 
   private static final Map<Direction, VoxelShape> SHAPES_R = new EnumMap<>(ImmutableMap
@@ -124,7 +123,7 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
 
   @Override
   public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos,
-                                      @Nonnull BlockState state, @Nonnull Player player) {
+                                               @Nonnull BlockState state, @Nonnull Player player) {
     dropHammock(level, pos, state);
     return super.playerWillDestroy(level, pos, state, player);
   }
@@ -153,18 +152,15 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
     return null;
   }
 
-  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
-  public BlockState updateShape(@Nonnull BlockState stateIn, @Nonnull Direction facing,
-                                @Nonnull BlockState facingState, @Nonnull LevelAccessor level,
-                                @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
-
+  protected BlockState updateShape(BlockState stateIn, @NotNull LevelReader levelReader, @NotNull ScheduledTickAccess tickAccess, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, @NotNull RandomSource randomSource) {
     if (stateIn.getValue(BaseComfortsBlock.WATERLOGGED)) {
-      level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+
+      tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
     }
     return facing.getOpposite() == stateIn.getValue(HORIZONTAL_FACING) && !stateIn
-        .canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;
+        .canSurvive(levelReader, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;
   }
 
   @SuppressWarnings("deprecation")

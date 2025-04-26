@@ -72,7 +72,7 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
   public void render(BaseComfortsBlockEntity blockEntity, float partialTicks,
                      @Nonnull PoseStack matrixStack, @Nonnull MultiBufferSource buffer,
                      int combinedLightIn, int combinedOverlayIn) {
-    final Material material = new Material(InventoryMenu.BLOCK_ATLAS,
+    final Material material = new Material(ResourceLocation.withDefaultNamespace("textures/atlas/blocks.png"),
         ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
             "entity/" + type + "/" + blockEntity.getColor().getName()));
     final Level level = blockEntity.getLevel();
