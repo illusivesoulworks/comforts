@@ -43,10 +43,10 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -60,11 +60,14 @@ public class ComfortsForgeMod {
   public static final Supplier<MapCodec<? extends ICondition>> HAMMOCK_CONDITION =
       CONDITIONS.register("hammock_enabled", () -> HammockEnabledCondition.CODEC);
 
-  public ComfortsForgeMod() {
+  public ComfortsForgeMod(FMLJavaModLoadingContext context) {
     ComfortsCommonMod.init();
     ComfortsCommonMod.initConfig();
-    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ComfortsForgeClientMod::init);
-    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+    IEventBus eventBus = context.getModEventBus();
+    if (FMLEnvironment.dist == Dist.CLIENT) {
+      ComfortsForgeClientMod.init(eventBus);
+    }
     CONDITIONS.register(eventBus);
     eventBus.addListener(this::setup);
     eventBus.addListener(this::registerCapabilities);

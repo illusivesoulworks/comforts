@@ -26,12 +26,10 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ComfortsForgeClientMod {
 
-  public static void init() {
-    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+  public static void init(IEventBus eventBus) {
     eventBus.addListener(ComfortsForgeClientMod::clientSetup);
     eventBus.addListener(ComfortsForgeClientMod::entityRenderers);
     eventBus.addListener(ComfortsForgeClientMod::layerDefinitions);
