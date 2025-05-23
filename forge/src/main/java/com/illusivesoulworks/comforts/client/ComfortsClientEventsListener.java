@@ -25,9 +25,9 @@ import net.minecraftforge.fml.LogicalSide;
 public class ComfortsClientEventsListener {
 
   @SubscribeEvent
-  public void onTick(final TickEvent.PlayerTickEvent evt) {
+  public void onTick(final TickEvent.PlayerTickEvent.Pre evt) {
 
-    if (evt.phase == TickEvent.Phase.START && evt.side == LogicalSide.CLIENT) {
+    if (evt.side == LogicalSide.CLIENT) {
       ComfortsClientEvents.onTick(evt.player);
     }
   }
