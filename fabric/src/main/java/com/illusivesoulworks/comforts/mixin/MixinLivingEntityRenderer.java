@@ -19,31 +19,31 @@ package com.illusivesoulworks.comforts.mixin;
 
 import com.illusivesoulworks.comforts.client.ComfortsClientEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("unused")
-@Mixin(PlayerRenderer.class)
-public class MixinPlayerRenderer {
+@Mixin(LivingEntityRenderer.class)
+public class MixinLivingEntityRenderer<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
 
   @Inject(at = @At("HEAD"), method = "render*")
-  private void comforts$sleepingTranslate(AbstractClientPlayer entity, float entityYaw,
-                                          float partialTicks, PoseStack matrixStack,
-                                          MultiBufferSource buffer, int packedLight,
+  private void comforts$sleepingTranslate(S livingEntityRenderState, PoseStack poseStack,
+                                          MultiBufferSource multiBufferSource, int packedLight,
                                           CallbackInfo ci) {
-    ComfortsClientEvents.onPlayerRenderPre(entity, matrixStack);
+    ComfortsClientEvents.onPlayerRenderPre(livingEntityRenderState, poseStack);
   }
 
   @Inject(at = @At("TAIL"), method = "render*")
-  private void comforts$resetSleepingTranslate(AbstractClientPlayer entity, float entityYaw,
-                                               float partialTicks, PoseStack matrixStack,
-                                               MultiBufferSource buffer, int packedLight,
+  private void comforts$resetSleepingTranslate(S livingEntityRenderState, PoseStack poseStack,
+                                               MultiBufferSource multiBufferSource, int packedLight,
                                                CallbackInfo ci) {
-    ComfortsClientEvents.onPlayerRenderPost(entity, matrixStack);
+    ComfortsClientEvents.onPlayerRenderPost(livingEntityRenderState, poseStack);
   }
 }

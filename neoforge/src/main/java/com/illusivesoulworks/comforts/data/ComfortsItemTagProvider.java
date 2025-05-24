@@ -11,17 +11,13 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
 
 public class ComfortsItemTagProvider extends ItemTagsProvider {
 
-
   public ComfortsItemTagProvider(PackOutput p_275343_,
                                  CompletableFuture<HolderLookup.Provider> p_275729_,
-                                 CompletableFuture<TagLookup<Block>> p_275322_, String modId,
-                                 @Nullable ExistingFileHelper existingFileHelper) {
-    super(p_275343_, p_275729_, p_275322_, modId, existingFileHelper);
+                                 CompletableFuture<TagLookup<Block>> p_275322_, String modId) {
+    super(p_275343_, p_275729_, p_275322_, modId);
   }
 
   @Override

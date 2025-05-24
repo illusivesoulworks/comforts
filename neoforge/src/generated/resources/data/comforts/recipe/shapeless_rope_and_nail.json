@@ -20,12 +20,8 @@
   "category": "misc",
   "group": "comforts:rope_and_nail",
   "ingredients": [
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "c:ropes"
-    }
+    "#c:ingots/iron",
+    "#c:ropes"
   ],
   "result": {
     "count": 2,

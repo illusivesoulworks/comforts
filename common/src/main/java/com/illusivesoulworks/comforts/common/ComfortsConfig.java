@@ -158,10 +158,10 @@ public class ComfortsConfig {
   }
 
   public enum ComfortsTimeUse {
-    NONE(Component.translatable("block.comforts.no_sleep")),
-    DAY(Component.translatable("block.comforts.hammock.no_sleep")),
-    NIGHT(Component.translatable("block.minecraft.bed.no_sleep")),
-    DAY_OR_NIGHT(Component.translatable("block.comforts.hammock.no_sleep.2"));
+    NONE(Component.translatable("item.comforts.no_sleep")),
+    DAY(Component.translatable("item.comforts.hammock.no_sleep")),
+    NIGHT(Component.translatable("item.minecraft.bed.no_sleep")),
+    DAY_OR_NIGHT(Component.translatable("item.comforts.hammock.no_sleep.2"));
 
     private final Component message;
 

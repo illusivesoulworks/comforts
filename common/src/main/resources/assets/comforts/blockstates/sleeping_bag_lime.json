@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "comforts:block/lime_cloth" }
+    "": {
+      "model": "comforts:block/lime_cloth"
+    }
   }
 }

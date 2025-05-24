@@ -18,7 +18,10 @@
 package com.illusivesoulworks.comforts.platform;
 
 import com.illusivesoulworks.comforts.platform.services.IRegistryUtil;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +38,7 @@ public class ForgeRegistryUtil implements IRegistryUtil {
   @Override
   public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(
       BiFunction<BlockPos, BlockState, T> builder, Block... blocks) {
-    return BlockEntityType.Builder.of(builder::apply, blocks).build(null);
+    return new BlockEntityType<T>(builder::apply, Arrays.stream(blocks).collect(Collectors.toSet()));
   }
 
   @Override

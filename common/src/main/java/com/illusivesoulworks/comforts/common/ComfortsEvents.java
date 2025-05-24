@@ -169,7 +169,7 @@ public class ComfortsEvents {
                   level.removeBlock(bedPos, false);
                   level.removeBlock(blockpos, false);
                   player.displayClientMessage(
-                      Component.translatable("block.comforts.sleeping_bag.broke"), true);
+                      Component.translatable("item.comforts.sleeping_bag.broke"), true);
                   level.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
                       1.0F, 1.0F);
                   player.clearSleepingPos();

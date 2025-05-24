@@ -8,12 +8,8 @@
   "category": "misc",
   "group": "comforts:rope_and_nail",
   "key": {
-    "A": {
-      "tag": "c:strings"
-    },
-    "X": {
-      "tag": "c:ingots/iron"
-    }
+    "A": "#c:strings",
+    "X": "#c:ingots/iron"
   },
   "pattern": [
     "AA ",

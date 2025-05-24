@@ -1,5 +1,5 @@
 {
-  "advancements": [
+  "forge:conditional": [
     {
       "parent": "minecraft:recipes/root",
       "criteria": {
@@ -7,7 +7,7 @@
           "conditions": {
             "items": [
               {
-                "items": "#forge:dyes/purple"
+                "items": "#c:dyes/purple"
               }
             ]
           },

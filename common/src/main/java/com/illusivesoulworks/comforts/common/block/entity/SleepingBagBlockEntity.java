@@ -38,6 +38,6 @@ public class SleepingBagBlockEntity extends BaseComfortsBlockEntity {
   @Override
   public Component getName() {
     return this.name != null ? this.name : Component.translatable(
-        "block.comforts.sleeping_bag_" + this.getColor().getSerializedName());
+        "item.comforts.sleeping_bag_" + this.getColor().getSerializedName());
   }
 }

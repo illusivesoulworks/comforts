@@ -108,6 +108,7 @@ processResources {
     }
     exclude('.cache')
     inputs.properties(expandProps)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 publishing {

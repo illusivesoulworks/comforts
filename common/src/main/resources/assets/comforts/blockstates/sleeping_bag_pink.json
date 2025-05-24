@@ -1,6 +1,7 @@
-
 {
   "variants": {
-    "": { "model": "comforts:block/pink_cloth" }
+    "": {
+      "model": "comforts:block/pink_cloth"
+    }
   }
 }

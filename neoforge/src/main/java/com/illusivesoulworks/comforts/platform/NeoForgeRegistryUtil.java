@@ -35,11 +35,11 @@ public class NeoForgeRegistryUtil implements IRegistryUtil {
   @Override
   public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(
       BiFunction<BlockPos, BlockState, T> builder, Block... blocks) {
-    return BlockEntityType.Builder.of(builder::apply, blocks).build(null);
+    return new BlockEntityType<T>(builder::apply, blocks);
   }
 
   @Override
   public Holder<MobEffect> getMobEffect(ResourceLocation resourceLocation) {
-    return BuiltInRegistries.MOB_EFFECT.getHolder(resourceLocation).orElse(null);
+    return BuiltInRegistries.MOB_EFFECT.get(resourceLocation).orElse(null);
   }
 }

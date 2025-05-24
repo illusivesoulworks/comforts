@@ -18,17 +18,24 @@
 package com.illusivesoulworks.comforts.common.block;
 
 import com.google.common.collect.ImmutableMap;
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import java.util.EnumMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -47,43 +54,49 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
 public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
 
   public static final EnumProperty<Direction> HORIZONTAL_FACING = HorizontalDirectionalBlock.FACING;
   public static final BooleanProperty SUPPORTING = BooleanProperty.create("supporting");
 
-  private static final Map<Direction, VoxelShape> SHAPES_R = new EnumMap<>(ImmutableMap
-      .of(Direction.NORTH, Block.box(6.0D, 0.0D, 12.0D, 10.0D, 8.0D, 16.0D),
-          Direction.SOUTH, Block.box(6.0D, 0.0D, 0.0D, 10.0D, 8.0D, 4.0D),
-          Direction.WEST, Block.box(12.0D, 0.0D, 6.0D, 16.0D, 8.0D, 10.0D),
-          Direction.EAST, Block.box(0.0D, 0.0D, 6.0D, 4.0D, 8.0D, 10.0D)));
+  private static final Map<Direction, VoxelShape> SHAPES_R = new EnumMap<>(
+      ImmutableMap
+          .of(Direction.NORTH, Block.box(6.0D, 0.0D, 12.0D, 10.0D, 8.0D, 16.0D),
+              Direction.SOUTH, Block.box(6.0D, 0.0D, 0.0D, 10.0D, 8.0D, 4.0D),
+              Direction.WEST, Block.box(12.0D, 0.0D, 6.0D, 16.0D, 8.0D, 10.0D),
+              Direction.EAST, Block.box(0.0D, 0.0D, 6.0D, 4.0D, 8.0D, 10.0D)));
 
-  private static final Map<Direction, VoxelShape> SHAPES_S = new EnumMap<>(ImmutableMap
-      .of(Direction.NORTH, Block.box(6.0D, 3.0D, 9.0D, 10.0D, 8.0D, 16.0D),
-          Direction.SOUTH, Block.box(6.0D, 3.0D, 0.0D, 10.0D, 8.0D, 7.0D),
-          Direction.WEST, Block.box(9.0D, 3.0D, 6.0D, 16.0D, 8.0D, 10.0D),
-          Direction.EAST, Block.box(0.0D, 3.0D, 6.0D, 7.0D, 8.0D, 10.0D)));
+  private static final Map<Direction, VoxelShape> SHAPES_S = new EnumMap<>(
+      ImmutableMap
+          .of(Direction.NORTH, Block.box(6.0D, 3.0D, 9.0D, 10.0D, 8.0D, 16.0D),
+              Direction.SOUTH, Block.box(6.0D, 3.0D, 0.0D, 10.0D, 8.0D, 7.0D),
+              Direction.WEST, Block.box(9.0D, 3.0D, 6.0D, 16.0D, 8.0D, 10.0D),
+              Direction.EAST, Block.box(0.0D, 3.0D, 6.0D, 7.0D, 8.0D, 10.0D)));
 
   public RopeAndNailBlock() {
-    super(Block.Properties.of().ignitedByLava().mapColor(MapColor.WOOL).sound(SoundType.METAL)
-        .strength(0.2F));
+    super(Block.Properties.of()
+              .ignitedByLava()
+              .mapColor(MapColor.WOOL)
+              .sound(SoundType.METAL)
+              .strength(0.2F)
+              .setId(ResourceKey.create(
+                  Registries.BLOCK,
+                  ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
+                                                        "rope_and_nail"))));
     this.registerDefaultState(
         this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH)
             .setValue(SUPPORTING, false));
   }
 
-  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public VoxelShape getShape(BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos,
                              @Nonnull CollisionContext context) {
     return state.getValue(SUPPORTING) ? SHAPES_S.get(state.getValue(HORIZONTAL_FACING))
-        : SHAPES_R.get(state.getValue(HORIZONTAL_FACING));
+                                      : SHAPES_R.get(state.getValue(HORIZONTAL_FACING));
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
     final Direction direction = state.getValue(HORIZONTAL_FACING);
@@ -121,9 +134,10 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
     }
   }
 
+  @Nonnull
   @Override
   public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos,
-                                               @Nonnull BlockState state, @Nonnull Player player) {
+                                      @Nonnull BlockState state, @Nonnull Player player) {
     dropHammock(level, pos, state);
     return super.playerWillDestroy(level, pos, state, player);
   }
@@ -154,23 +168,25 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
 
   @Nonnull
   @Override
-  protected BlockState updateShape(BlockState stateIn, @NotNull LevelReader levelReader, @NotNull ScheduledTickAccess tickAccess, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, @NotNull RandomSource randomSource) {
-    if (stateIn.getValue(BaseComfortsBlock.WATERLOGGED)) {
+  protected BlockState updateShape(BlockState stateIn, @Nonnull LevelReader levelReader,
+                                   @Nonnull ScheduledTickAccess tickAccess,
+                                   @Nonnull BlockPos currentPos, @Nonnull Direction facing,
+                                   @Nonnull BlockPos facingPos, @Nonnull BlockState facingState,
+                                   @Nonnull RandomSource randomSource) {
 
+    if (stateIn.getValue(BaseComfortsBlock.WATERLOGGED)) {
       tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
     }
     return facing.getOpposite() == stateIn.getValue(HORIZONTAL_FACING) && !stateIn
         .canSurvive(levelReader, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;
   }
 
-  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState rotate(@Nonnull BlockState state, Rotation rot) {
     return state.setValue(HORIZONTAL_FACING, rot.rotate(state.getValue(HORIZONTAL_FACING)));
   }
 
-  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public BlockState mirror(@Nonnull BlockState state, Mirror mirrorIn) {
@@ -182,11 +198,10 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
     builder.add(SUPPORTING, HORIZONTAL_FACING, BaseComfortsBlock.WATERLOGGED);
   }
 
-  @SuppressWarnings("deprecation")
   @Nonnull
   @Override
   public FluidState getFluidState(BlockState state) {
     return state.getValue(BaseComfortsBlock.WATERLOGGED) ? Fluids.WATER.getSource(false)
-        : super.getFluidState(state);
+                                                         : super.getFluidState(state);
   }
 }

@@ -8,15 +8,9 @@
   "category": "misc",
   "group": "comforts:hammock",
   "key": {
-    "#": {
-      "item": "minecraft:cyan_wool"
-    },
-    "S": {
-      "tag": "c:strings"
-    },
-    "X": {
-      "tag": "c:rods/wooden"
-    }
+    "#": "minecraft:cyan_wool",
+    "S": "#c:strings",
+    "X": "#c:rods/wooden"
   },
   "pattern": [
     " X ",

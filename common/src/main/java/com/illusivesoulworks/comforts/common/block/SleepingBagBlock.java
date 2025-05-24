@@ -17,12 +17,16 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -42,8 +46,15 @@ public class SleepingBagBlock extends BaseComfortsBlock {
 
   public SleepingBagBlock(DyeColor color) {
     super(BedType.SLEEPING_BAG, color,
-        Block.Properties.of().ignitedByLava().mapColor(MapColor.WOOL).sound(SoundType.WOOL)
-            .strength(0.1F));
+        Block.Properties.of()
+            .ignitedByLava()
+            .mapColor(MapColor.WOOL)
+            .sound(SoundType.WOOL)
+            .strength(0.1F)
+            .setId(ResourceKey.create(
+                Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
+                                                      "sleeping_bag_" + color.getName()))));
     this.color = color;
   }
 
@@ -54,6 +65,7 @@ public class SleepingBagBlock extends BaseComfortsBlock {
     return SLEEPING_BAG_SHAPE;
   }
 
+  @Nonnull
   @Override
   public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
     return new SleepingBagBlockEntity(pos, state, this.color);

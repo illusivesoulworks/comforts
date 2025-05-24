@@ -9,16 +9,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
 
 public class ComfortsBlockTagsProvider extends BlockTagsProvider {
 
   public ComfortsBlockTagsProvider(PackOutput output,
                                    CompletableFuture<HolderLookup.Provider> lookupProvider,
-                                   String modId,
-                                   @Nullable ExistingFileHelper existingFileHelper) {
-    super(output, lookupProvider, modId, existingFileHelper);
+                                   String modId) {
+    super(output, lookupProvider, modId);
   }
 
   @Override

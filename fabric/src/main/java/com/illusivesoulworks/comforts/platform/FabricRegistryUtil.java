@@ -32,15 +32,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class FabricRegistryUtil implements IRegistryUtil {
 
-  @SuppressWarnings("all")
   @Override
   public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(
       BiFunction<BlockPos, BlockState, T> builder, Block... blocks) {
-    return FabricBlockEntityTypeBuilder.create(builder::apply, blocks).build(null);
+    return FabricBlockEntityTypeBuilder.create(builder::apply, blocks).build();
   }
 
   @Override
   public Holder<MobEffect> getMobEffect(ResourceLocation resourceLocation) {
-    return BuiltInRegistries.MOB_EFFECT.getHolder(resourceLocation).orElse(null);
+    return BuiltInRegistries.MOB_EFFECT.get(resourceLocation).orElse(null);
   }
 }

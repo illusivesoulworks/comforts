@@ -66,7 +66,7 @@ public class HammockItem extends BaseComfortsItem {
 
           if (player != null) {
             player.displayClientMessage(
-                Component.translatable("block.comforts.hammock.no_space"), true);
+                Component.translatable("item.comforts.hammock.no_space"), true);
           }
         }
         return result;
@@ -76,14 +76,14 @@ public class HammockItem extends BaseComfortsItem {
 
         if (flag) {
           player.displayClientMessage(
-              Component.translatable("block.comforts.hammock.no_space"), true);
+              Component.translatable("item.comforts.hammock.no_space"), true);
         } else {
           player.displayClientMessage(
-              Component.translatable("block.comforts.hammock.missing_rope"), true);
+              Component.translatable("item.comforts.hammock.missing_rope"), true);
         }
       }
     } else if (player != null) {
-      player.displayClientMessage(Component.translatable("block.comforts.hammock.no_rope"),
+      player.displayClientMessage(Component.translatable("item.comforts.hammock.no_rope"),
           true);
     }
     return InteractionResult.FAIL;
@@ -101,7 +101,7 @@ public class HammockItem extends BaseComfortsItem {
   public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context,
                               List<Component> components, @Nonnull TooltipFlag flag) {
     components.add(Component.translatable("item.comforts.hammock.placement.tooltip",
-            Component.translatable("block.comforts.rope_and_nail").withStyle(ChatFormatting.YELLOW))
+            Component.translatable("item.comforts.rope_and_nail").withStyle(ChatFormatting.YELLOW))
         .withStyle(ChatFormatting.GRAY));
   }
 }

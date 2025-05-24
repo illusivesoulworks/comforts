@@ -10,12 +10,8 @@
         "category": "misc",
         "group": "comforts:rope_and_nail",
         "key": {
-          "A": {
-            "tag": "forge:string"
-          },
-          "X": {
-            "tag": "forge:ingots/iron"
-          }
+          "A": "#c:strings",
+          "X": "#c:ingots/iron"
         },
         "pattern": [
           "AA ",

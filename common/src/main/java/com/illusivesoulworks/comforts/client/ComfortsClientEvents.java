@@ -22,12 +22,16 @@ import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -38,11 +42,18 @@ import net.minecraft.world.phys.Vec3;
 
 public class ComfortsClientEvents {
 
-  public static void onPlayerRenderPre(Player player, PoseStack poseStack) {
+  public static void onPlayerRenderPre(LivingEntityRenderState renderState, PoseStack poseStack) {
 
-    if (player.getPose() == Pose.SLEEPING) {
+    if (!(renderState instanceof PlayerRenderState playerState)) {
+      return;
+    }
+    Minecraft mc = Minecraft.getInstance();
+    ClientLevel level = mc.level;
 
-      if (player instanceof RemotePlayer) {
+    if (level != null && playerState.pose == Pose.SLEEPING) {
+      Entity entity = level.getEntity(playerState.id);
+
+      if (entity instanceof RemotePlayer player) {
         player.getSleepingPos().ifPresent(bedPos -> {
           final Block bed = player.level().getBlockState(bedPos).getBlock();
 
@@ -52,7 +63,7 @@ public class ComfortsClientEvents {
             poseStack.translate(0.0f, -0.5F, 0.0f);
           }
         });
-      } else if (player instanceof LocalPlayer) {
+      } else if (entity instanceof LocalPlayer player) {
         player.getSleepingPos().ifPresent(bedPos -> {
           final Block bed = player.level().getBlockState(bedPos).getBlock();
 
@@ -65,9 +76,16 @@ public class ComfortsClientEvents {
     }
   }
 
-  public static void onPlayerRenderPost(Player player, PoseStack poseStack) {
+  public static void onPlayerRenderPost(LivingEntityRenderState renderState, PoseStack poseStack) {
 
-    if (player instanceof RemotePlayer && player.getPose() == Pose.SLEEPING) {
+    if (!(renderState instanceof PlayerRenderState playerState)) {
+      return;
+    }
+    Minecraft mc = Minecraft.getInstance();
+    ClientLevel level = mc.level;
+
+    if (level != null && level.getEntity(playerState.id) instanceof RemotePlayer player
+        && player.getPose() == Pose.SLEEPING) {
       player.getSleepingPos().ifPresent(bedPos -> {
         final Block bed = player.level().getBlockState(bedPos).getBlock();
 
@@ -100,7 +118,7 @@ public class ComfortsClientEvents {
 
             if (flag) {
               BlockHitResult hit = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()),
-                  Direction.UP, pos, false);
+                                                      Direction.UP, pos, false);
               MultiPlayerGameMode playerController = Minecraft.getInstance().gameMode;
 
               if (playerController != null) {

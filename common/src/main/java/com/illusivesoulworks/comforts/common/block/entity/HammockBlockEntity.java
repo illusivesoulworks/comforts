@@ -38,6 +38,6 @@ public class HammockBlockEntity extends BaseComfortsBlockEntity {
   @Override
   public Component getName() {
     return this.name != null ? this.name :
-        Component.translatable("block.comforts.hammmock_" + this.getColor().getSerializedName());
+        Component.translatable("item.comforts.hammmock_" + this.getColor().getSerializedName());
   }
 }

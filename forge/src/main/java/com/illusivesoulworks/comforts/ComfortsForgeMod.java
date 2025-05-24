@@ -82,7 +82,7 @@ public class ComfortsForgeMod {
       CompletableFuture<HolderLookup.Provider> lookupProvider = evt.getLookupProvider();
       DataGenerator gen = evt.getGenerator();
       PackOutput packOutput = gen.getPackOutput();
-      generator.addProvider(true, new ComfortsRecipeProvider(packOutput, lookupProvider));
+      generator.addProvider(true, new ComfortsRecipeProvider.Runner(packOutput, lookupProvider));
     }
   }
 

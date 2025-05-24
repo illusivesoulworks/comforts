@@ -12,7 +12,6 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,13 +26,12 @@ import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 public class ComfortsRecipeProvider extends RecipeProvider {
 
-  public ComfortsRecipeProvider(PackOutput pOutput,
-                                CompletableFuture<HolderLookup.Provider> pRegistries) {
-    super(pOutput, pRegistries);
+  public ComfortsRecipeProvider(HolderLookup.Provider pRegistries, RecipeOutput recipeOutput) {
+    super(pRegistries, recipeOutput);
   }
 
   @Override
-  protected void buildRecipes(@Nonnull RecipeOutput pRecipeOutput) {
+  protected void buildRecipes() {
     List<TagKey<Item>> dyes = List.of(
         Tags.Items.DYES_WHITE,
         Tags.Items.DYES_ORANGE,
@@ -77,16 +75,16 @@ public class ComfortsRecipeProvider extends RecipeProvider {
     );
 
     for (int i = 0; i < wool.size(); i++) {
-      sleepingBag(pRecipeOutput, sleepingBags.get(i), wool.get(i));
-      hammock(pRecipeOutput, hammocks.get(i), wool.get(i));
+      sleepingBag(this.output, sleepingBags.get(i), wool.get(i));
+      hammock(this.output, hammocks.get(i), wool.get(i));
     }
-    colorWithDye(pRecipeOutput.withConditions(HammockEnabledCondition.INSTANCE), dyes, hammocks,
-        "comforts:hammock");
-    colorWithDye(pRecipeOutput.withConditions(SleepingBagEnabledCondition.INSTANCE), dyes,
-        sleepingBags, "comforts:sleeping_bag");
+    colorWithDye(this.output.withConditions(HammockEnabledCondition.INSTANCE), dyes, hammocks,
+                 "comforts:hammock");
+    colorWithDye(this.output.withConditions(SleepingBagEnabledCondition.INSTANCE), dyes,
+                 sleepingBags, "comforts:sleeping_bag");
     Item ropeAndNail = ComfortsRegistry.ROPE_AND_NAIL_ITEM.get();
 
-    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ropeAndNail, 2)
+    this.shaped(RecipeCategory.DECORATIONS, ropeAndNail, 2)
         .define('A', Tags.Items.STRINGS)
         .define('X', Tags.Items.INGOTS_IRON)
         .pattern("AA ")
@@ -94,41 +92,40 @@ public class ComfortsRecipeProvider extends RecipeProvider {
         .pattern("  A")
         .group("comforts:rope_and_nail")
         .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
-        .save(pRecipeOutput.withConditions(HammockEnabledCondition.INSTANCE));
+        .save(this.output.withConditions(HammockEnabledCondition.INSTANCE));
 
     List<ICondition> conditions = new ArrayList<>();
     conditions.add(HammockEnabledCondition.INSTANCE);
-    conditions.add(new NotCondition(new TagEmptyCondition(Tags.Items.ROPES)));
+    conditions.add(new NotCondition(new TagEmptyCondition<>(Tags.Items.ROPES)));
 
-    ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, ropeAndNail, 2)
+    this.shapeless(RecipeCategory.DECORATIONS, ropeAndNail, 2)
         .requires(Tags.Items.INGOTS_IRON)
         .requires(Tags.Items.ROPES)
         .group("comforts:rope_and_nail")
         .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
-        .save(pRecipeOutput.withConditions(new AndCondition(conditions)),
-            ComfortsConstants.MOD_ID + ":shapeless_" + getItemName(ropeAndNail));
+        .save(this.output.withConditions(new AndCondition(conditions)),
+              ComfortsConstants.MOD_ID + ":shapeless_" + getItemName(ropeAndNail));
   }
 
-  protected static void colorWithDye(RecipeOutput pRecipeOutput, List<TagKey<Item>> pDyes,
-                                     List<Item> pDyeableItems, String pGroup) {
+  protected void colorWithDye(RecipeOutput pRecipeOutput, List<TagKey<Item>> pDyes,
+                              List<Item> pDyeableItems, String pGroup) {
 
     for (int i = 0; i < pDyes.size(); i++) {
       TagKey<Item> dye = pDyes.get(i);
       Item item = pDyeableItems.get(i);
-      ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, item)
+      this.shapeless(RecipeCategory.BUILDING_BLOCKS, item)
           .requires(dye)
           .requires(Ingredient.of(
-              pDyeableItems.stream().filter(p_288265_ -> !p_288265_.equals(item))
-                  .map(ItemStack::new)))
+              pDyeableItems.stream().filter(val -> !val.equals(item))))
           .group(pGroup)
           .unlockedBy("has_needed_dye", has(dye))
           .save(pRecipeOutput, ComfortsConstants.MOD_ID + ":dye_" + getItemName(item));
     }
   }
 
-  protected static void sleepingBag(RecipeOutput pRecipeOutput, ItemLike pBed,
-                                    ItemLike pWool) {
-    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, pBed)
+  protected void sleepingBag(RecipeOutput pRecipeOutput, ItemLike pBed,
+                             ItemLike pWool) {
+    this.shaped(RecipeCategory.DECORATIONS, pBed)
         .define('#', pWool)
         .pattern(" # ")
         .pattern(" # ")
@@ -138,9 +135,9 @@ public class ComfortsRecipeProvider extends RecipeProvider {
         .save(pRecipeOutput.withConditions(SleepingBagEnabledCondition.INSTANCE));
   }
 
-  protected static void hammock(RecipeOutput pRecipeOutput, ItemLike pBed,
-                                ItemLike pWool) {
-    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, pBed)
+  protected void hammock(RecipeOutput pRecipeOutput, ItemLike pBed,
+                         ItemLike pWool) {
+    this.shaped(RecipeCategory.DECORATIONS, pBed)
         .define('#', pWool)
         .define('S', Tags.Items.STRINGS)
         .define('X', Tags.Items.RODS_WOODEN)
@@ -150,5 +147,23 @@ public class ComfortsRecipeProvider extends RecipeProvider {
         .group("comforts:hammock")
         .unlockedBy(getHasName(pWool), has(pWool))
         .save(pRecipeOutput.withConditions(HammockEnabledCondition.INSTANCE));
+  }
+
+  public static final class Runner extends RecipeProvider.Runner {
+
+    public Runner(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+      super(output, lookupProvider);
+    }
+
+    @Nonnull
+    protected RecipeProvider createRecipeProvider(@Nonnull HolderLookup.Provider lookupProvider,
+                                                  @Nonnull RecipeOutput output) {
+      return new ComfortsRecipeProvider(lookupProvider, output);
+    }
+
+    @Nonnull
+    public String getName() {
+      return "Comforts recipes";
+    }
   }
 }

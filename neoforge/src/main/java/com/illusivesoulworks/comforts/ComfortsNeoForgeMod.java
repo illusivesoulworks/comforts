@@ -28,6 +28,7 @@ import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import com.illusivesoulworks.comforts.data.ComfortsBlockTagsProvider;
 import com.illusivesoulworks.comforts.data.ComfortsItemTagProvider;
 import com.illusivesoulworks.comforts.data.ComfortsLootTableProvider;
+import com.illusivesoulworks.comforts.data.ComfortsModelProvider;
 import com.illusivesoulworks.comforts.data.ComfortsRecipeProvider;
 import com.illusivesoulworks.comforts.data.HammockEnabledCondition;
 import com.illusivesoulworks.comforts.data.SleepingBagEnabledCondition;
@@ -53,7 +54,6 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -69,7 +69,8 @@ public class ComfortsNeoForgeMod {
       DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, ComfortsConstants.MOD_ID);
   public static final Supplier<AttachmentType<? extends ISleepData>> SLEEP_DATA =
       ATTACHMENT_TYPES.register("sleep_data",
-          () -> AttachmentType.serializable(SleepDataAttachment::new).copyOnDeath().build());
+                                () -> AttachmentType.serializable(SleepDataAttachment::new)
+                                    .copyOnDeath().build());
   public static final Supplier<MapCodec<? extends ICondition>> SLEEPING_BAG_CONDITION =
       CONDITIONS.register("sleeping_bag_enabled", () -> SleepingBagEnabledCondition.CODEC);
   public static final Supplier<MapCodec<? extends ICondition>> HAMMOCK_CONDITION =
@@ -90,25 +91,25 @@ public class ComfortsNeoForgeMod {
     eventBus.addListener(this::gatherData);
   }
 
-  private void gatherData(GatherDataEvent evt) {
+  private void gatherData(GatherDataEvent.Client evt) {
     DataGenerator generator = evt.getGenerator();
-
-    if (evt.includeServer()) {
-      ExistingFileHelper existingFileHelper = evt.getExistingFileHelper();
-      CompletableFuture<HolderLookup.Provider> lookupProvider = evt.getLookupProvider();
-      DataGenerator gen = evt.getGenerator();
-      PackOutput packOutput = gen.getPackOutput();
-      ComfortsBlockTagsProvider blockTagsProvider =
-          new ComfortsBlockTagsProvider(packOutput, lookupProvider, ComfortsConstants.MOD_ID,
-              existingFileHelper);
-      generator.addProvider(true, new LootTableProvider(packOutput, Collections.emptySet(),
-          List.of(new LootTableProvider.SubProviderEntry(ComfortsLootTableProvider::new,
-              LootContextParamSets.BLOCK)), lookupProvider));
-      generator.addProvider(true, new ComfortsRecipeProvider(packOutput, lookupProvider));
-      generator.addProvider(true, blockTagsProvider);
-      generator.addProvider(true, new ComfortsItemTagProvider(packOutput, lookupProvider,
-          blockTagsProvider.contentsGetter(), ComfortsConstants.MOD_ID, existingFileHelper));
-    }
+    CompletableFuture<HolderLookup.Provider> lookupProvider = evt.getLookupProvider();
+    DataGenerator gen = evt.getGenerator();
+    PackOutput packOutput = gen.getPackOutput();
+    ComfortsBlockTagsProvider blockTagsProvider =
+        new ComfortsBlockTagsProvider(packOutput, lookupProvider, ComfortsConstants.MOD_ID);
+    generator.addProvider(true, new LootTableProvider(packOutput, Collections.emptySet(),
+                                                      List.of(
+                                                          new LootTableProvider.SubProviderEntry(
+                                                              ComfortsLootTableProvider::new,
+                                                              LootContextParamSets.BLOCK)),
+                                                      lookupProvider));
+    generator.addProvider(true, new ComfortsRecipeProvider.Runner(packOutput, lookupProvider));
+    generator.addProvider(true, blockTagsProvider);
+    generator.addProvider(true, new ComfortsItemTagProvider(packOutput, lookupProvider,
+                                                            blockTagsProvider.contentsGetter(),
+                                                            ComfortsConstants.MOD_ID));
+    generator.addProvider(true, new ComfortsModelProvider(packOutput));
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
@@ -118,10 +119,10 @@ public class ComfortsNeoForgeMod {
   private void registerPayloadHandler(final RegisterPayloadHandlersEvent evt) {
     evt.registrar(ComfortsConstants.MOD_ID)
         .playToClient(SPacketAutoSleep.TYPE, SPacketAutoSleep.STREAM_CODEC,
-            ComfortsClientPayloadHandler.getInstance()::handleAutoSleep);
+                      ComfortsClientPayloadHandler.getInstance()::handleAutoSleep);
     evt.registrar(ComfortsConstants.MOD_ID)
         .playToClient(SPacketPlaceBag.TYPE, SPacketPlaceBag.STREAM_CODEC,
-            ComfortsClientPayloadHandler.getInstance()::handlePlaceBag);
+                      ComfortsClientPayloadHandler.getInstance()::handlePlaceBag);
   }
 
   private void creativeTab(final BuildCreativeModeTabContentsEvent evt) {

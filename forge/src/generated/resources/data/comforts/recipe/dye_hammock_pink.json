@@ -10,55 +10,23 @@
         "category": "building",
         "group": "comforts:hammock",
         "ingredients": [
-          {
-            "tag": "forge:dyes/pink"
-          },
+          "#c:dyes/pink",
           [
-            {
-              "item": "comforts:hammock_white"
-            },
-            {
-              "item": "comforts:hammock_orange"
-            },
-            {
-              "item": "comforts:hammock_magenta"
-            },
-            {
-              "item": "comforts:hammock_light_blue"
-            },
-            {
-              "item": "comforts:hammock_yellow"
-            },
-            {
-              "item": "comforts:hammock_lime"
-            },
-            {
-              "item": "comforts:hammock_gray"
-            },
-            {
-              "item": "comforts:hammock_light_gray"
-            },
-            {
-              "item": "comforts:hammock_cyan"
-            },
-            {
-              "item": "comforts:hammock_purple"
-            },
-            {
-              "item": "comforts:hammock_blue"
-            },
-            {
-              "item": "comforts:hammock_brown"
-            },
-            {
-              "item": "comforts:hammock_green"
-            },
-            {
-              "item": "comforts:hammock_red"
-            },
-            {
-              "item": "comforts:hammock_black"
-            }
+            "comforts:hammock_white",
+            "comforts:hammock_orange",
+            "comforts:hammock_magenta",
+            "comforts:hammock_light_blue",
+            "comforts:hammock_yellow",
+            "comforts:hammock_lime",
+            "comforts:hammock_gray",
+            "comforts:hammock_light_gray",
+            "comforts:hammock_cyan",
+            "comforts:hammock_purple",
+            "comforts:hammock_blue",
+            "comforts:hammock_brown",
+            "comforts:hammock_green",
+            "comforts:hammock_red",
+            "comforts:hammock_black"
           ]
         ],
         "result": {

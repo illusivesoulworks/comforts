@@ -112,13 +112,13 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         }
         Vec3 vec3 = pos.getCenter();
         level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3, 5.0F,
-            true, Level.ExplosionInteraction.BLOCK);
+                      true, Level.ExplosionInteraction.BLOCK);
         return InteractionResult.SUCCESS;
       } else if (state.getValue(OCCUPIED)) {
 
         if (!this.kickVillagerOutOfBed(level, pos)) {
           player.displayClientMessage(
-              Component.translatable("block.comforts." + this.type.name + ".occupied"), true);
+              Component.translatable("item.comforts." + this.type.name + ".occupied"), true);
         }
         return InteractionResult.SUCCESS;
       } else if (player instanceof ServerPlayer serverPlayer) {
@@ -137,7 +137,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
                 yield message;
               }
               case TOO_FAR_AWAY -> Component.translatable(
-                  "block.comforts." + type.name + ".too_far_away");
+                  "item.comforts." + type.name + ".too_far_away");
               default -> result.getMessage();
             };
 
@@ -180,18 +180,20 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
             final double d0 = 8.0D;
             final double d1 = 5.0D;
             final Vec3 vector3d = Vec3.atBottomCenterOf(at);
-
-
             List<Monster> list = player.level().getEntitiesOfClass(Monster.class,
-                new AABB(vector3d.x() - d0, vector3d.y() - d1, vector3d.z() - d0, vector3d.x() + d0,
-                    vector3d.y() + d1, vector3d.z() + d0),
-                (monster) -> monster.isPreventingPlayerRest((ServerLevel) player.level(),player));
-                if (!list.isEmpty()) {
-                  result = Either.left(Player.BedSleepingProblem.NOT_SAFE);
-                }
+                                                                   new AABB(vector3d.x() - d0,
+                                                                            vector3d.y() - d1,
+                                                                            vector3d.z() - d0,
+                                                                            vector3d.x() + d0,
+                                                                            vector3d.y() + d1,
+                                                                            vector3d.z() + d0),
+                                                                   (monster) -> monster.isPreventingPlayerRest(
+                                                                       player.serverLevel(),
+                                                                       player));
 
-
-
+            if (!list.isEmpty()) {
+              result = Either.left(Player.BedSleepingProblem.NOT_SAFE);
+            }
           }
 
           if (result == null) {
@@ -230,7 +232,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       return false;
     }
     return isReachableBedBlock(playerEntity, blockPos) || isReachableBedBlock(playerEntity,
-        blockPos.relative(direction.getOpposite()));
+                                                                              blockPos.relative(
+                                                                                  direction.getOpposite()));
   }
 
   private static boolean isReachableBedBlock(ServerPlayer playerEntity, BlockPos blockPos) {
@@ -244,7 +247,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
                                     Direction direction) {
     final BlockPos blockpos = blockPos.above();
     return isAbnormalCube(playerEntity.level(), blockpos) || isAbnormalCube(playerEntity.level(),
-        blockpos.relative(direction.getOpposite()));
+                                                                            blockpos.relative(
+                                                                                direction.getOpposite()));
   }
 
   private static boolean isAbnormalCube(Level world, BlockPos pos) {
@@ -258,11 +262,12 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     if (list.isEmpty()) {
       return false;
     } else {
-      list.get(0).stopSleeping();
+      list.getFirst().stopSleeping();
       return true;
     }
   }
 
+  @Nonnull
   @Override
   public BlockState playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
                                       @Nonnull Player player) {
@@ -289,19 +294,24 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     level.levelEvent(player, 2001, pos, getId(state));
 
     if (state.is(BlockTags.GUARDED_BY_PIGLINS)) {
-      PiglinAi.angerNearbyPiglins((ServerLevel) player.level(),player, false);
+      PiglinAi.angerNearbyPiglins((ServerLevel) player.level(), player, false);
     }
     return state;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  protected BlockState updateShape(BlockState stateIn, @NotNull LevelReader levelReader, @NotNull ScheduledTickAccess tickAccess, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, @NotNull RandomSource randomSource) {
+  protected BlockState updateShape(BlockState stateIn, @NotNull LevelReader levelReader,
+                                   @NotNull ScheduledTickAccess tickAccess,
+                                   @NotNull BlockPos currentPos, @NotNull Direction facing,
+                                   @NotNull BlockPos facingPos, @NotNull BlockState facingState,
+                                   @NotNull RandomSource randomSource) {
+
     if (stateIn.getValue(WATERLOGGED)) {
       tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
     }
-
-    return super.updateShape(stateIn, levelReader,tickAccess, currentPos, facing, facingPos, facingState, randomSource);
+    return super.updateShape(stateIn, levelReader, tickAccess, currentPos, facing, facingPos,
+                             facingState, randomSource);
   }
 
   @Nullable
@@ -310,7 +320,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     final FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
     final BlockState state = super.getStateForPlacement(context);
     return state == null ? null :
-        state.setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
+           state.setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
   }
 
   @Override

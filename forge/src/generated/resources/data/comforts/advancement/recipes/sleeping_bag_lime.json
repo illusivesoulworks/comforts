@@ -1,5 +1,5 @@
 {
-  "advancements": [
+  "forge:conditional": [
     {
       "parent": "minecraft:recipes/root",
       "criteria": {

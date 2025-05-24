@@ -7,7 +7,7 @@
     "MixinServerLevel"
   ],
   "client": [
-    "MixinPlayerRenderer"
+    "MixinLivingEntityRenderer"
   ],
   "server": [
   ],

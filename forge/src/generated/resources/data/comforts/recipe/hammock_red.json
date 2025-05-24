@@ -10,15 +10,9 @@
         "category": "misc",
         "group": "comforts:hammock",
         "key": {
-          "#": {
-            "item": "minecraft:red_wool"
-          },
-          "S": {
-            "tag": "forge:string"
-          },
-          "X": {
-            "tag": "forge:rods/wooden"
-          }
+          "#": "minecraft:red_wool",
+          "S": "#c:strings",
+          "X": "#c:rods/wooden"
         },
         "pattern": [
           " X ",

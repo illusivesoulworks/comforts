@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "comforts:block/light_blue_cloth" }
+    "": {
+      "model": "comforts:block/light_blue_cloth"
+    }
   }
 }

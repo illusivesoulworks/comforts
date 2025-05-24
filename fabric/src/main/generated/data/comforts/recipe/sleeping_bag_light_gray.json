@@ -8,9 +8,7 @@
   "category": "misc",
   "group": "comforts:sleeping_bag",
   "key": {
-    "#": {
-      "item": "minecraft:light_gray_wool"
-    }
+    "#": "minecraft:light_gray_wool"
   },
   "pattern": [
     " # ",

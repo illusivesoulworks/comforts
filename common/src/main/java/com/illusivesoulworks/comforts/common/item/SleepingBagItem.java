@@ -41,7 +41,7 @@ public class SleepingBagItem extends BaseComfortsItem {
         return result.map(bedSleepingProblem -> {
           final Component text = switch (bedSleepingProblem) {
             case NOT_POSSIBLE_NOW -> ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
-            case TOO_FAR_AWAY -> Component.translatable("block.comforts.sleeping_bag.too_far_away");
+            case TOO_FAR_AWAY -> Component.translatable("item.comforts.sleeping_bag.too_far_away");
             default -> bedSleepingProblem.getMessage();
           };
 
