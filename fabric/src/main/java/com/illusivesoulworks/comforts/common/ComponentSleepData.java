@@ -27,7 +27,7 @@ public class ComponentSleepData extends SleepDataImpl implements Component {
 
   @Override
   public void readFromNbt(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider provider) {
-    this.read(tag.getCompound("Data"));
+    this.read(tag.getCompound("Data").orElse(new CompoundTag()));
   }
 
   @Override

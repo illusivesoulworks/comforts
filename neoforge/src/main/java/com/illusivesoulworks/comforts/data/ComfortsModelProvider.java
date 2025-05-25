@@ -4,6 +4,7 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.block.RopeAndNailBlock;
+import com.mojang.math.Quadrant;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -13,11 +14,10 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.renderer.block.model.VariantMutator;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -71,10 +71,12 @@ public class ComfortsModelProvider extends ModelProvider {
       Block hammock = ComfortsRegistry.HAMMOCKS.get(color).get();
       Block sleepingBag = ComfortsRegistry.SLEEPING_BAGS.get(color).get();
       blockModels.blockStateOutput.accept(
-          BlockModelGenerators.createSimpleBlock(hammock, resourceLocation));
+          BlockModelGenerators.createSimpleBlock(hammock, BlockModelGenerators.plainVariant(
+              resourceLocation)));
       blockModels.registerSimpleFlatItemModel(hammock.asItem());
       blockModels.blockStateOutput.accept(
-          BlockModelGenerators.createSimpleBlock(sleepingBag, resourceLocation));
+          BlockModelGenerators.createSimpleBlock(sleepingBag, BlockModelGenerators.plainVariant(
+              resourceLocation)));
       blockModels.registerSimpleFlatItemModel(sleepingBag.asItem());
     }
     ResourceLocation rope =
@@ -82,25 +84,25 @@ public class ComfortsModelProvider extends ModelProvider {
     ResourceLocation supportingRope =
         ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "block/rope_and_nail_s");
     blockModels.blockStateOutput.accept(
-        MultiVariantGenerator.multiVariant(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get())
+        MultiVariantGenerator.dispatch(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get())
             .with(
-                PropertyDispatch.properties(RopeAndNailBlock.HORIZONTAL_FACING,
-                                            RopeAndNailBlock.SUPPORTING,
-                                            BaseComfortsBlock.WATERLOGGED)
+                PropertyDispatch.initial(RopeAndNailBlock.HORIZONTAL_FACING,
+                                         RopeAndNailBlock.SUPPORTING,
+                                         BaseComfortsBlock.WATERLOGGED)
                     .generate(
                         (horizontalFacing, isSupporting, isWaterlogged) -> {
-                          VariantProperties.Rotation rotation = VariantProperties.Rotation.R0;
+                          Quadrant rotation = Quadrant.R0;
 
                           if (horizontalFacing == Direction.EAST) {
-                            rotation = VariantProperties.Rotation.R270;
+                            rotation = Quadrant.R270;
                           } else if (horizontalFacing == Direction.WEST) {
-                            rotation = VariantProperties.Rotation.R90;
+                            rotation = Quadrant.R90;
                           } else if (horizontalFacing == Direction.NORTH) {
-                            rotation = VariantProperties.Rotation.R180;
+                            rotation = Quadrant.R180;
                           }
                           ResourceLocation resourceLocation = isSupporting ? supportingRope : rope;
-                          return Variant.variant().with(VariantProperties.Y_ROT, rotation)
-                              .with(VariantProperties.MODEL, resourceLocation);
+                          return BlockModelGenerators.plainVariant(resourceLocation)
+                              .with(VariantMutator.Y_ROT.withValue(rotation));
                         }
                     )
             )

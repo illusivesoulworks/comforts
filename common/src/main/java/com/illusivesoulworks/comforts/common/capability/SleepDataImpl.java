@@ -85,8 +85,8 @@ public class SleepDataImpl implements ISleepData {
 
   @Override
   public void read(CompoundTag tag) {
-    this.setWakeTime(tag.getLong(WAKE_TAG));
-    this.setTiredTime(tag.getLong(TIRED_TAG));
-    this.setSleepTime(tag.getLong(SLEEP_TAG));
+    this.setWakeTime(tag.getLong(WAKE_TAG).orElse(0L));
+    this.setTiredTime(tag.getLong(TIRED_TAG).orElse(0L));
+    this.setSleepTime(tag.getLong(SLEEP_TAG).orElse(0L));
   }
 }

@@ -48,7 +48,7 @@ public class FabricSleepEvents implements ISleepEvents {
 
   @Override
   public boolean isAwakeTime(Player player, BlockPos pos) {
-    boolean day = player.level().isDay();
+    boolean day = player.level().isBrightOutside();
     InteractionResult result =
         EntitySleepEvents.ALLOW_SLEEP_TIME.invoker().allowSleepTime(player, pos, !day);
 

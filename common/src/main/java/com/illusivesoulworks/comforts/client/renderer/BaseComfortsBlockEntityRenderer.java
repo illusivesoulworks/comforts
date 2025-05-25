@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBlockEntity> implements
     BlockEntityRenderer<T> {
@@ -71,7 +72,7 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
   @Override
   public void render(BaseComfortsBlockEntity blockEntity, float partialTicks,
                      @Nonnull PoseStack matrixStack, @Nonnull MultiBufferSource buffer,
-                     int combinedLightIn, int combinedOverlayIn) {
+                     int combinedLightIn, int combinedOverlayIn, Vec3 vec3) {
     final Material material = new Material(ResourceLocation.withDefaultNamespace("textures/atlas/blocks.png"),
         ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
             "entity/" + type + "/" + blockEntity.getColor().getName()));

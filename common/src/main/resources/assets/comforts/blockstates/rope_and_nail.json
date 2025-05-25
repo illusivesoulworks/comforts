@@ -33,20 +33,16 @@
       "y": 180
     },
     "facing=south,supporting=false,waterlogged=false": {
-      "model": "comforts:block/rope_and_nail",
-      "y": 0
+      "model": "comforts:block/rope_and_nail"
     },
     "facing=south,supporting=false,waterlogged=true": {
-      "model": "comforts:block/rope_and_nail",
-      "y": 0
+      "model": "comforts:block/rope_and_nail"
     },
     "facing=south,supporting=true,waterlogged=false": {
-      "model": "comforts:block/rope_and_nail_s",
-      "y": 0
+      "model": "comforts:block/rope_and_nail_s"
     },
     "facing=south,supporting=true,waterlogged=true": {
-      "model": "comforts:block/rope_and_nail_s",
-      "y": 0
+      "model": "comforts:block/rope_and_nail_s"
     },
     "facing=west,supporting=false,waterlogged=false": {
       "model": "comforts:block/rope_and_nail",

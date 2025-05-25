@@ -47,7 +47,7 @@ public class NeoForgeSleepEvents implements ISleepEvents {
 
   @Override
   public boolean isAwakeTime(Player player, BlockPos pos) {
-    return player.level().isDay();
+    return player.level().isBrightOutside();
   }
 
   @Override

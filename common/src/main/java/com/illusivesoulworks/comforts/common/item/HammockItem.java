@@ -18,7 +18,7 @@
 package com.illusivesoulworks.comforts.common.item;
 
 import com.illusivesoulworks.comforts.common.block.RopeAndNailBlock;
-import java.util.List;
+import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -29,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -56,8 +57,9 @@ public class HammockItem extends BaseComfortsItem {
 
       if (hasPartneredRopes(state, blockstate)) {
         InteractionResult result = this.place(BlockPlaceContext
-            .at(new BlockPlaceContext(context), context.getClickedPos().relative(direction),
-                direction));
+                                                  .at(new BlockPlaceContext(context),
+                                                      context.getClickedPos().relative(direction),
+                                                      direction));
 
         if (result.consumesAction()) {
           level.setBlockAndUpdate(pos, state.setValue(RopeAndNailBlock.SUPPORTING, true));
@@ -84,7 +86,7 @@ public class HammockItem extends BaseComfortsItem {
       }
     } else if (player != null) {
       player.displayClientMessage(Component.translatable("item.comforts.hammock.no_rope"),
-          true);
+                                  true);
     }
     return InteractionResult.FAIL;
   }
@@ -99,9 +101,11 @@ public class HammockItem extends BaseComfortsItem {
 
   @Override
   public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context,
-                              List<Component> components, @Nonnull TooltipFlag flag) {
-    components.add(Component.translatable("item.comforts.hammock.placement.tooltip",
-            Component.translatable("item.comforts.rope_and_nail").withStyle(ChatFormatting.YELLOW))
-        .withStyle(ChatFormatting.GRAY));
+                              @Nonnull TooltipDisplay tooltipDisplay,
+                              @Nonnull Consumer<Component> consumer, @Nonnull TooltipFlag flag) {
+    consumer.accept(Component.translatable("item.comforts.hammock.placement.tooltip",
+                                           Component.translatable("item.comforts.rope_and_nail")
+                                               .withStyle(ChatFormatting.YELLOW))
+                        .withStyle(ChatFormatting.GRAY));
   }
 }

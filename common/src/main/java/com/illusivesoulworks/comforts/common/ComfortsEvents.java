@@ -109,7 +109,7 @@ public class ComfortsEvents {
       }
     }
 
-    if (daySleeping[0] && level.getLevel().isDay()) {
+    if (daySleeping[0] && level.getLevel().isBrightOutside()) {
       final long i = currentTime + 24000L;
       long result = (i - i % 24000L) - 12001L;
       return Math.max(ComfortsConfig.SERVER.nightWakeTimeOffset.get() + result, currentTime);
@@ -257,7 +257,7 @@ public class ComfortsEvents {
   public static boolean announceSleepStatus(SleepStatus sleepStatus, ServerLevel serverLevel) {
     MinecraftServer server = serverLevel.getServer();
 
-    if (!serverLevel.isDay()) {
+    if (!serverLevel.isBrightOutside()) {
       return false;
     }
 

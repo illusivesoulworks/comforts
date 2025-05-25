@@ -5,6 +5,7 @@ import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.datafixers.util.Either;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 
@@ -71,13 +73,14 @@ public class SleepingBagItem extends BaseComfortsItem {
 
   @Override
   public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context,
-                              @Nonnull List<Component> components, @Nonnull TooltipFlag flag) {
+                              @Nonnull TooltipDisplay tooltipDisplay,
+                              @Nonnull Consumer<Component> consumer, @Nonnull TooltipFlag flag) {
 
     if (ComfortsConfig.SERVER.autoUse.get()) {
-      components.add(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.0")
-          .withStyle(ChatFormatting.GRAY));
-      components.add(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.1")
-          .withStyle(ChatFormatting.GRAY));
+      consumer.accept(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.0")
+                         .withStyle(ChatFormatting.GRAY));
+      consumer.accept(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.1")
+                         .withStyle(ChatFormatting.GRAY));
     }
   }
 }
