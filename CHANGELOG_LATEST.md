@@ -2,6 +2,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.21.x/CHANGELOG.md).
 
-## [10.0.0+1.21.4] - 2025.05.26
-### Changed
-- Updated to Minecraft 1.21.4
+## [10.0.1+1.21.4] - 2025.05.30
+### Fixed
+- Fixed outdated bundled Cardinal Components API [#177](https://github.com/illusivesoulworks/comforts/issues/177)
