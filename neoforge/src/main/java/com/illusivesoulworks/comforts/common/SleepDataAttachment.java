@@ -2,19 +2,19 @@ package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.common.capability.SleepDataImpl;
 import javax.annotation.Nonnull;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
-public class SleepDataAttachment extends SleepDataImpl implements INBTSerializable<CompoundTag> {
+public class SleepDataAttachment extends SleepDataImpl implements ValueIOSerializable {
 
   @Override
-  public CompoundTag serializeNBT(@Nonnull HolderLookup.Provider provider) {
-    return this.write();
+  public void serialize(@Nonnull ValueOutput valueOutput) {
+    this.write(valueOutput);
   }
 
   @Override
-  public void deserializeNBT(@Nonnull HolderLookup.Provider provider, @Nonnull CompoundTag nbt) {
-    this.read(nbt);
+  public void deserialize(@Nonnull ValueInput valueInput) {
+    this.read(valueInput);
   }
 }

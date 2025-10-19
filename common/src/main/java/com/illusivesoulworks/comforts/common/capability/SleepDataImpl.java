@@ -19,6 +19,9 @@ package com.illusivesoulworks.comforts.common.capability;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jetbrains.annotations.NotNull;
 
 public class SleepDataImpl implements ISleepData {
 
@@ -75,18 +78,16 @@ public class SleepDataImpl implements ISleepData {
   }
 
   @Override
-  public CompoundTag write() {
-    CompoundTag compound = new CompoundTag();
-    compound.putLong(WAKE_TAG, this.getWakeTime());
-    compound.putLong(TIRED_TAG, this.getTiredTime());
-    compound.putLong(SLEEP_TAG, this.getSleepTime());
-    return compound;
+  public void write(@NotNull ValueOutput output) {
+    output.putLong(WAKE_TAG, this.getWakeTime());
+    output.putLong(TIRED_TAG, this.getTiredTime());
+    output.putLong(SLEEP_TAG, this.getSleepTime());
   }
 
   @Override
-  public void read(CompoundTag tag) {
-    this.setWakeTime(tag.getLong(WAKE_TAG).orElse(0L));
-    this.setTiredTime(tag.getLong(TIRED_TAG).orElse(0L));
-    this.setSleepTime(tag.getLong(SLEEP_TAG).orElse(0L));
+  public void read(@NotNull ValueInput input) {
+    this.setWakeTime(input.getLong(WAKE_TAG).orElse(0L));
+    this.setTiredTime(input.getLong(TIRED_TAG).orElse(0L));
+    this.setSleepTime(input.getLong(SLEEP_TAG).orElse(0L));
   }
 }

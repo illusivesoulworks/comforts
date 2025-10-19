@@ -18,9 +18,12 @@
 package com.illusivesoulworks.comforts.common.capability;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public interface ISleepData {
 
@@ -48,7 +51,7 @@ public interface ISleepData {
 
   void copyFrom(ISleepData other);
 
-  CompoundTag write();
+  void write(@Nonnull ValueOutput output);
 
-  void read(CompoundTag tag);
+  void read(@Nonnull ValueInput input);
 }

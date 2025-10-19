@@ -224,7 +224,7 @@ public class ComfortsEvents {
 
     if (!player.level().isClientSide()) {
       return Services.SLEEP_EVENTS.getSleepData(player).map(data -> {
-        final long dayTime = player.getCommandSenderWorld().getDayTime();
+        final long dayTime = player.level().getDayTime();
         data.setSleepTime(dayTime);
 
         if (ComfortsConfig.SERVER.restrictSleeping.get()) {

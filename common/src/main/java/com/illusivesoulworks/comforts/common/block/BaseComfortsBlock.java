@@ -188,7 +188,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
                                                                             vector3d.y() + d1,
                                                                             vector3d.z() + d0),
                                                                    (monster) -> monster.isPreventingPlayerRest(
-                                                                       player.serverLevel(),
+                                                                       player.level(),
                                                                        player));
 
             if (!list.isEmpty()) {

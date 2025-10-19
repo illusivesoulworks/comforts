@@ -107,7 +107,6 @@ public class ComfortsNeoForgeMod {
     generator.addProvider(true, new ComfortsRecipeProvider.Runner(packOutput, lookupProvider));
     generator.addProvider(true, blockTagsProvider);
     generator.addProvider(true, new ComfortsItemTagProvider(packOutput, lookupProvider,
-                                                            blockTagsProvider.contentsGetter(),
                                                             ComfortsConstants.MOD_ID));
     generator.addProvider(true, new ComfortsModelProvider(packOutput));
   }
