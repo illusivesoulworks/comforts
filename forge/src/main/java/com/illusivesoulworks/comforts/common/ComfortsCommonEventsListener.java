@@ -18,24 +18,24 @@
 package com.illusivesoulworks.comforts.common;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 public class ComfortsCommonEventsListener {
 
   @SubscribeEvent
-  public void onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
-
-    if (!ComfortsEvents.canSetSpawn(evt.getEntity(), evt.getNewSpawn())) {
-      evt.setCanceled(true);
-    }
+  public boolean onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
+    ServerPlayer.RespawnConfig respawnConfig = evt.getConfig();
+    return respawnConfig != null && !ComfortsEvents.canSetSpawn(evt.getEntity(),
+                                                                respawnConfig.pos());
   }
 
   @SubscribeEvent
@@ -44,8 +44,8 @@ public class ComfortsCommonEventsListener {
       ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getEntity().level(), pos);
 
       switch (result) {
-        case ALLOW -> evt.setResult(Event.Result.ALLOW);
-        case DENY -> evt.setResult(Event.Result.DENY);
+        case ALLOW -> evt.setResult(Result.ALLOW);
+        case DENY -> evt.setResult(Result.DENY);
       }
     });
   }

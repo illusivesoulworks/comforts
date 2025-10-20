@@ -28,8 +28,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -37,7 +40,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 public class CapabilitySleepData {
 
@@ -63,26 +66,34 @@ public class CapabilitySleepData {
 
     final LazyOptional<ISleepData> optional;
     final ISleepData data;
+    final Player player;
 
-    Provider() {
+    Provider(Player player) {
       this.data = new SleepDataImpl();
       this.optional = LazyOptional.of(() -> data);
+      this.player = player;
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nullable Capability<T> capability, Direction side) {
-      return SLEEP_DATA_CAP.orEmpty(capability, optional);
+      return SLEEP_DATA_CAP.orEmpty(capability, this.optional);
     }
 
     @Override
     public Tag serializeNBT(HolderLookup.Provider provider) {
-      return data.write();
+      try (ProblemReporter.ScopedCollector problems = new ProblemReporter.ScopedCollector(this.player.problemPath(), Entity.LOGGER)) {
+        TagValueOutput output = TagValueOutput.createWithContext(problems, provider);
+        this.data.write(output);
+        return output.buildResult();
+      }
     }
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, Tag nbt) {
-      data.read((CompoundTag) nbt);
+      try (ProblemReporter.ScopedCollector problems = new ProblemReporter.ScopedCollector(this.player.problemPath(), Entity.LOGGER)) {
+        this.data.read(TagValueInput.create(problems, provider, (CompoundTag) nbt));
+      }
     }
   }
 
@@ -92,8 +103,8 @@ public class CapabilitySleepData {
     public void onAttachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
       Entity entity = evt.getObject();
 
-      if (entity instanceof Player) {
-        evt.addCapability(ISleepData.ID, new Provider());
+      if (entity instanceof Player player) {
+        evt.addCapability(ISleepData.ID, new Provider(player));
       }
     }
 

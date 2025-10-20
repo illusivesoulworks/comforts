@@ -25,14 +25,15 @@ import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.network.SPacketAutoSleep;
 import com.illusivesoulworks.comforts.common.network.SPacketPlaceBag;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -57,8 +58,8 @@ public class ComfortsFabricClientMod implements ClientModInitializer {
         SleepingBagBlockEntityRenderer::new);
     BlockEntityRenderers.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
         HammockBlockEntityRenderer::new);
-    BlockRenderLayerMap.INSTANCE.putBlock(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get(),
-        RenderType.translucent());
+    BlockRenderLayerMap.putBlock(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get(),
+                                 ChunkSectionLayer.TRANSLUCENT);
     ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
       if (client.player != null) {

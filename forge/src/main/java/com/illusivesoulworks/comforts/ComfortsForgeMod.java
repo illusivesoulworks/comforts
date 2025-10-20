@@ -36,17 +36,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -63,16 +61,12 @@ public class ComfortsForgeMod {
   public ComfortsForgeMod(FMLJavaModLoadingContext context) {
     ComfortsCommonMod.init();
     ComfortsCommonMod.initConfig();
-
-    IEventBus eventBus = context.getModEventBus();
-    if (FMLEnvironment.dist == Dist.CLIENT) {
-      ComfortsForgeClientMod.init(eventBus);
-    }
-    CONDITIONS.register(eventBus);
-    eventBus.addListener(this::setup);
-    eventBus.addListener(this::registerCapabilities);
-    eventBus.addListener(this::creativeTab);
-    eventBus.addListener(this::gatherData);
+    BusGroup busGroup = context.getModBusGroup();
+    CONDITIONS.register(busGroup);
+    FMLCommonSetupEvent.getBus(busGroup).addListener(this::setup);
+    RegisterCapabilitiesEvent.getBus(busGroup).addListener(this::registerCapabilities);
+    BuildCreativeModeTabContentsEvent.getBus(busGroup).addListener(this::creativeTab);
+    GatherDataEvent.getBus(busGroup).addListener(this::gatherData);
   }
 
   private void gatherData(GatherDataEvent evt) {

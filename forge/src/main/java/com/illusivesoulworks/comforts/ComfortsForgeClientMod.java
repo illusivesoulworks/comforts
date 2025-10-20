@@ -22,38 +22,38 @@ import com.illusivesoulworks.comforts.client.renderer.BaseComfortsBlockEntityRen
 import com.illusivesoulworks.comforts.client.renderer.HammockBlockEntityRenderer;
 import com.illusivesoulworks.comforts.client.renderer.SleepingBagBlockEntityRenderer;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
+@Mod.EventBusSubscriber(modid = ComfortsConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ComfortsForgeClientMod {
 
-  public static void init(IEventBus eventBus) {
-    eventBus.addListener(ComfortsForgeClientMod::clientSetup);
-    eventBus.addListener(ComfortsForgeClientMod::entityRenderers);
-    eventBus.addListener(ComfortsForgeClientMod::layerDefinitions);
-  }
-
-  private static void clientSetup(final FMLClientSetupEvent evt) {
+  @SubscribeEvent
+  public static void clientSetup(final FMLClientSetupEvent evt) {
     MinecraftForge.EVENT_BUS.register(new ComfortsClientEventsListener());
   }
 
-  private static void entityRenderers(final EntityRenderersEvent.RegisterRenderers evt) {
+  @SubscribeEvent
+  public static void entityRenderers(final EntityRenderersEvent.RegisterRenderers evt) {
     evt.registerBlockEntityRenderer(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(),
-        SleepingBagBlockEntityRenderer::new);
+                                    SleepingBagBlockEntityRenderer::new);
     evt.registerBlockEntityRenderer(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
-        HammockBlockEntityRenderer::new);
+                                    HammockBlockEntityRenderer::new);
   }
 
-  private static void layerDefinitions(final EntityRenderersEvent.RegisterLayerDefinitions evt) {
+  @SubscribeEvent
+  public static void layerDefinitions(final EntityRenderersEvent.RegisterLayerDefinitions evt) {
     evt.registerLayerDefinition(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_HEAD,
-        SleepingBagBlockEntityRenderer::createHeadLayer);
+                                SleepingBagBlockEntityRenderer::createHeadLayer);
     evt.registerLayerDefinition(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_FOOT,
-        SleepingBagBlockEntityRenderer::createFootLayer);
+                                SleepingBagBlockEntityRenderer::createFootLayer);
     evt.registerLayerDefinition(BaseComfortsBlockEntityRenderer.HAMMOCK_HEAD,
-        HammockBlockEntityRenderer::createHeadLayer);
+                                HammockBlockEntityRenderer::createHeadLayer);
     evt.registerLayerDefinition(BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT,
-        HammockBlockEntityRenderer::createFootLayer);
+                                HammockBlockEntityRenderer::createFootLayer);
   }
 }
