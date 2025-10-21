@@ -2,7 +2,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'net.neoforged.gradle.userdev' version '7.0.184'
+    id 'net.neoforged.gradle.userdev' version '7.0.192'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
 }
@@ -73,7 +73,7 @@ tasks.register('publishCurseForge', TaskPublishCurseForge) {
     apiToken = "${System.getenv('CURSEFORGE_KEY')}"
     //debugMode = true
     def projectId = "${cf_id}".toString()
-    def mainFile = upload(projectId, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
+    def mainFile = upload(projectId, file("${project.layout.buildDirectory.get()}/libs/${base.archivesName.get()}-${version}.jar"))
     mainFile.changelogType = 'markdown'
     mainFile.changelog = file('../CHANGELOG_LATEST.md')
     mainFile.releaseType = "${release_type}"
@@ -94,10 +94,10 @@ modrinth {
     token = "${System.getenv('MODRINTH_KEY')}" ?: ""
     //debugMode = true
     projectId = "${modrinth_id}"
-    versionName = getArchivesBaseName() + "-" + getVersion()
+    versionName = "${base.archivesName.get()}-${version}"
     versionType = "${release_type}"
     changelog = file('../CHANGELOG_LATEST.md').text
-    uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
+    uploadFile = file("${project.layout.buildDirectory.get()}/libs/${base.archivesName.get()}-${version}.jar")
     additionalFiles = [sourcesJar]
     gameVersions = "${release_versions}".split(",") as List<String>
 }

@@ -17,7 +17,7 @@
 
 package com.illusivesoulworks.comforts.client;
 
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderAvatarEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -27,18 +27,18 @@ public class ComfortsClientEventsListener {
   @SubscribeEvent
   public void onTick(final TickEvent.PlayerTickEvent.Pre evt) {
 
-    if (evt.side == LogicalSide.CLIENT) {
-      ComfortsClientEvents.onTick(evt.player);
+    if (evt.side() == LogicalSide.CLIENT) {
+      ComfortsClientEvents.onTick(evt.player());
     }
   }
 
   @SubscribeEvent
-  public void onPlayerRenderPre(final RenderPlayerEvent.Pre evt) {
+  public void onPlayerRenderPre(final RenderAvatarEvent.Pre evt) {
     ComfortsClientEvents.onPlayerRenderPre(evt.getState(), evt.getPoseStack());
   }
 
   @SubscribeEvent
-  public void onPlayerRenderPost(final RenderPlayerEvent.Post evt) {
+  public void onPlayerRenderPost(final RenderAvatarEvent.Post evt) {
     ComfortsClientEvents.onPlayerRenderPost(evt.getState(), evt.getPoseStack());
   }
 }

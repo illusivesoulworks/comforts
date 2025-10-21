@@ -80,7 +80,7 @@ public class ComfortsNeoForgeMod {
     ComfortsCommonMod.init();
     ComfortsCommonMod.initConfig();
 
-    if (FMLEnvironment.dist == Dist.CLIENT) {
+    if (FMLEnvironment.getDist() == Dist.CLIENT) {
       ComfortsNeoForgeClientMod.init(eventBus);
     }
     ATTACHMENT_TYPES.register(eventBus);

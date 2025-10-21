@@ -123,7 +123,7 @@ public class ComfortsEvents {
   public static void onWakeUp(Player player) {
     Level level = player.level();
 
-    if (!level.isClientSide) {
+    if (!level.isClientSide()) {
       Services.SLEEP_EVENTS.getSleepData(player)
           .ifPresent(data -> player.getSleepingPos().ifPresent(bedPos -> {
             final long wakeTime = level.getDayTime();

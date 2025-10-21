@@ -90,7 +90,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
                                           @Nonnull BlockPos pos, @Nonnull Player player,
                                           @Nonnull BlockHitResult hit) {
 
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       return InteractionResult.CONSUME;
     } else {
 
@@ -272,7 +272,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
   public BlockState playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
                                       @Nonnull Player player) {
 
-    if (!level.isClientSide && player.isCreative()) {
+    if (!level.isClientSide() && player.isCreative()) {
       final BedPart bedpart = state.getValue(PART);
 
       if (bedpart == BedPart.FOOT) {

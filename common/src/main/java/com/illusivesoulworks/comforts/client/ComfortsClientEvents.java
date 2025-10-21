@@ -26,8 +26,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +44,7 @@ public class ComfortsClientEvents {
 
   public static void onPlayerRenderPre(LivingEntityRenderState renderState, PoseStack poseStack) {
 
-    if (!(renderState instanceof PlayerRenderState playerState)) {
+    if (!(renderState instanceof AvatarRenderState playerState)) {
       return;
     }
     Minecraft mc = Minecraft.getInstance();
@@ -78,7 +78,7 @@ public class ComfortsClientEvents {
 
   public static void onPlayerRenderPost(LivingEntityRenderState renderState, PoseStack poseStack) {
 
-    if (!(renderState instanceof PlayerRenderState playerState)) {
+    if (!(renderState instanceof AvatarRenderState playerState)) {
       return;
     }
     Minecraft mc = Minecraft.getInstance();

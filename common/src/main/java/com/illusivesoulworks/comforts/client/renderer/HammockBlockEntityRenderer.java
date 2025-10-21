@@ -25,13 +25,14 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
-public class HammockBlockEntityRenderer extends BaseComfortsBlockEntityRenderer<HammockBlockEntity> {
+public class HammockBlockEntityRenderer
+    extends BaseComfortsBlockEntityRenderer<HammockBlockEntity> {
 
   private static final String BOARD = "board";
 
   public HammockBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
     super(ctx, "hammock", BaseComfortsBlockEntityRenderer.HAMMOCK_HEAD,
-        BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT);
+          BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT);
   }
 
   public static LayerDefinition createHeadLayer() {

@@ -25,11 +25,12 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
-public class SleepingBagBlockEntityRenderer extends BaseComfortsBlockEntityRenderer<SleepingBagBlockEntity> {
+public class SleepingBagBlockEntityRenderer
+    extends BaseComfortsBlockEntityRenderer<SleepingBagBlockEntity> {
 
   public SleepingBagBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
     super(ctx, "sleeping_bag", BaseComfortsBlockEntityRenderer.SLEEPING_BAG_HEAD,
-        BaseComfortsBlockEntityRenderer.SLEEPING_BAG_FOOT);
+          BaseComfortsBlockEntityRenderer.SLEEPING_BAG_FOOT);
   }
 
   public static LayerDefinition createHeadLayer() {

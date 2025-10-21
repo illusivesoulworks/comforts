@@ -35,7 +35,7 @@ public class ComfortsCommonEventsListener {
   public boolean onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
     ServerPlayer.RespawnConfig respawnConfig = evt.getConfig();
     return respawnConfig != null && !ComfortsEvents.canSetSpawn(evt.getEntity(),
-                                                                respawnConfig.pos());
+                                                                respawnConfig.respawnData().pos());
   }
 
   @SubscribeEvent
