@@ -1,7 +1,7 @@
 name: Bug Report
 description: Create a report for bugs, crashes, and other unintended behavior
 title: "[Bug]: "
-labels: [ "type: bug", "status: triage" ]
+labels: ["type: bug", "status: triage"]
 assignees:
   - TheIllusiveC4
 body:
@@ -15,11 +15,10 @@ body:
       label: Minecraft Version
       description: What version of Minecraft are you running? (Unlisted versions are unsupported)
       options:
-        - 1.21.5
-        - 1.21.4
+        - 1.21.10
+        - 1.21.8
         - 1.21.1
         - 1.20.1
-        - 1.19.2
     validations:
       required: true
   - type: textarea
@@ -28,6 +27,18 @@ body:
       label: What happened?
       description: Also tell us, what did you expect to happen and what are the steps to reproduce the issue?
       placeholder: A bug happened and I didn't expect that!
+    validations:
+      required: true
+  - type: dropdown
+    id: loader
+    attributes:
+      label: Loader
+      description: Are you using Fabric, Forge, NeoForge, or Quilt?
+      options:
+        - Fabric
+        - Forge
+        - NeoForge
+        - Quilt
     validations:
       required: true
   - type: textarea
