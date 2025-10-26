@@ -21,7 +21,6 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.client.model.Model;
@@ -34,12 +33,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BrightnessCombiner;
 import net.minecraft.client.renderer.blockentity.state.BedRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.MaterialSet;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.BedBlock;
@@ -49,7 +46,6 @@ import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBlockEntity> implements
     BlockEntityRenderer<T, BedRenderState> {
@@ -76,13 +72,6 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
     this(type, context.materials(), context.entityModelSet(), headModel, footModel);
   }
 
-  public BaseComfortsBlockEntityRenderer(SpecialModelRenderer.BakingContext context,
-                                         String type,
-                                         ModelLayerLocation headModel,
-                                         ModelLayerLocation footModel) {
-    this(type, context.materials(), context.entityModelSet(), headModel, footModel);
-  }
-
   public BaseComfortsBlockEntityRenderer(String type, MaterialSet materials,
                                          EntityModelSet modelSet,
                                          ModelLayerLocation headModel,
@@ -100,11 +89,11 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
   }
 
   public void extractRenderState(
-      @Nonnull BaseComfortsBlockEntity comfortsBlockEntity, @Nonnull BedRenderState bedRenderState,
+      @Nonnull T comfortsBlockEntity, @Nonnull BedRenderState bedRenderState,
       float partialTicks, @Nonnull Vec3 cameraPosition,
       @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress
   ) {
-    BlockEntityRenderer.super.extractRenderState((T) comfortsBlockEntity, bedRenderState,
+    BlockEntityRenderer.super.extractRenderState(comfortsBlockEntity, bedRenderState,
                                                  partialTicks, cameraPosition, breakProgress);
     bedRenderState.color = comfortsBlockEntity.getColor();
     bedRenderState.facing = comfortsBlockEntity.getBlockState().getValue(BedBlock.FACING);
@@ -137,54 +126,24 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
                      ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
                                                            "entity/" + this.type + "/"
                                                                + bedRenderState.color.getName()));
-    this.submitPiece(
-        poseStack,
-        nodeCollector,
-        bedRenderState.isHead ? this.headModel : this.footModel,
-        bedRenderState.facing,
-        material,
-        bedRenderState.lightCoords,
-        OverlayTexture.NO_OVERLAY,
-        false,
-        bedRenderState.breakProgress,
-        0
-    );
-  }
-
-  private void submitPiece(
-      PoseStack poseStack,
-      SubmitNodeCollector nodeCollector,
-      Model.Simple model,
-      Direction direction,
-      Material material,
-      int packedLight,
-      int packedOverlay,
-      boolean isFeet,
-      @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
-      int outlineColor
-  ) {
     poseStack.pushPose();
-    preparePose(poseStack, isFeet, direction);
+    poseStack.translate(0.0D, 0.1875D, 0.0D);
+    poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+    poseStack.translate(0.5D, 0.5D, 0.5D);
+    poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F + bedRenderState.facing.toYRot()));
+    poseStack.translate(-0.5D, -0.5D, -0.5D);
     nodeCollector.submitModel(
-        model,
+        bedRenderState.isHead ? this.headModel : this.footModel,
         Unit.INSTANCE,
         poseStack,
         material.renderType(RenderType::entitySolid),
-        packedLight,
-        packedOverlay,
+        bedRenderState.lightCoords,
+        OverlayTexture.NO_OVERLAY,
         -1,
         this.materials.get(material),
-        outlineColor,
-        crumblingOverlay
+        0,
+        bedRenderState.breakProgress
     );
     poseStack.popPose();
-  }
-
-  private static void preparePose(PoseStack poseStack, boolean isFeet, Direction direction) {
-    poseStack.translate(0.0D, 0.1875D, isFeet ? -1.0D : 0.0D);
-    poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-    poseStack.translate(0.5D, 0.5D, 0.5D);
-    poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F + direction.toYRot()));
-    poseStack.translate(-0.5D, -0.5D, -0.5D);
   }
 }

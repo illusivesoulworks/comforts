@@ -34,12 +34,12 @@ public class ComfortsClientEventsListener {
   }
 
   @SubscribeEvent
-  public void onPlayerRenderPre(final RenderPlayerEvent.Pre evt) {
+  public void onPlayerRenderPre(final RenderPlayerEvent.Pre<?> evt) {
     ComfortsClientEvents.onPlayerRenderPre(evt.getRenderState(), evt.getPoseStack());
   }
 
   @SubscribeEvent
-  public void onPlayerRenderPost(final RenderPlayerEvent.Post evt) {
+  public void onPlayerRenderPost(final RenderPlayerEvent.Post<?> evt) {
     ComfortsClientEvents.onPlayerRenderPost(evt.getRenderState(), evt.getPoseStack());
   }
 }
