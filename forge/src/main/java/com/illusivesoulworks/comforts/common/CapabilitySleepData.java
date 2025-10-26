@@ -100,7 +100,7 @@ public class CapabilitySleepData {
   public static class CapabilityEvents {
 
     @SubscribeEvent
-    public void onAttachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
+    public void onAttachCapabilities(final AttachCapabilitiesEvent.Entities evt) {
       Entity entity = evt.getObject();
 
       if (entity instanceof Player player) {
