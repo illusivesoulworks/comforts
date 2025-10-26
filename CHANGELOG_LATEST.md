@@ -2,6 +2,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.21.x/CHANGELOG.md).
 
-## [13.0.0+1.21.10] - 2025.10.21
+## [13.0.1+1.21.10] - 2025.10.26
 ### Changed
-- Updated to Minecraft 1.21.9-1.21.10
+- Minor code optimizations
+- Update README.md
+### Fixed
+- [Forge] Fixed world load crash [#185](https://github.com/illusivesoulworks/comforts/issues/185)
