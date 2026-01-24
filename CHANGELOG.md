@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [9.0.5+1.21.1] - 2026.01.23
+### Fixed
+- Fixed `nightWakeTimeOffset` configuration option conflicting with mods that increment ticks while sleeping [#190](https://github.com/illusivesoulworks/comforts/issues/190)
+
 ## [9.0.4+1.21.1] - 2025.05.23
 ### Changed
 - Updated `ru_ru` localization [#165](https://github.com/illusivesoulworks/comforts/pull/165)
