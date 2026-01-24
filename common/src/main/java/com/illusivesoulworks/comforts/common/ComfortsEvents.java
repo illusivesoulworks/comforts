@@ -68,14 +68,19 @@ public class ComfortsEvents {
     } else if (block instanceof SleepingBagBlock) {
       timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
     }
+    long[] daySpan = new long[] {100L, 11900L};
+    daySpan[0] = Math.max(1, daySpan[0] + ComfortsConfig.SERVER.dayWakeTimeOffset.get());
+    daySpan[1] =
+        Math.max(daySpan[0] + 1, daySpan[1] + ComfortsConfig.SERVER.nightWakeTimeOffset.get());
 
-    if (time > 500L && time < 11500L && (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
-        timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT)) {
+    if (time > daySpan[0] && time < daySpan[1]
+        && (timeUse == ComfortsConfig.ComfortsTimeUse.DAY
+        || timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT)) {
       return Result.ALLOW;
     }
 
-    if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT ||
-        timeUse == ComfortsConfig.ComfortsTimeUse.NIGHT) {
+    if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT
+        || timeUse == ComfortsConfig.ComfortsTimeUse.NIGHT) {
       return Result.DEFAULT;
     }
     return Result.DENY;
@@ -146,7 +151,7 @@ public class ComfortsEvents {
                   for (MobEffectInstance effect : effectInstances) {
                     player.addEffect(
                         new MobEffectInstance(effect.getEffect(), effect.getDuration(),
-                            effect.getAmplifier()));
+                                              effect.getAmplifier()));
                   }
                 }
                 double breakChance =
@@ -171,7 +176,7 @@ public class ComfortsEvents {
                   player.displayClientMessage(
                       Component.translatable("block.comforts.sleeping_bag.broke"), true);
                   level.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
-                      1.0F, 1.0F);
+                                  1.0F, 1.0F);
                   player.clearSleepingPos();
                 }
               }
@@ -235,7 +240,7 @@ public class ComfortsEvents {
 
           if (data.getTiredTime() > dayTime) {
             player.displayClientMessage(Component.translatable("capability.comforts.not_sleepy"),
-                true);
+                                        true);
             return Player.BedSleepingProblem.OTHER_PROBLEM;
           }
         }
@@ -277,7 +282,7 @@ public class ComfortsEvents {
         component = Component.translatable("comforts.skipping_day");
       } else {
         component = Component.translatable("sleep.players_sleeping", sleepStatus.amountSleeping(),
-            sleepStatus.sleepersNeeded(percentage));
+                                           sleepStatus.sleepersNeeded(percentage));
       }
 
       for (ServerPlayer player : serverLevel.players()) {
