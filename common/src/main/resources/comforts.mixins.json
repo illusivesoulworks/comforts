@@ -5,6 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AccessorPlayer",
+    "MixinCatLieOnBedGoal",
+    "MixinCatRelaxOnOwnerGoal",
+    "MixinCatSitOnBlockGoal",
     "MixinServerSleepStatus",
     "MixinSleepStatus"
   ],

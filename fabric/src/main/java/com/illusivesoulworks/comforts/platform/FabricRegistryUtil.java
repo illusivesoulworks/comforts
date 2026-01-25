@@ -23,7 +23,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,7 +39,7 @@ public class FabricRegistryUtil implements IRegistryUtil {
   }
 
   @Override
-  public Holder<MobEffect> getMobEffect(ResourceLocation resourceLocation) {
-    return BuiltInRegistries.MOB_EFFECT.get(resourceLocation).orElse(null);
+  public Holder<MobEffect> getMobEffect(Identifier id) {
+    return BuiltInRegistries.MOB_EFFECT.get(id).orElse(null);
   }
 }

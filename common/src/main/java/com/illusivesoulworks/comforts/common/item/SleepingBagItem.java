@@ -1,5 +1,6 @@
 package com.illusivesoulworks.comforts.common.item;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.platform.Services;
@@ -41,11 +42,15 @@ public class SleepingBagItem extends BaseComfortsItem {
         Either<Player.BedSleepingProblem, Unit> result =
             BaseComfortsBlock.trySleep(serverPlayer, context.getClickedPos().above(), true);
         return result.map(bedSleepingProblem -> {
-          final Component text = switch (bedSleepingProblem) {
-            case NOT_POSSIBLE_NOW -> ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
-            case TOO_FAR_AWAY -> Component.translatable("item.comforts.sleeping_bag.too_far_away");
-            default -> bedSleepingProblem.getMessage();
-          };
+          Component text;
+
+          if (bedSleepingProblem == ComfortsConstants.NOT_NOW) {
+            text = ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
+          } else if (bedSleepingProblem == Player.BedSleepingProblem.TOO_FAR_AWAY) {
+            text = Component.translatable("item.comforts.sleeping_bag.too_far_away");
+          } else {
+            text = bedSleepingProblem.message();
+          }
 
           if (text != null) {
             player.displayClientMessage(text, true);

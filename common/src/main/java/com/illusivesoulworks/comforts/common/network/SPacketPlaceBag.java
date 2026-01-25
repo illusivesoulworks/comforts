@@ -9,19 +9,19 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public record SPacketPlaceBag(int entityId, InteractionHand hand, Direction direction,
-                              BlockPos blockPos, Vector3f location, boolean inside)
+                              BlockPos blockPos, Vector3fc location, boolean inside)
     implements CustomPacketPayload {
 
   public static final Type<SPacketPlaceBag> TYPE =
-      new Type<>(ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "place_bag"));
+      new Type<>(Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "place_bag"));
   public static final StreamCodec<FriendlyByteBuf, SPacketPlaceBag> STREAM_CODEC =
       StreamCodec.composite(
           ByteBufCodecs.VAR_INT,

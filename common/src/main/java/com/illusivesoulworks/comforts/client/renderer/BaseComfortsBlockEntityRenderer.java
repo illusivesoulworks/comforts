@@ -26,18 +26,19 @@ import javax.annotation.Nullable;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BrightnessCombiner;
 import net.minecraft.client.renderer.blockentity.state.BedRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.MaterialSet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.ChestBlock;
@@ -51,13 +52,13 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
     BlockEntityRenderer<T, BedRenderState> {
 
   public static final ModelLayerLocation SLEEPING_BAG_HEAD = new ModelLayerLocation(
-      ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleeping_bag_head"), "main");
+      Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleeping_bag_head"), "main");
   public static final ModelLayerLocation SLEEPING_BAG_FOOT = new ModelLayerLocation(
-      ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleeping_bag_foot"), "main");
+      Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleeping_bag_foot"), "main");
   public static final ModelLayerLocation HAMMOCK_HEAD = new ModelLayerLocation(
-      ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "hammock_head"), "main");
+      Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "hammock_head"), "main");
   public static final ModelLayerLocation HAMMOCK_FOOT = new ModelLayerLocation(
-      ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "hammock_foot"), "main");
+      Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "hammock_foot"), "main");
 
   private final String type;
 
@@ -76,8 +77,8 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
                                          EntityModelSet modelSet,
                                          ModelLayerLocation headModel,
                                          ModelLayerLocation footModel) {
-    this.headModel = new Model.Simple(modelSet.bakeLayer(headModel), RenderType::entitySolid);
-    this.footModel = new Model.Simple(modelSet.bakeLayer(footModel), RenderType::entitySolid);
+    this.headModel = new Model.Simple(modelSet.bakeLayer(headModel), RenderTypes::entitySolid);
+    this.footModel = new Model.Simple(modelSet.bakeLayer(footModel), RenderTypes::entitySolid);
     this.materials = materials;
     this.type = type;
   }
@@ -122,8 +123,8 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
                      @Nonnull SubmitNodeCollector nodeCollector,
                      @Nonnull CameraRenderState cameraRenderState) {
     final Material material =
-        new Material(ResourceLocation.withDefaultNamespace("textures/atlas/blocks.png"),
-                     ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
+        new Material(Identifier.withDefaultNamespace("textures/atlas/blocks.png"),
+                     Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
                                                            "entity/" + this.type + "/"
                                                                + bedRenderState.color.getName()));
     poseStack.pushPose();
@@ -136,7 +137,7 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
         bedRenderState.isHead ? this.headModel : this.footModel,
         Unit.INSTANCE,
         poseStack,
-        material.renderType(RenderType::entitySolid),
+        material.renderType(RenderTypes::entitySolid),
         bedRenderState.lightCoords,
         OverlayTexture.NO_OVERLAY,
         -1,

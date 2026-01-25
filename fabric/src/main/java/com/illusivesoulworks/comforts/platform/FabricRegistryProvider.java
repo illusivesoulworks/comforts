@@ -29,7 +29,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FabricRegistryProvider implements IRegistryFactory {
 
@@ -55,7 +55,7 @@ public class FabricRegistryProvider implements IRegistryFactory {
     @SuppressWarnings("unchecked")
     private Provider(String modId, ResourceKey<? extends Registry<T>> key) {
       this.modId = modId;
-      registry = (Registry<T>) BuiltInRegistries.REGISTRY.getValue(key.location());
+      registry = (Registry<T>) BuiltInRegistries.REGISTRY.getValue(key.identifier());
     }
 
     private Provider(String modId, Registry<T> registry) {
@@ -66,7 +66,7 @@ public class FabricRegistryProvider implements IRegistryFactory {
     @Override
     @SuppressWarnings("unchecked")
     public <I extends T> RegistryObject<I> register(String name, Supplier<? extends I> supplier) {
-      final var rl = ResourceLocation.fromNamespaceAndPath(modId, name);
+      final var rl = Identifier.fromNamespaceAndPath(modId, name);
       final var obj = Registry.register(registry, rl, supplier.get());
       final var ro = new RegistryObject<I>() {
         final ResourceKey<I> key =
@@ -78,7 +78,7 @@ public class FabricRegistryProvider implements IRegistryFactory {
         }
 
         @Override
-        public ResourceLocation getId() {
+        public Identifier getId() {
           return rl;
         }
 

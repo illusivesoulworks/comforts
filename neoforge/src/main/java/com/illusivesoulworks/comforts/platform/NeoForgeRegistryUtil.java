@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,7 +39,7 @@ public class NeoForgeRegistryUtil implements IRegistryUtil {
   }
 
   @Override
-  public Holder<MobEffect> getMobEffect(ResourceLocation resourceLocation) {
+  public Holder<MobEffect> getMobEffect(Identifier resourceLocation) {
     return BuiltInRegistries.MOB_EFFECT.get(resourceLocation).orElse(null);
   }
 }

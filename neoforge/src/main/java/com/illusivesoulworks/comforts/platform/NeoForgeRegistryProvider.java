@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -82,7 +82,7 @@ public class NeoForgeRegistryProvider implements IRegistryFactory {
         }
 
         @Override
-        public ResourceLocation getId() {
+        public Identifier getId() {
           return obj.getId();
         }
 

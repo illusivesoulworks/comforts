@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
@@ -46,7 +47,7 @@ public class ComfortsCommonEventsListener {
       Player.BedSleepingProblem problem = evt.getProblem();
 
       if (result == ComfortsEvents.Result.ALLOW &&
-          problem == Player.BedSleepingProblem.NOT_POSSIBLE_NOW) {
+          problem == ComfortsConstants.NOT_NOW) {
         evt.setContinueSleeping(true);
       }
 
@@ -82,10 +83,10 @@ public class ComfortsCommonEventsListener {
     Player.BedSleepingProblem problem = evt.getVanillaProblem();
 
     if (result == ComfortsEvents.Result.ALLOW &&
-        problem == Player.BedSleepingProblem.NOT_POSSIBLE_NOW && evt.getProblem() == problem) {
+        problem == ComfortsConstants.NOT_NOW && evt.getProblem() == problem) {
       evt.setProblem(null);
     } else if (result == ComfortsEvents.Result.DENY) {
-      evt.setProblem(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+      evt.setProblem(ComfortsConstants.NOT_NOW);
     } else if (evt.getProblem() == null) {
       Player.BedSleepingProblem sleepingProblem = ComfortsEvents.onSleep(evt.getEntity());
 

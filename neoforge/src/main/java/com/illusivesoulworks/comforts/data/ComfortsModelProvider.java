@@ -20,7 +20,7 @@ import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.renderer.block.model.VariantMutator;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -61,7 +61,7 @@ public class ComfortsModelProvider extends ModelProvider {
     for (Map.Entry<DyeColor, Block> entry : dyedWool.entrySet()) {
       DyeColor color = entry.getKey();
       Block wool = entry.getValue();
-      ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(
+      Identifier resourceLocation = Identifier.fromNamespaceAndPath(
           ComfortsConstants.MOD_ID,
           "block/" + color.getName() + "_cloth");
       TEMPLATE.create(resourceLocation, new TextureMapping().put(TextureSlot.PARTICLE,
@@ -79,10 +79,10 @@ public class ComfortsModelProvider extends ModelProvider {
               resourceLocation)));
       blockModels.registerSimpleFlatItemModel(sleepingBag.asItem());
     }
-    ResourceLocation rope =
-        ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "block/rope_and_nail");
-    ResourceLocation supportingRope =
-        ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "block/rope_and_nail_s");
+    Identifier rope =
+        Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "block/rope_and_nail");
+    Identifier supportingRope =
+        Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "block/rope_and_nail_s");
     blockModels.blockStateOutput.accept(
         MultiVariantGenerator.dispatch(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get())
             .with(
@@ -100,7 +100,7 @@ public class ComfortsModelProvider extends ModelProvider {
                           } else if (horizontalFacing == Direction.NORTH) {
                             rotation = Quadrant.R180;
                           }
-                          ResourceLocation resourceLocation = isSupporting ? supportingRope : rope;
+                          Identifier resourceLocation = isSupporting ? supportingRope : rope;
                           return BlockModelGenerators.plainVariant(resourceLocation)
                               .with(VariantMutator.Y_ROT.withValue(rotation));
                         }

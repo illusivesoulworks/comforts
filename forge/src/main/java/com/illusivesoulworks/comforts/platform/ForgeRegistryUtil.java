@@ -24,7 +24,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,7 +42,7 @@ public class ForgeRegistryUtil implements IRegistryUtil {
   }
 
   @Override
-  public Holder<MobEffect> getMobEffect(ResourceLocation resourceLocation) {
+  public Holder<MobEffect> getMobEffect(Identifier resourceLocation) {
     return ForgeRegistries.MOB_EFFECTS.getHolder(resourceLocation).orElse(null);
   }
 }

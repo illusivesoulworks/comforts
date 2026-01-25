@@ -26,7 +26,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,11 +39,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 
 public class ComfortsEvents {
 
@@ -203,7 +203,7 @@ public class ComfortsEvents {
     ComfortsConfig.SERVER.sleepingBagEffects.get().forEach(effect -> {
       String[] elements = effect.split(";");
       Holder<MobEffect> mobEffect =
-          Services.REGISTRY_UTIL.getMobEffect(ResourceLocation.tryParse(elements[0]));
+          Services.REGISTRY_UTIL.getMobEffect(Identifier.tryParse(elements[0]));
 
       if (mobEffect == null) {
         return;
@@ -265,7 +265,7 @@ public class ComfortsEvents {
       int percentage = ComfortsConfig.SERVER.daySleepingPercentage.get();
 
       if (percentage < 0) {
-        percentage = serverLevel.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
+        percentage = serverLevel.getGameRules().get(GameRules.PLAYERS_SLEEPING_PERCENTAGE);
       }
 
       if (percentage > 100) {

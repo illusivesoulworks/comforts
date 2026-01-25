@@ -22,7 +22,7 @@ import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ComfortsConfig {
@@ -145,7 +145,7 @@ public class ComfortsConfig {
               s -> {
                 if (s instanceof String str) {
                   String[] split = str.split(";");
-                  return split.length == 3 && ResourceLocation.tryParse(split[0]) != null &&
+                  return split.length == 3 && Identifier.tryParse(split[0]) != null &&
                       split[1].matches("\\d+") && split[2].matches("\\d+");
                 }
                 return false;

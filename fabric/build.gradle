@@ -2,7 +2,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'fabric-loom' version '1.12.0-alpha.25'
+    id 'fabric-loom' version '1.13-SNAPSHOT'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
 }
@@ -46,7 +46,7 @@ fabricApi {
 }
 
 loom {
-    def aw = project(":common").file("src/main/resources/${mod_id}.accesswidener")
+    def aw = file("src/main/resources/${mod_id}.accesswidener")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
     }

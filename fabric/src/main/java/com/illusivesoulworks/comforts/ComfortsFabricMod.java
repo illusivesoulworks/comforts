@@ -29,10 +29,13 @@ import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ComfortsFabricMod implements ModInitializer {
 
@@ -41,8 +44,8 @@ public class ComfortsFabricMod implements ModInitializer {
     ComfortsCommonMod.init();
     EntitySleepEvents.ALLOW_SLEEPING.register(
         (player, sleepingPos) -> ComfortsEvents.onSleep(player));
-    EntitySleepEvents.ALLOW_SLEEP_TIME.register((player, sleepingPos, vanillaResult) -> {
-      ComfortsEvents.Result result = ComfortsEvents.checkTime(player.level(), sleepingPos);
+    EntitySleepEvents.ALLOW_BED.register((entity, sleepingPos, state, vanillaResult) -> {
+      ComfortsEvents.Result result = ComfortsEvents.checkTime(entity.level(), sleepingPos);
 
       if (result == ComfortsEvents.Result.DENY) {
         return InteractionResult.FAIL;

@@ -20,7 +20,7 @@ package com.illusivesoulworks.comforts.platform.services;
 import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -32,5 +32,5 @@ public interface IRegistryUtil {
   <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(
       BiFunction<BlockPos, BlockState, T> builder, Block... blocks);
 
-  Holder<MobEffect> getMobEffect(ResourceLocation resourceLocation);
+  Holder<MobEffect> getMobEffect(Identifier resourceLocation);
 }

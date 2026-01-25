@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.SimpleChannel;
@@ -35,7 +35,7 @@ public class ComfortsForgeNetwork {
 
   public static void setup() {
     INSTANCE = ChannelBuilder.named(
-            ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "main"))
+            Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "main"))
         .networkProtocolVersion(PTC_VERSION)
         .clientAcceptedVersions(Channel.VersionTest.exact(PTC_VERSION))
         .serverAcceptedVersions(Channel.VersionTest.exact(PTC_VERSION)).simpleChannel();

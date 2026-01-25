@@ -17,13 +17,10 @@
 
 package com.illusivesoulworks.comforts.common.item;
 
-import com.illusivesoulworks.comforts.ComfortsConstants;
-import com.illusivesoulworks.comforts.platform.Services;
 import javax.annotation.Nonnull;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;

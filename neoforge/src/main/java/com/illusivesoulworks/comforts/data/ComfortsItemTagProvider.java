@@ -10,7 +10,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.KeyTagProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
@@ -37,12 +37,12 @@ public class ComfortsItemTagProvider extends KeyTagProvider<Item> {
 
     this.tag(Tags.Items.ROPES)
         .addOptional(ResourceKey.create(Registries.ITEM,
-                                        ResourceLocation.fromNamespaceAndPath("quark", "rope")))
+                                        Identifier.fromNamespaceAndPath("quark", "rope")))
         .addOptional(ResourceKey.create(Registries.ITEM,
-                                        ResourceLocation.fromNamespaceAndPath("supplementaries",
+                                        Identifier.fromNamespaceAndPath("supplementaries",
                                                                               "rope")))
         .addOptional(ResourceKey.create(Registries.ITEM,
-                                        ResourceLocation.fromNamespaceAndPath("farmersdelight",
+                                        Identifier.fromNamespaceAndPath("farmersdelight",
                                                                               "rope")));
   }
 }

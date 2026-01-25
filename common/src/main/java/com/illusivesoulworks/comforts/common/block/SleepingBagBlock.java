@@ -25,8 +25,8 @@ import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -53,8 +53,8 @@ public class SleepingBagBlock extends BaseComfortsBlock {
             .strength(0.1F)
             .setId(ResourceKey.create(
                 Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
-                                                      "sleeping_bag_" + color.getName()))));
+                Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
+                                                "sleeping_bag_" + color.getName()))));
     this.color = color;
   }
 

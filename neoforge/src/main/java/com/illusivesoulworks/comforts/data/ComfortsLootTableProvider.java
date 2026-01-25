@@ -4,7 +4,7 @@ import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import java.util.Collections;
 import javax.annotation.Nonnull;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.loot.BlockLootSubProvider;

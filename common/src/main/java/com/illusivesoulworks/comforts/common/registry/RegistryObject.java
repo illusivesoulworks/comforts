@@ -20,13 +20,13 @@ package com.illusivesoulworks.comforts.common.registry;
 import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface RegistryObject<T> extends Supplier<T> {
 
   ResourceKey<T> getResourceKey();
 
-  ResourceLocation getId();
+  Identifier getId();
 
   @Override
   T get();

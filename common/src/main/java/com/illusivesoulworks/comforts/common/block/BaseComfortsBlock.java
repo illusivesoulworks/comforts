@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common.block;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
@@ -37,10 +38,12 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.attribute.BedRule;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -102,8 +105,10 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           return InteractionResult.CONSUME;
         }
       }
+      BedRule bedrule = level.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, pos);
 
-      if (!canSetSpawn(level)) {
+      if (bedrule.explodes()) {
+        bedrule.errorMessage().ifPresent((msg) -> player.displayClientMessage(msg, true));
         level.removeBlock(pos, false);
         final BlockPos blockpos = pos.relative(state.getValue(FACING).getOpposite());
 
@@ -113,7 +118,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         Vec3 vec3 = pos.getCenter();
         level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3, 5.0F,
                       true, Level.ExplosionInteraction.BLOCK);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS_SERVER;
       } else if (state.getValue(OCCUPIED)) {
 
         if (!this.kickVillagerOutOfBed(level, pos)) {
@@ -123,27 +128,24 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         return InteractionResult.SUCCESS;
       } else if (player instanceof ServerPlayer serverPlayer) {
         trySleep(serverPlayer, pos, false).ifLeft((result) -> {
+          Component text = null;
 
-          if (result != null) {
-            final Component text = switch (result) {
-              case NOT_POSSIBLE_NOW -> {
-                Component message = ComfortsConfig.ComfortsTimeUse.NIGHT.getMessage();
+          if (result == ComfortsConstants.NOT_NOW) {
+            text = ComfortsConfig.ComfortsTimeUse.NIGHT.getMessage();
 
-                if (type == BedType.HAMMOCK) {
-                  message = ComfortsConfig.SERVER.hammockUse.get().getMessage();
-                } else if (type == BedType.SLEEPING_BAG) {
-                  message = ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
-                }
-                yield message;
-              }
-              case TOO_FAR_AWAY -> Component.translatable(
-                  "item.comforts." + type.name + ".too_far_away");
-              default -> result.getMessage();
-            };
-
-            if (text != null) {
-              player.displayClientMessage(text, true);
+            if (type == BedType.HAMMOCK) {
+              text = ComfortsConfig.SERVER.hammockUse.get().getMessage();
+            } else if (type == BedType.SLEEPING_BAG) {
+              text = ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
             }
+          } else if (result == Player.BedSleepingProblem.TOO_FAR_AWAY) {
+            text = Component.translatable("item.comforts." + type.name + ".too_far_away");
+          } else {
+            text = result.message();
+          }
+
+          if (text != null) {
+            player.displayClientMessage(text, true);
           }
         });
       }
@@ -159,21 +161,20 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     if (ret != null) {
       return Either.left(ret);
     }
-    final Direction direction = player.level().getBlockState(at)
+    ServerLevel level = player.level();
+    final Direction direction = level.getBlockState(at)
         .getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(player.getDirection());
 
     if (!player.isSleeping() && player.isAlive()) {
 
-      if (!player.level().dimensionType().natural()) {
-        result = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
-      } else if (!bedInRange(player, at, direction)) {
+      if (!bedInRange(player, at, direction)) {
         result = Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
       } else if (bedBlocked(player, at, direction)) {
         result = Either.left(Player.BedSleepingProblem.OBSTRUCTED);
       } else {
 
         if (Services.SLEEP_EVENTS.isAwakeTime(player, at)) {
-          result = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+          result = Either.left(ComfortsConstants.NOT_NOW);
         } else {
 
           if (!player.isCreative()) {
@@ -219,7 +220,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       ((AccessorPlayer) player).setSleepCounter(0);
       player.awardStat(Stats.SLEEP_IN_BED);
       CriteriaTriggers.SLEPT_IN_BED.trigger(player);
-      ((ServerLevel) player.level()).updateSleepingPlayerList();
+      player.level().updateSleepingPlayerList();
     }
     return result;
   }

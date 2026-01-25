@@ -25,13 +25,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 public record SPacketAutoSleep(int entityId, BlockPos pos) implements CustomPacketPayload {
 
   public static final Type<SPacketAutoSleep> TYPE =
-      new Type<>(ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "auto_sleep"));
+      new Type<>(Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "auto_sleep"));
   public static final StreamCodec<FriendlyByteBuf, SPacketAutoSleep> STREAM_CODEC =
       StreamCodec.composite(
           ByteBufCodecs.VAR_INT,

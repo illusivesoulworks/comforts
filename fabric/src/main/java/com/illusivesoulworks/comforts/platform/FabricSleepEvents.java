@@ -49,8 +49,8 @@ public class FabricSleepEvents implements ISleepEvents {
   @Override
   public boolean isAwakeTime(Player player, BlockPos pos) {
     boolean day = player.level().isBrightOutside();
-    InteractionResult result =
-        EntitySleepEvents.ALLOW_SLEEP_TIME.invoker().allowSleepTime(player, pos, !day);
+    InteractionResult result = EntitySleepEvents.ALLOW_BED.invoker()
+        .allowBed(player, pos, player.level().getBlockState(pos), !day);
 
     if (result != InteractionResult.PASS) {
       return !result.consumesAction();
@@ -71,7 +71,10 @@ public class FabricSleepEvents implements ISleepEvents {
   @Override
   public void sendPlaceBagPacket(ServerPlayer player, UseOnContext context) {
     ServerPlayNetworking.send(player,
-        new SPacketPlaceBag(player.getId(), context.getHand(), context.getClickedFace(),
-            context.getClickedPos(), context.getClickLocation().toVector3f(), context.isInside()));
+                              new SPacketPlaceBag(player.getId(), context.getHand(),
+                                                  context.getClickedFace(),
+                                                  context.getClickedPos(),
+                                                  context.getClickLocation().toVector3f(),
+                                                  context.isInside()));
   }
 }

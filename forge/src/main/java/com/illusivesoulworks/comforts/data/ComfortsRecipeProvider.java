@@ -15,7 +15,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -107,19 +107,19 @@ public class ComfortsRecipeProvider extends RecipeProvider {
     List<ICondition> conditions = new ArrayList<>();
     conditions.add(HammockEnabledCondition.INSTANCE);
     conditions.add(new NotCondition(new TagEmptyCondition(
-        ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ropes")))));
+        ItemTags.create(Identifier.fromNamespaceAndPath("c", "ropes")))));
 
     ConditionalRecipe.builder()
         .condition(new AndCondition(conditions))
         .recipe(
             ShapelessRecipeBuilder.shapeless(this.items, RecipeCategory.DECORATIONS, ropeAndNail, 2)
                 .requires(Tags.Items.INGOTS_IRON)
-                .requires(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ropes")))
+                .requires(ItemTags.create(Identifier.fromNamespaceAndPath("c", "ropes")))
                 .group("comforts:rope_and_nail")
                 .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
                 ::save)
         .save(this.output,
-              ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
+              Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
                                                     "shapeless_" + getItemName(ropeAndNail)));
   }
 
@@ -137,7 +137,7 @@ public class ComfortsRecipeProvider extends RecipeProvider {
                       .group(pGroup)
                       .unlockedBy("has_needed_dye", has(dye))
                       ::save)
-          .save(this.output, ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
+          .save(this.output, Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
                                                                    "dye_" + getItemName(item)));
     }
   }

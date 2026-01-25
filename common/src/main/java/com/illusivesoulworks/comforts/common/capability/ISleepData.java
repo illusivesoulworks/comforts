@@ -20,15 +20,14 @@ package com.illusivesoulworks.comforts.common.capability;
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 public interface ISleepData {
 
-  ResourceLocation ID =
-      ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleep_data");
+  Identifier ID =
+      Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleep_data");
   String WAKE_TAG = "wakeTime";
   String TIRED_TAG = "tiredTime";
   String SLEEP_TAG = "sleepTime";

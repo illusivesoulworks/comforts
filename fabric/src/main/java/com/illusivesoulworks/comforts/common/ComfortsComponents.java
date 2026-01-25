@@ -18,7 +18,7 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
@@ -29,7 +29,7 @@ public class ComfortsComponents implements EntityComponentInitializer {
 
   public static final ComponentKey<ComponentSleepData> SLEEP_TRACKER =
       ComponentRegistry.getOrCreate(
-          ResourceLocation.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleep_tracker"),
+          Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "sleep_tracker"),
           ComponentSleepData.class);
 
   @Override
