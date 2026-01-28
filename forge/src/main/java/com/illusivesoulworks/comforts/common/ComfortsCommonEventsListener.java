@@ -32,13 +32,6 @@ import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 public class ComfortsCommonEventsListener {
 
-//  @SubscribeEvent
-//  public boolean onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
-//    ServerPlayer.RespawnConfig respawnConfig = evt.getConfig();
-//    return respawnConfig != null && !ComfortsEvents.canSetSpawn(evt.getEntity(),
-//                                                                respawnConfig.respawnData().pos());
-//  }
-
   @SubscribeEvent
   public void onSleepTimeCheck(final SleepingTimeCheckEvent evt) {
     evt.getSleepingLocation().ifPresent(pos -> {

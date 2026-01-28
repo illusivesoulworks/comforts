@@ -19,24 +19,13 @@ package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
-import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerSetSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 
 public class ComfortsCommonEventsListener {
-
-//  @SubscribeEvent
-//  public void onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
-//
-//    if (!ComfortsEvents.canSetSpawn(evt.getEntity(), evt.getNewSpawn())) {
-//      evt.setCanceled(true);
-//    }
-//  }
 
   @SubscribeEvent
   public void onSleepTimeCheck(final CanContinueSleepingEvent evt) {
@@ -71,23 +60,4 @@ public class ComfortsCommonEventsListener {
   public void onPlayerWakeUp(final PlayerWakeUpEvent evt) {
     ComfortsEvents.onWakeUp(evt.getEntity());
   }
-
-//  @SubscribeEvent
-//  public void onPlayerSleep(final CanPlayerSleepEvent evt) {
-//
-//    if (evt.getProblem() == null) {
-//      ComfortsEvents.Result result =
-//          ComfortsEvents.checkTime(evt.getEntity().level(), evt.getPos());
-//
-//      if (result == ComfortsEvents.Result.DENY) {
-//        evt.setProblem(ComfortsConstants.NOT_NOW);
-//      } else {
-//        Player.BedSleepingProblem sleepingProblem = ComfortsEvents.onSleep(evt.getEntity());
-//
-//        if (sleepingProblem != null) {
-//          evt.setProblem(sleepingProblem);
-//        }
-//      }
-//    }
-//  }
 }

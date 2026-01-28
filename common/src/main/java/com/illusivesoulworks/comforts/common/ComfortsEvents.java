@@ -48,40 +48,6 @@ import net.minecraft.world.level.gamerules.GameRules;
 
 public class ComfortsEvents {
 
-//  public static boolean canSetSpawn(Player player, BlockPos pos) {
-//    final Level level = player.level();
-//
-//    if (pos != null && !player.level().isClientSide()) {
-//      final Block block = level.getBlockState(pos).getBlock();
-//
-//      return !(block instanceof SleepingBagBlock) && !(block instanceof HammockBlock);
-//    }
-//    return true;
-//  }
-
-//  public static Result checkTime(Level level, BlockPos pos) {
-//    final long time = level.getDayTime() % 24000L;
-//    ComfortsConfig.ComfortsTimeUse timeUse = ComfortsConfig.ComfortsTimeUse.NIGHT;
-//    Block block = level.getBlockState(pos).getBlock();
-//
-//    if (block instanceof HammockBlock) {
-//      timeUse = ComfortsConfig.SERVER.hammockUse.get();
-//    } else if (block instanceof SleepingBagBlock) {
-//      timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
-//    }
-//
-//    if (time > 500L && time < 11500L && (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
-//        timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT)) {
-//      return Result.ALLOW;
-//    }
-//
-//    if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT ||
-//        timeUse == ComfortsConfig.ComfortsTimeUse.NIGHT) {
-//      return Result.DEFAULT;
-//    }
-//    return Result.DENY;
-//  }
-
   public static ComfortsConstants.Result canSleep(Level level, BlockPos pos) {
     return BaseComfortsBlock.canSleep(level, pos);
   }
@@ -151,7 +117,7 @@ public class ComfortsEvents {
                   for (MobEffectInstance effect : effectInstances) {
                     player.addEffect(
                         new MobEffectInstance(effect.getEffect(), effect.getDuration(),
-                            effect.getAmplifier()));
+                                              effect.getAmplifier()));
                   }
                 }
                 double breakChance =
@@ -176,7 +142,7 @@ public class ComfortsEvents {
                   player.displayClientMessage(
                       Component.translatable("item.comforts.sleeping_bag.broke"), true);
                   level.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
-                      1.0F, 1.0F);
+                                  1.0F, 1.0F);
                   player.clearSleepingPos();
                 }
               }
@@ -240,7 +206,7 @@ public class ComfortsEvents {
 
           if (data.getTiredTime() > dayTime) {
             player.displayClientMessage(Component.translatable("capability.comforts.not_sleepy"),
-                true);
+                                        true);
             return Player.BedSleepingProblem.OTHER_PROBLEM;
           }
         }
@@ -282,7 +248,7 @@ public class ComfortsEvents {
         component = Component.translatable("comforts.skipping_day");
       } else {
         component = Component.translatable("sleep.players_sleeping", sleepStatus.amountSleeping(),
-            sleepStatus.sleepersNeeded(percentage));
+                                           sleepStatus.sleepersNeeded(percentage));
       }
 
       for (ServerPlayer player : serverLevel.players()) {
