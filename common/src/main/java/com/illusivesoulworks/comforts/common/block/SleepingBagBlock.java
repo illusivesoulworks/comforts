@@ -77,6 +77,11 @@ public class SleepingBagBlock extends BaseComfortsBlock {
   }
 
   @Override
+  public ComfortsConstants.TimeUse getComfortsTimeUse() {
+    return ComfortsConfig.SERVER.sleepingBagUse.get();
+  }
+
+  @Override
   public BlockEntityType<? extends BaseComfortsBlockEntity> getBlockEntityType() {
     return ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get();
   }

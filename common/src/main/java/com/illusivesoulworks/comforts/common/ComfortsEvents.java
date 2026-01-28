@@ -18,6 +18,7 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
+import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.block.HammockBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
 import com.illusivesoulworks.comforts.platform.Services;
@@ -47,38 +48,42 @@ import net.minecraft.world.level.gamerules.GameRules;
 
 public class ComfortsEvents {
 
-  public static boolean canSetSpawn(Player player, BlockPos pos) {
-    final Level level = player.level();
+//  public static boolean canSetSpawn(Player player, BlockPos pos) {
+//    final Level level = player.level();
+//
+//    if (pos != null && !player.level().isClientSide()) {
+//      final Block block = level.getBlockState(pos).getBlock();
+//
+//      return !(block instanceof SleepingBagBlock) && !(block instanceof HammockBlock);
+//    }
+//    return true;
+//  }
 
-    if (pos != null && !player.level().isClientSide()) {
-      final Block block = level.getBlockState(pos).getBlock();
+//  public static Result checkTime(Level level, BlockPos pos) {
+//    final long time = level.getDayTime() % 24000L;
+//    ComfortsConfig.ComfortsTimeUse timeUse = ComfortsConfig.ComfortsTimeUse.NIGHT;
+//    Block block = level.getBlockState(pos).getBlock();
+//
+//    if (block instanceof HammockBlock) {
+//      timeUse = ComfortsConfig.SERVER.hammockUse.get();
+//    } else if (block instanceof SleepingBagBlock) {
+//      timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
+//    }
+//
+//    if (time > 500L && time < 11500L && (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
+//        timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT)) {
+//      return Result.ALLOW;
+//    }
+//
+//    if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT ||
+//        timeUse == ComfortsConfig.ComfortsTimeUse.NIGHT) {
+//      return Result.DEFAULT;
+//    }
+//    return Result.DENY;
+//  }
 
-      return !(block instanceof SleepingBagBlock) && !(block instanceof HammockBlock);
-    }
-    return true;
-  }
-
-  public static Result checkTime(Level level, BlockPos pos) {
-    final long time = level.getDayTime() % 24000L;
-    ComfortsConfig.ComfortsTimeUse timeUse = ComfortsConfig.ComfortsTimeUse.NIGHT;
-    Block block = level.getBlockState(pos).getBlock();
-
-    if (block instanceof HammockBlock) {
-      timeUse = ComfortsConfig.SERVER.hammockUse.get();
-    } else if (block instanceof SleepingBagBlock) {
-      timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
-    }
-
-    if (time > 500L && time < 11500L && (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
-        timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT)) {
-      return Result.ALLOW;
-    }
-
-    if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT ||
-        timeUse == ComfortsConfig.ComfortsTimeUse.NIGHT) {
-      return Result.DEFAULT;
-    }
-    return Result.DENY;
+  public static ComfortsConstants.Result canSleep(Level level, BlockPos pos) {
+    return BaseComfortsBlock.canSleep(level, pos);
   }
 
   public static long getWakeTime(ServerLevel level, long currentTime, long newTime) {
@@ -88,7 +93,7 @@ public class ComfortsEvents {
     for (Player player : players) {
       player.getSleepingPos().ifPresent(bedPos -> {
         if (player.isSleepingLongEnough()) {
-          ComfortsConfig.ComfortsTimeUse timeUse = ComfortsConfig.ComfortsTimeUse.NIGHT;
+          ComfortsConstants.TimeUse timeUse = ComfortsConstants.TimeUse.NIGHT;
           Block block = level.getBlockState(bedPos).getBlock();
 
           if (block instanceof HammockBlock) {
@@ -97,8 +102,8 @@ public class ComfortsEvents {
             timeUse = ComfortsConfig.SERVER.sleepingBagUse.get();
           }
 
-          if (timeUse == ComfortsConfig.ComfortsTimeUse.DAY ||
-              timeUse == ComfortsConfig.ComfortsTimeUse.DAY_OR_NIGHT) {
+          if (timeUse == ComfortsConstants.TimeUse.DAY ||
+              timeUse == ComfortsConstants.TimeUse.DAY_OR_NIGHT) {
             daySleeping[0] = true;
           }
         }
@@ -286,11 +291,5 @@ public class ComfortsEvents {
       return true;
     }
     return false;
-  }
-
-  public enum Result {
-    ALLOW,
-    DEFAULT,
-    DENY
   }
 }

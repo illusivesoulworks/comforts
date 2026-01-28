@@ -28,7 +28,6 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Unit;
-import net.minecraft.world.attribute.BedRule;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -37,20 +36,10 @@ import net.minecraftforge.network.PacketDistributor;
 public class ForgeSleepEvents implements ISleepEvents {
 
   @Override
-  public Player.BedSleepingProblem getSleepResult(ServerPlayer player, BlockPos pos) {
-    return ForgeEventFactory.onPlayerSleepInBed(player, Optional.of(pos));
-  }
-
-  @Override
-  public Either<Player.BedSleepingProblem, Unit> getSleepResult(ServerPlayer player, BlockPos pos,
-                                                                Either<Player.BedSleepingProblem, Unit> vanillaResult) {
-    return vanillaResult;
-  }
-
-  @Override
-  public boolean isAwakeTime(Player player, BlockPos pos) {
-    return !ForgeEventFactory.onSleepingTimeCheck(player, Optional.of(pos),
-                                                  BedRule.CAN_SLEEP_WHEN_DARK);
+  public Either<Player.BedSleepingProblem, Unit> canStartSleeping(ServerPlayer player, BlockPos pos,
+                                                                  Either<Player.BedSleepingProblem, Unit> vanillaResult) {
+    Player.BedSleepingProblem problem = ForgeEventFactory.onPlayerSleepInBed(player, Optional.of(pos));
+    return problem != null ? Either.left(problem) : vanillaResult;
   }
 
   @Override

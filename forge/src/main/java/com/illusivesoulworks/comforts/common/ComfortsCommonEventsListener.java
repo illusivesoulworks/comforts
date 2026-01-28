@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts.common;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -31,17 +32,17 @@ import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 public class ComfortsCommonEventsListener {
 
-  @SubscribeEvent
-  public boolean onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
-    ServerPlayer.RespawnConfig respawnConfig = evt.getConfig();
-    return respawnConfig != null && !ComfortsEvents.canSetSpawn(evt.getEntity(),
-                                                                respawnConfig.respawnData().pos());
-  }
+//  @SubscribeEvent
+//  public boolean onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
+//    ServerPlayer.RespawnConfig respawnConfig = evt.getConfig();
+//    return respawnConfig != null && !ComfortsEvents.canSetSpawn(evt.getEntity(),
+//                                                                respawnConfig.respawnData().pos());
+//  }
 
   @SubscribeEvent
   public void onSleepTimeCheck(final SleepingTimeCheckEvent evt) {
     evt.getSleepingLocation().ifPresent(pos -> {
-      ComfortsEvents.Result result = ComfortsEvents.checkTime(evt.getEntity().level(), pos);
+      ComfortsConstants.Result result = ComfortsEvents.canSleep(evt.getEntity().level(), pos);
 
       switch (result) {
         case ALLOW -> evt.setResult(Result.ALLOW);

@@ -30,28 +30,24 @@ import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 
 public class ComfortsCommonEventsListener {
 
-  @SubscribeEvent
-  public void onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
-
-    if (!ComfortsEvents.canSetSpawn(evt.getEntity(), evt.getNewSpawn())) {
-      evt.setCanceled(true);
-    }
-  }
+//  @SubscribeEvent
+//  public void onPlayerSetSpawn(final PlayerSetSpawnEvent evt) {
+//
+//    if (!ComfortsEvents.canSetSpawn(evt.getEntity(), evt.getNewSpawn())) {
+//      evt.setCanceled(true);
+//    }
+//  }
 
   @SubscribeEvent
   public void onSleepTimeCheck(final CanContinueSleepingEvent evt) {
 
     evt.getEntity().getSleepingPos().ifPresent(sleepingPos -> {
-      ComfortsEvents.Result result =
-          ComfortsEvents.checkTime(evt.getEntity().level(), sleepingPos);
-      Player.BedSleepingProblem problem = evt.getProblem();
+      ComfortsConstants.Result result =
+          ComfortsEvents.canSleep(evt.getEntity().level(), sleepingPos);
 
-      if (result == ComfortsEvents.Result.ALLOW &&
-          problem == ComfortsConstants.NOT_NOW) {
+      if (result == ComfortsConstants.Result.ALLOW) {
         evt.setContinueSleeping(true);
-      }
-
-      if (result == ComfortsEvents.Result.DENY) {
+      } else if (result == ComfortsConstants.Result.DENY) {
         evt.setContinueSleeping(false);
       }
     });
@@ -76,23 +72,22 @@ public class ComfortsCommonEventsListener {
     ComfortsEvents.onWakeUp(evt.getEntity());
   }
 
-  @SubscribeEvent
-  public void onPlayerSleep(final CanPlayerSleepEvent evt) {
-    ComfortsEvents.Result result =
-        ComfortsEvents.checkTime(evt.getEntity().level(), evt.getPos());
-    Player.BedSleepingProblem problem = evt.getVanillaProblem();
-
-    if (result == ComfortsEvents.Result.ALLOW &&
-        problem == ComfortsConstants.NOT_NOW && evt.getProblem() == problem) {
-      evt.setProblem(null);
-    } else if (result == ComfortsEvents.Result.DENY) {
-      evt.setProblem(ComfortsConstants.NOT_NOW);
-    } else if (evt.getProblem() == null) {
-      Player.BedSleepingProblem sleepingProblem = ComfortsEvents.onSleep(evt.getEntity());
-
-      if (sleepingProblem != null) {
-        evt.setProblem(sleepingProblem);
-      }
-    }
-  }
+//  @SubscribeEvent
+//  public void onPlayerSleep(final CanPlayerSleepEvent evt) {
+//
+//    if (evt.getProblem() == null) {
+//      ComfortsEvents.Result result =
+//          ComfortsEvents.checkTime(evt.getEntity().level(), evt.getPos());
+//
+//      if (result == ComfortsEvents.Result.DENY) {
+//        evt.setProblem(ComfortsConstants.NOT_NOW);
+//      } else {
+//        Player.BedSleepingProblem sleepingProblem = ComfortsEvents.onSleep(evt.getEntity());
+//
+//        if (sleepingProblem != null) {
+//          evt.setProblem(sleepingProblem);
+//        }
+//      }
+//    }
+//  }
 }

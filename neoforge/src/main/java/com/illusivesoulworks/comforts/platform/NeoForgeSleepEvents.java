@@ -35,19 +35,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class NeoForgeSleepEvents implements ISleepEvents {
 
   @Override
-  public Player.BedSleepingProblem getSleepResult(ServerPlayer player, BlockPos pos) {
-    return null;
-  }
-
-  @Override
-  public Either<Player.BedSleepingProblem, Unit> getSleepResult(ServerPlayer player, BlockPos pos,
-                                                                Either<Player.BedSleepingProblem, Unit> vanillaResult) {
+  public Either<Player.BedSleepingProblem, Unit> canStartSleeping(ServerPlayer player, BlockPos pos,
+                                                                  Either<Player.BedSleepingProblem, Unit> vanillaResult) {
     return EventHooks.canPlayerStartSleeping(player, pos, vanillaResult);
-  }
-
-  @Override
-  public boolean isAwakeTime(Player player, BlockPos pos) {
-    return player.level().isBrightOutside();
   }
 
   @Override

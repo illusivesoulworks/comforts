@@ -4,6 +4,7 @@
   "package": "com.illusivesoulworks.comforts.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "MixinPlayer",
     "MixinServerLevel"
   ],
   "client": [

@@ -21,7 +21,6 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -68,8 +67,8 @@ public class ComfortsConfig {
     public final SpectreConfigSpec.BooleanValue autoUse;
     public final SpectreConfigSpec.BooleanValue restrictSleeping;
     public final SpectreConfigSpec.DoubleValue restMultiplier;
-    public final SpectreConfigSpec.EnumValue<ComfortsTimeUse> hammockUse;
-    public final SpectreConfigSpec.EnumValue<ComfortsTimeUse> sleepingBagUse;
+    public final SpectreConfigSpec.EnumValue<ComfortsConstants.TimeUse> hammockUse;
+    public final SpectreConfigSpec.EnumValue<ComfortsConstants.TimeUse> sleepingBagUse;
     public final SpectreConfigSpec.IntValue daySleepingPercentage;
     public final SpectreConfigSpec.IntValue dayWakeTimeOffset;
     public final SpectreConfigSpec.IntValue nightWakeTimeOffset;
@@ -95,11 +94,11 @@ public class ComfortsConfig {
           .defineInRange("restMultiplier", 2.0D, 1.0D, 20.0D);
 
       hammockUse = builder.comment("The time of day that hammocks can be used.")
-          .translation(CONFIG_PREFIX + "hammockUse").defineEnum("hammockUse", ComfortsTimeUse.DAY);
+          .translation(CONFIG_PREFIX + "hammockUse").defineEnum("hammockUse", ComfortsConstants.TimeUse.DAY);
 
       sleepingBagUse = builder.comment("The time of day that sleeping bags can be used.")
           .translation(CONFIG_PREFIX + "sleepingBagUse")
-          .defineEnum("sleepingBagUse", ComfortsTimeUse.NIGHT);
+          .defineEnum("sleepingBagUse", ComfortsConstants.TimeUse.NIGHT);
 
       daySleepingPercentage = builder.comment("""
               What percentage of players must sleep to skip the day.
@@ -157,20 +156,5 @@ public class ComfortsConfig {
     ComfortsEvents.effectsInitialized = false;
   }
 
-  public enum ComfortsTimeUse {
-    NONE(Component.translatable("item.comforts.no_sleep")),
-    DAY(Component.translatable("item.comforts.hammock.no_sleep")),
-    NIGHT(Component.translatable("block.minecraft.bed.no_sleep")),
-    DAY_OR_NIGHT(Component.translatable("item.comforts.hammock.no_sleep.2"));
 
-    private final Component message;
-
-    ComfortsTimeUse(Component message) {
-      this.message = message;
-    }
-
-    public Component getMessage() {
-      return this.message;
-    }
-  }
 }

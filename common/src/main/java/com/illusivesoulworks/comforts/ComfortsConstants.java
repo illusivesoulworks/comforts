@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.comforts;
 
+import java.util.logging.Level;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
@@ -29,4 +30,27 @@ public class ComfortsConstants {
   public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
   public static final Player.BedSleepingProblem NOT_NOW = new Player.BedSleepingProblem(null);
+
+  public enum Result {
+    ALLOW,
+    DEFAULT,
+    DENY
+  }
+
+  public enum TimeUse {
+    NONE(Component.translatable("item.comforts.no_sleep")),
+    DAY(Component.translatable("item.comforts.hammock.no_sleep")),
+    NIGHT(Component.translatable("block.minecraft.bed.no_sleep")),
+    DAY_OR_NIGHT(Component.translatable("item.comforts.hammock.no_sleep.2"));
+
+    private final Component message;
+
+    TimeUse(Component message) {
+      this.message = message;
+    }
+
+    public Component getMessage() {
+      return this.message;
+    }
+  }
 }

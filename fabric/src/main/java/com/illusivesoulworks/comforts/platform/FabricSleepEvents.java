@@ -36,26 +36,10 @@ import net.minecraft.world.item.context.UseOnContext;
 public class FabricSleepEvents implements ISleepEvents {
 
   @Override
-  public Player.BedSleepingProblem getSleepResult(ServerPlayer player, BlockPos pos) {
-    return EntitySleepEvents.ALLOW_SLEEPING.invoker().allowSleep(player, pos);
-  }
-
-  @Override
-  public Either<Player.BedSleepingProblem, Unit> getSleepResult(ServerPlayer player, BlockPos pos,
-                                                                Either<Player.BedSleepingProblem, Unit> vanillaResult) {
-    return vanillaResult;
-  }
-
-  @Override
-  public boolean isAwakeTime(Player player, BlockPos pos) {
-    boolean day = player.level().isBrightOutside();
-    InteractionResult result = EntitySleepEvents.ALLOW_BED.invoker()
-        .allowBed(player, pos, player.level().getBlockState(pos), !day);
-
-    if (result != InteractionResult.PASS) {
-      return !result.consumesAction();
-    }
-    return day;
+  public Either<Player.BedSleepingProblem, Unit> canStartSleeping(ServerPlayer player, BlockPos pos,
+                                                                  Either<Player.BedSleepingProblem, Unit> vanillaResult) {
+    Player.BedSleepingProblem problem = EntitySleepEvents.ALLOW_SLEEPING.invoker().allowSleep(player, pos);
+    return problem != null ? Either.left(problem) : vanillaResult;
   }
 
   @Override

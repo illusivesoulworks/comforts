@@ -31,6 +31,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -45,11 +46,11 @@ public class ComfortsFabricMod implements ModInitializer {
     EntitySleepEvents.ALLOW_SLEEPING.register(
         (player, sleepingPos) -> ComfortsEvents.onSleep(player));
     EntitySleepEvents.ALLOW_BED.register((entity, sleepingPos, state, vanillaResult) -> {
-      ComfortsEvents.Result result = ComfortsEvents.checkTime(entity.level(), sleepingPos);
+      ComfortsConstants.Result result = ComfortsEvents.canSleep(entity.level(), sleepingPos);
 
-      if (result == ComfortsEvents.Result.DENY) {
+      if (result == ComfortsConstants.Result.DENY) {
         return InteractionResult.FAIL;
-      } else if (result == ComfortsEvents.Result.ALLOW) {
+      } else if (result == ComfortsConstants.Result.ALLOW) {
         return InteractionResult.SUCCESS;
       }
       return InteractionResult.PASS;

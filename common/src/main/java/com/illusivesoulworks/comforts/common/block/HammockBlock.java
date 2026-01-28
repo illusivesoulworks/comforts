@@ -140,6 +140,11 @@ public class HammockBlock extends BaseComfortsBlock {
         .setValue(BaseComfortsBlock.WATERLOGGED, ifluidstate.getType() == Fluids.WATER) : null;
   }
 
+  @Override
+  public ComfortsConstants.TimeUse getComfortsTimeUse() {
+    return ComfortsConfig.SERVER.hammockUse.get();
+  }
+
   @Nonnull
   @Override
   public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {

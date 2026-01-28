@@ -128,16 +128,10 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         return InteractionResult.SUCCESS;
       } else if (player instanceof ServerPlayer serverPlayer) {
         trySleep(serverPlayer, pos, false).ifLeft((result) -> {
-          Component text = null;
+          Component text;
 
           if (result == ComfortsConstants.NOT_NOW) {
-            text = ComfortsConfig.ComfortsTimeUse.NIGHT.getMessage();
-
-            if (type == BedType.HAMMOCK) {
-              text = ComfortsConfig.SERVER.hammockUse.get().getMessage();
-            } else if (type == BedType.SLEEPING_BAG) {
-              text = ComfortsConfig.SERVER.sleepingBagUse.get().getMessage();
-            }
+            text = this.getComfortsTimeUse().getMessage();
           } else if (result == Player.BedSleepingProblem.TOO_FAR_AWAY) {
             text = Component.translatable("item.comforts." + type.name + ".too_far_away");
           } else {
@@ -155,12 +149,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
 
   public static Either<Player.BedSleepingProblem, Unit> trySleep(ServerPlayer player, BlockPos at,
                                                                  boolean dryRun) {
-    final Player.BedSleepingProblem ret = Services.SLEEP_EVENTS.getSleepResult(player, at);
     Either<Player.BedSleepingProblem, Unit> result = null;
-
-    if (ret != null) {
-      return Either.left(ret);
-    }
     ServerLevel level = player.level();
     final Direction direction = level.getBlockState(at)
         .getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(player.getDirection());
@@ -172,10 +161,13 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       } else if (bedBlocked(player, at, direction)) {
         result = Either.left(Player.BedSleepingProblem.OBSTRUCTED);
       } else {
+        BedRule bedrule = level.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, at);
 
-        if (Services.SLEEP_EVENTS.isAwakeTime(player, at)) {
-          result = Either.left(ComfortsConstants.NOT_NOW);
-        } else {
+        if (bedrule.canSleep() == BedRule.Rule.NEVER) {
+          return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
+        }
+
+        if (canSleep(level, at) != ComfortsConstants.Result.DENY) {
 
           if (!player.isCreative()) {
             final double d0 = 8.0D;
@@ -200,12 +192,14 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           if (result == null) {
             result = Either.right(Unit.INSTANCE);
           }
+        } else {
+          result = Either.left(ComfortsConstants.NOT_NOW);
         }
       }
     } else {
       result = Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
     }
-    result = Services.SLEEP_EVENTS.getSleepResult(player, at, result);
+    result = Services.SLEEP_EVENTS.canStartSleeping(player, at, result);
 
     if (!dryRun && result.right().isPresent()) {
       Block block = player.level().getBlockState(at).getBlock();
@@ -347,6 +341,38 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           .ifPresent((blockEntity) -> blockEntity.setName(stack.getHoverName()));
     }
   }
+
+  public static ComfortsConstants.Result canSleep(Level level, BlockPos at) {
+    BlockState blockState = level.getBlockState(at);
+
+    if (blockState.getBlock() instanceof BaseComfortsBlock comfortsBlock) {
+      final long time = level.getDayTime() % 24000L;
+      ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
+      long[] daySpan = new long[] {100L, 11900L};
+      daySpan[0] = Math.max(1, daySpan[0] + ComfortsConfig.SERVER.dayWakeTimeOffset.get());
+      daySpan[1] =
+          Math.max(daySpan[0] + 1, daySpan[1] + ComfortsConfig.SERVER.nightWakeTimeOffset.get());
+
+      if (time > daySpan[0] && time < daySpan[1]
+          && (timeUse == ComfortsConstants.TimeUse.DAY
+          || timeUse == ComfortsConstants.TimeUse.DAY_OR_NIGHT)) {
+        return ComfortsConstants.Result.ALLOW;
+      }
+
+      if (timeUse == ComfortsConstants.TimeUse.DAY_OR_NIGHT
+          || timeUse == ComfortsConstants.TimeUse.NIGHT) {
+
+        if (BedRule.CAN_SLEEP_WHEN_DARK.canSleep(level)) {
+          return ComfortsConstants.Result.ALLOW;
+        }
+        return ComfortsConstants.Result.DENY;
+      }
+      return ComfortsConstants.Result.DENY;
+    }
+    return ComfortsConstants.Result.DEFAULT;
+  }
+
+  public abstract ComfortsConstants.TimeUse getComfortsTimeUse();
 
   public abstract BlockEntityType<? extends BaseComfortsBlockEntity> getBlockEntityType();
 

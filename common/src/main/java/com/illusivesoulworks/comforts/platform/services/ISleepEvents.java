@@ -28,12 +28,8 @@ import net.minecraft.world.item.context.UseOnContext;
 
 public interface ISleepEvents {
 
-  Player.BedSleepingProblem getSleepResult(ServerPlayer player, BlockPos pos);
-
-  Either<Player.BedSleepingProblem, Unit> getSleepResult(ServerPlayer player, BlockPos pos,
-                                                         Either<Player.BedSleepingProblem, Unit> vanillaResult);
-
-  boolean isAwakeTime(Player player, BlockPos pos);
+  Either<Player.BedSleepingProblem, Unit> canStartSleeping(ServerPlayer player, BlockPos pos,
+                                                           Either<Player.BedSleepingProblem, Unit> vanillaResult);
 
   Optional<? extends ISleepData> getSleepData(Player player);
 
