@@ -1,11 +1,9 @@
 package com.illusivesoulworks.comforts.mixin;
 
-import com.illusivesoulworks.comforts.common.ComfortsTags;
+import com.illusivesoulworks.comforts.common.ComfortsMixinHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,21 +36,13 @@ public abstract class MixinCatRelaxOnOwnerGoal {
       cancellable = true
   )
   private void comforts$canUse(CallbackInfoReturnable<Boolean> cir) {
+    BlockPos blockPos = ComfortsMixinHooks.getRelaxableCatBlock(this.cat, this.ownerPlayer);
 
-    if (this.ownerPlayer != null) {
-      BlockPos pos = this.ownerPlayer.blockPosition();
-      BlockState blockstate = this.cat.level().getBlockState(pos);
+    if (blockPos != null) {
+      this.goalPos = blockPos;
 
-      if (blockstate.is(ComfortsTags.Blocks.HAMMOCKS) || blockstate.is(
-          ComfortsTags.Blocks.SLEEPING_BAGS)) {
-        this.goalPos = blockstate.getOptionalValue(
-                HorizontalDirectionalBlock.FACING)
-            .map((direction) -> pos.relative(direction.getOpposite()))
-            .orElseGet(() -> new BlockPos(pos));
-
-        if (!this.spaceIsOccupied()) {
-          cir.setReturnValue(true);
-        }
+      if (!this.spaceIsOccupied()) {
+        cir.setReturnValue(true);
       }
     }
   }

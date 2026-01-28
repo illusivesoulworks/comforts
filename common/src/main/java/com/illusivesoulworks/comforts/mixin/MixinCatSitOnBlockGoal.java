@@ -1,9 +1,12 @@
 package com.illusivesoulworks.comforts.mixin;
 
+import com.illusivesoulworks.comforts.common.ComfortsMixinHooks;
 import com.illusivesoulworks.comforts.common.ComfortsTags;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.CatSitOnBlockGoal;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -14,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CatSitOnBlockGoal.class)
-public class MixinCatSitOnBlockGoal {
+public abstract class MixinCatSitOnBlockGoal {
 
   @Inject(
       at = @At(
@@ -25,12 +28,8 @@ public class MixinCatSitOnBlockGoal {
       cancellable = true)
   private void comforts$isValidTarget(LevelReader levelReader, BlockPos blockPos,
                                       CallbackInfoReturnable<Boolean> cir, BlockState blockState) {
-    if (blockState.is(ComfortsTags.Blocks.SLEEPING_BAGS,
-                      state -> state.getOptionalValue(BaseComfortsBlock.PART)
-                          .map(part -> part != BedPart.HEAD).orElse(true)) ||
-        blockState.is(ComfortsTags.Blocks.HAMMOCKS,
-                      state -> state.getOptionalValue(BaseComfortsBlock.PART)
-                          .map(part -> part != BedPart.HEAD).orElse(true))) {
+
+    if (ComfortsMixinHooks.isValidCatBlock(blockState)) {
       cir.setReturnValue(true);
     }
   }

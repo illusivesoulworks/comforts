@@ -8,6 +8,7 @@
     "MixinCatLieOnBedGoal",
     "MixinCatRelaxOnOwnerGoal",
     "MixinCatSitOnBlockGoal",
+    "MixinMoveToBlockGoal",
     "MixinServerSleepStatus",
     "MixinSleepStatus"
   ],
