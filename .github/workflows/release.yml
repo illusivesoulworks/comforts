@@ -21,7 +21,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
       - name: Publish
-        run: ./gradlew publishFabricForgeNeoForge
+        run: ./gradlew publishMod
         env:
           CURSEFORGE_KEY: ${{ secrets.CURSEFORGE_KEY }}
           MODRINTH_KEY: ${{ secrets.MODRINTH_KEY }}
