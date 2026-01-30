@@ -17,11 +17,18 @@
 
 package com.illusivesoulworks.comforts.client;
 
+import com.illusivesoulworks.comforts.ComfortsConstants;
+import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.block.HammockBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
+import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.InBedChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -41,6 +48,33 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class ComfortsClientEvents {
+
+  public static void keyPressed(Player player, Screen screen, KeyEvent keyEvent) {
+
+    if (screen instanceof InBedChatScreen) {
+      player.getSleepingPos().ifPresent(bedPos -> {
+        Block block = player.level().getBlockState(bedPos).getBlock();
+
+        if (block instanceof BaseComfortsBlock comfortsBlock) {
+          ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
+
+          if (timeUse == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+            Minecraft mc = Minecraft.getInstance();
+
+            if (mc.options.keyTogglePerspective.matches(keyEvent)) {
+              CameraType cameratype = mc.options.getCameraType();
+              mc.options.setCameraType(mc.options.getCameraType().cycle());
+
+              if (cameratype.isFirstPerson() != mc.options.getCameraType().isFirstPerson()) {
+                mc.gameRenderer.checkEntityPostEffect(mc.options.getCameraType().isFirstPerson() ? mc.getCameraEntity() : null);
+              }
+              mc.levelRenderer.needsUpdate();
+            }
+          }
+        }
+      });
+    }
+  }
 
   public static void onPlayerRenderPre(LivingEntityRenderState renderState, PoseStack poseStack) {
 

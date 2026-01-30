@@ -22,8 +22,17 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 
 public class ComfortsClientEventsListener {
+
+  @SubscribeEvent
+  public void onKey(final ScreenEvent.KeyPressed.Post evt) {
+
+    if (Minecraft.getInstance().player instanceof AbstractClientPlayer player) {
+      ComfortsClientEvents.keyPressed(player, evt.getScreen(), evt.getKeyEvent());
+    }
+  }
 
   @SubscribeEvent
   public void onTick(final ClientTickEvent.Post evt) {

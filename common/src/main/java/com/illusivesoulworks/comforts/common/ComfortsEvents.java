@@ -21,6 +21,7 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.block.HammockBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
+import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,20 @@ public class ComfortsEvents {
 
   public static ComfortsConstants.Result canSleep(Level level, BlockPos pos) {
     return BaseComfortsBlock.canSleep(level, pos);
+  }
+
+  public static void resetSleepCounter(Player player) {
+    player.getSleepingPos().ifPresent(bedPos -> {
+      Block block = player.level().getBlockState(bedPos).getBlock();
+
+      if (block instanceof BaseComfortsBlock comfortsBlock) {
+        ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
+
+        if (timeUse == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+          ((AccessorPlayer) player).setSleepCounter(0);
+        }
+      }
+    });
   }
 
   public static long getWakeTime(ServerLevel level, long currentTime, long newTime) {

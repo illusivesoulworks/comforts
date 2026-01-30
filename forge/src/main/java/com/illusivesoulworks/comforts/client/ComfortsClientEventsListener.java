@@ -17,12 +17,23 @@
 
 package com.illusivesoulworks.comforts.client;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraftforge.client.event.RenderAvatarEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 public class ComfortsClientEventsListener {
+
+  @SubscribeEvent
+  public void onKey(final ScreenEvent.KeyPressed.Post evt) {
+
+    if (Minecraft.getInstance().player instanceof AbstractClientPlayer player) {
+      ComfortsClientEvents.keyPressed(player, evt.getScreen(), evt.getInfo());
+    }
+  }
 
   @SubscribeEvent
   public void onTick(final TickEvent.PlayerTickEvent.Pre evt) {

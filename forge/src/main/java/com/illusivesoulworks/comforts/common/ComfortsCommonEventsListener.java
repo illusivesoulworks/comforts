@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.util.Result;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -31,6 +32,11 @@ import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 public class ComfortsCommonEventsListener {
+
+  @SubscribeEvent
+  public void onPlayerTick(final TickEvent.PlayerTickEvent.Post evt) {
+    ComfortsEvents.resetSleepCounter(evt.player());
+  }
 
   @SubscribeEvent
   public void onSleepTimeCheck(final SleepingTimeCheckEvent evt) {

@@ -20,12 +20,19 @@ package com.illusivesoulworks.comforts.common;
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 public class ComfortsCommonEventsListener {
+
+  @SubscribeEvent
+  public void onPlayerTick(final PlayerTickEvent.Post evt) {
+    ComfortsEvents.resetSleepCounter(evt.getEntity());
+  }
 
   @SubscribeEvent
   public void onSleepTimeCheck(final CanContinueSleepingEvent evt) {

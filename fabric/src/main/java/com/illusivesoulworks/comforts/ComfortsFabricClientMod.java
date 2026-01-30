@@ -29,6 +29,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -45,6 +47,11 @@ public class ComfortsFabricClientMod implements ClientModInitializer {
 
   @Override
   public void onInitializeClient() {
+    ScreenEvents.BEFORE_INIT.register(
+        (client, screen, scaledWidth, scaledHeight) ->
+            ScreenKeyboardEvents.afterKeyPress(screen).register((screen1, context) ->
+                                                                    ComfortsClientEvents.keyPressed(client.player, screen, context)));
+
     EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_HEAD,
         SleepingBagBlockEntityRenderer::createHeadLayer);
     EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_FOOT,
