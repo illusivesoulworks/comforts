@@ -41,6 +41,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.attribute.BedRule;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.npc.villager.Villager;
@@ -48,6 +49,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
@@ -64,6 +66,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -94,7 +97,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
                                           @Nonnull BlockHitResult hit) {
 
     if (level.isClientSide()) {
-      return InteractionResult.CONSUME;
+      return InteractionResult.SUCCESS_SERVER;
     } else {
 
       if (state.getValue(PART) != BedPart.HEAD) {
@@ -104,6 +107,12 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         if (!state.is(this)) {
           return InteractionResult.CONSUME;
         }
+      }
+
+      if (this.getComfortsTimeUse() == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+        player.startSleeping(pos);
+        ((AccessorPlayer) player).setSleepCounter(0);
+        return InteractionResult.SUCCESS_SERVER;
       }
       BedRule bedrule = level.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, pos);
 
@@ -125,7 +134,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           player.displayClientMessage(
               Component.translatable("item.comforts." + this.type.name + ".occupied"), true);
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS_SERVER;
       } else if (player instanceof ServerPlayer serverPlayer) {
         trySleep(serverPlayer, pos, false).ifLeft((result) -> {
           Component text;
@@ -144,7 +153,11 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         });
       }
     }
-    return InteractionResult.SUCCESS;
+    return InteractionResult.SUCCESS_SERVER;
+  }
+
+  public PathType getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, Mob mob) {
+    return PathType.WALKABLE;
   }
 
   public static Either<Player.BedSleepingProblem, Unit> trySleep(ServerPlayer player, BlockPos at,
@@ -346,8 +359,12 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     BlockState blockState = level.getBlockState(at);
 
     if (blockState.getBlock() instanceof BaseComfortsBlock comfortsBlock) {
-      final long time = level.getDayTime() % 24000L;
       ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
+
+      if (timeUse == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+        return ComfortsConstants.Result.ALLOW;
+      }
+      final long time = level.getDayTime() % 24000L;
       long[] daySpan = new long[] {100L, 11900L};
       daySpan[0] = Math.max(1, daySpan[0] + ComfortsConfig.SERVER.dayWakeTimeOffset.get());
       daySpan[1] =

@@ -19,24 +19,24 @@ package com.illusivesoulworks.comforts;
 
 import com.illusivesoulworks.comforts.common.ComfortsEvents;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
+import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.network.SPacketAutoSleep;
 import com.illusivesoulworks.comforts.common.network.SPacketPlaceBag;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import com.illusivesoulworks.comforts.data.HammockEnabledCondition;
 import com.illusivesoulworks.comforts.data.SleepingBagEnabledCondition;
+import java.util.ArrayList;
+import java.util.List;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.registry.LandPathNodeTypesRegistry;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.attribute.EnvironmentAttributes;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class ComfortsFabricMod implements ModInitializer {
 
@@ -61,23 +61,28 @@ public class ComfortsFabricMod implements ModInitializer {
         ComfortsEvents.onWakeUp(player);
       }
     });
+    List<RegistryObject<Block>> comfortsBlocks = new ArrayList<>();
+    comfortsBlocks.addAll(ComfortsRegistry.HAMMOCKS.values());
+    comfortsBlocks.addAll(ComfortsRegistry.SLEEPING_BAGS.values());
+
+    for (RegistryObject<Block> value : comfortsBlocks) {
+      Block block = value.get();
+
+      if (block instanceof BaseComfortsBlock baseComfortsBlock) {
+        LandPathNodeTypesRegistry.register(block,
+                                           (state, neighbor) -> baseComfortsBlock.getBlockPathType(
+                                               state, null, null, null));
+      }
+    }
     ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COLORED_BLOCKS).register(entries -> {
 
-      for (RegistryObject<Block> value : ComfortsRegistry.SLEEPING_BAGS.values()) {
-        entries.accept(value.get());
-      }
-
-      for (RegistryObject<Block> value : ComfortsRegistry.HAMMOCKS.values()) {
+      for (RegistryObject<Block> value : comfortsBlocks) {
         entries.accept(value.get());
       }
     });
     ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
 
-      for (RegistryObject<Block> value : ComfortsRegistry.SLEEPING_BAGS.values()) {
-        entries.accept(value.get());
-      }
-
-      for (RegistryObject<Block> value : ComfortsRegistry.HAMMOCKS.values()) {
+      for (RegistryObject<Block> value : comfortsBlocks) {
         entries.accept(value.get());
       }
       entries.accept(ComfortsRegistry.ROPE_AND_NAIL_ITEM.get());

@@ -1,12 +1,10 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
-import com.illusivesoulworks.comforts.common.block.HammockBlock;
-import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.CatLieOnBedGoal;
 import net.minecraft.world.entity.ai.goal.CatSitOnBlockGoal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
@@ -24,6 +22,19 @@ public class ComfortsMixinHooks {
         || isValidBlockPart(ComfortsTags.Blocks.HAMMOCKS, blockState);
   }
 
+  public static boolean isApplicableGoal(MoveToBlockGoal goal, BlockState state) {
+    boolean catGoal = goal instanceof CatSitOnBlockGoal || goal instanceof CatLieOnBedGoal;
+    return catGoal && isValidCatBlock(state);
+  }
+
+  public static boolean withinAcceptableDistance(BlockPos targetPosition, Position position,
+                                                 double distance) {
+    double d0 = targetPosition.getX() + 0.5D - position.x();
+    double d1 = targetPosition.getY() - position.y();
+    double d2 = targetPosition.getZ() + 0.5D - position.z();
+    return (d0 * d0 + d1 * d1 + d2 * d2) <= distance;
+  }
+
   public static BlockPos getRelaxableCatBlock(Cat cat, Player ownerPlayer) {
 
     if (ownerPlayer != null) {
@@ -32,29 +43,11 @@ public class ComfortsMixinHooks {
 
       if (blockstate.is(ComfortsTags.Blocks.HAMMOCKS) || blockstate.is(
           ComfortsTags.Blocks.SLEEPING_BAGS)) {
-        return blockstate.getOptionalValue(HorizontalDirectionalBlock.FACING)
-            .map((direction) -> pos.relative(direction.getOpposite()))
-            .orElseGet(() -> new BlockPos(pos));
+        Direction direction = blockstate.getValue(HorizontalDirectionalBlock.FACING).getOpposite();
+        return pos.relative(direction);
       }
     }
     return null;
-  }
-
-  public static Optional<Double> getAcceptedDistance(MoveToBlockGoal moveToBlockGoal, BlockPos pos,
-                                                     Mob mob) {
-
-    if ((moveToBlockGoal instanceof CatLieOnBedGoal)
-        || (moveToBlockGoal instanceof CatSitOnBlockGoal)) {
-
-      if (pos != null) {
-        Block block = mob.level().getBlockState(pos).getBlock();
-
-        if (block instanceof HammockBlock || block instanceof SleepingBagBlock) {
-          return Optional.of(1.8D);
-        }
-      }
-    }
-    return Optional.empty();
   }
 
   private static boolean isValidBlockPart(TagKey<Block> tagKey, BlockState blockState) {

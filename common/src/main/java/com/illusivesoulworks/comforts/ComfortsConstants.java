@@ -41,7 +41,8 @@ public class ComfortsConstants {
     NONE(Component.translatable("item.comforts.no_sleep")),
     DAY(Component.translatable("item.comforts.hammock.no_sleep")),
     NIGHT(Component.translatable("block.minecraft.bed.no_sleep")),
-    DAY_OR_NIGHT(Component.translatable("item.comforts.hammock.no_sleep.2"));
+    DAY_OR_NIGHT(Component.translatable("item.comforts.hammock.no_sleep.2")),
+    USABLE_DECORATIVE(Component.empty());
 
     private final Component message;
 

@@ -10,7 +10,8 @@
     "MixinCatSitOnBlockGoal",
     "MixinMoveToBlockGoal",
     "MixinServerSleepStatus",
-    "MixinSleepStatus"
+    "MixinSleepStatus",
+    "MixinWalkNodeEvaluator"
   ],
   "client": [
   ],
