@@ -17,7 +17,6 @@
 
 package com.illusivesoulworks.comforts;
 
-import java.util.logging.Level;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ public class ComfortsConstants {
     DAY(Component.translatable("item.comforts.hammock.no_sleep")),
     NIGHT(Component.translatable("block.minecraft.bed.no_sleep")),
     DAY_OR_NIGHT(Component.translatable("item.comforts.hammock.no_sleep.2")),
-    USABLE_DECORATIVE(Component.empty());
+    USE_WITHOUT_SLEEPING(Component.empty());
 
     private final Component message;
 

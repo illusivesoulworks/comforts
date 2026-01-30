@@ -109,7 +109,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         }
       }
 
-      if (this.getComfortsTimeUse() == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+      if (this.getComfortsTimeUse() == ComfortsConstants.TimeUse.USE_WITHOUT_SLEEPING) {
         player.startSleeping(pos);
         ((AccessorPlayer) player).setSleepCounter(0);
         return InteractionResult.SUCCESS_SERVER;
@@ -361,7 +361,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     if (blockState.getBlock() instanceof BaseComfortsBlock comfortsBlock) {
       ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
 
-      if (timeUse == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+      if (timeUse == ComfortsConstants.TimeUse.USE_WITHOUT_SLEEPING) {
         return ComfortsConstants.Result.ALLOW;
       }
       final long time = level.getDayTime() % 24000L;

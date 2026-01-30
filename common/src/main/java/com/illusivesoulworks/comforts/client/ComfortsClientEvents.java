@@ -21,7 +21,6 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.block.HammockBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
-import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.CameraType;
@@ -58,7 +57,7 @@ public class ComfortsClientEvents {
         if (block instanceof BaseComfortsBlock comfortsBlock) {
           ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
 
-          if (timeUse == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+          if (timeUse == ComfortsConstants.TimeUse.USE_WITHOUT_SLEEPING) {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.options.keyTogglePerspective.matches(keyEvent)) {

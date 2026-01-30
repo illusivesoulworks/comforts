@@ -60,7 +60,7 @@ public class ComfortsEvents {
       if (block instanceof BaseComfortsBlock comfortsBlock) {
         ComfortsConstants.TimeUse timeUse = comfortsBlock.getComfortsTimeUse();
 
-        if (timeUse == ComfortsConstants.TimeUse.USABLE_DECORATIVE) {
+        if (timeUse == ComfortsConstants.TimeUse.USE_WITHOUT_SLEEPING) {
           ((AccessorPlayer) player).setSleepCounter(0);
         }
       }
