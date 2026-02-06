@@ -2,11 +2,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.21.x/CHANGELOG.md).
 
-## [14.0.0+1.21.11] - 2026.01.29
-### Changed
-- Updated to Minecraft 1.21.11.
+## [14.0.1+1.21.11] - 2026.02.05
 ### Added
-- Added integration for cats, tamed cats will now treat sleeping bags and hammocks the same as vanilla beds in terms of
-sitting, relaxing, and giving gifts. [#181](https://github.com/illusivesoulworks/comforts/issues/181)
-- Added `USE_WITHOUT_SLEEPING` option to `hammockUse` and `sleepingBagUse` to allow for laying down without skipping
-time or sleeping. [#163](https://github.com/illusivesoulworks/comforts/issues/163)
+- Added additional feedback message to clarify when players have placed the rope and nail pairings too far apart. [#193](https://github.com/illusivesoulworks/comforts/issues/193)
+### Changed
+- Updated `zh_cn` localization [#192](https://github.com/illusivesoulworks/comforts/pull/192)
