@@ -50,6 +50,7 @@
   "item.comforts.hammock.no_rope": "You must hang the hammock on a pair of rope and nail",
   "item.comforts.hammock.no_space": "There is not enough space to fit the hammock",
   "item.comforts.hammock.missing_rope": "There must also be a rope and nail on the other end to hang the hammock",
+  "item.comforts.hammock.ropes_too_far": "The rope and nail on the other end are too far away to hang the hammock",
   "item.comforts.sleeping_bag.broke": "The sleeping bag broke",
   "capability.comforts.not_sleepy": "You may not rest now; you don't feel sleepy yet",
   "gui.comforts.config.autoUse.name": "Automatically use sleeping bags",

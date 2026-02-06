@@ -80,8 +80,14 @@ public class HammockItem extends BaseComfortsItem {
           player.displayClientMessage(
               Component.translatable("item.comforts.hammock.no_space"), true);
         } else {
-          player.displayClientMessage(
-              Component.translatable("item.comforts.hammock.missing_rope"), true);
+
+          if (findNearestPartnerRope(level, state, pos, direction, 3, 12) != -1) {
+            player.displayClientMessage(
+                Component.translatable("item.comforts.hammock.ropes_too_far"), true);
+          } else {
+            player.displayClientMessage(
+                Component.translatable("item.comforts.hammock.missing_rope"), true);
+          }
         }
       }
     } else if (player != null) {
@@ -89,6 +95,25 @@ public class HammockItem extends BaseComfortsItem {
                                   true);
     }
     return InteractionResult.FAIL;
+  }
+
+  private int findNearestPartnerRope(Level level, BlockState startingState, BlockPos startingPos,
+                                     Direction direction, int startingDistance, int maxDistance) {
+
+    for (int i = startingDistance; i <= maxDistance; i++) {
+      BlockPos pos = startingPos.relative(direction, i);
+      BlockState state = level.getBlockState(pos);
+
+      if (!state.isAir()) {
+
+        if (hasPartneredRopes(startingState, state)) {
+          return i;
+        } else if (!state.canBeReplaced()) {
+          break;
+        }
+      }
+    }
+    return -1;
   }
 
   private boolean hasPartneredRopes(BlockState state, BlockState otherState) {
