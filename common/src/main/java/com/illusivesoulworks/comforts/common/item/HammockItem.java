@@ -41,7 +41,7 @@ public class HammockItem extends BaseComfortsItem {
   public HammockItem(Block block) {
     super(block);
   }
-
+  
   @Nonnull
   @Override
   public InteractionResult useOn(UseOnContext context) {
@@ -50,50 +50,45 @@ public class HammockItem extends BaseComfortsItem {
     final BlockState state = level.getBlockState(pos);
     final Player player = context.getPlayer();
 
-    if (state.getBlock() instanceof RopeAndNailBlock) {
-      final Direction direction = state.getValue(RopeAndNailBlock.HORIZONTAL_FACING);
-      final BlockPos blockpos = pos.relative(direction, 3);
-      final BlockState blockstate = level.getBlockState(blockpos);
+    if (!(state.getBlock() instanceof RopeAndNailBlock)) {
+        if (player != null) {
+            player.displayClientMessage(Component.translatable("item.comforts.hammock.no_rope"), true);
+        }
+        return InteractionResult.FAIL;
+    }
 
-      if (hasPartneredRopes(state, blockstate)) {
-        InteractionResult result = this.place(BlockPlaceContext
-                                                  .at(new BlockPlaceContext(context),
-                                                      context.getClickedPos().relative(direction),
-                                                      direction));
+    final Direction direction = state.getValue(RopeAndNailBlock.HORIZONTAL_FACING);
+
+    // One unified scan
+    final int partnerDist = findNearestPartnerRope(level, state, pos, direction, 1, 12);
+
+    if (partnerDist == 3) {
+        final BlockPos partnerPos = pos.relative(direction, 3);
+        final BlockState partnerState = level.getBlockState(partnerPos);
+
+        InteractionResult result = this.place(
+                BlockPlaceContext.at(new BlockPlaceContext(context), pos, direction)
+        );
 
         if (result.consumesAction()) {
-          level.setBlockAndUpdate(pos, state.setValue(RopeAndNailBlock.SUPPORTING, true));
-          level.setBlockAndUpdate(blockpos, blockstate.setValue(RopeAndNailBlock.SUPPORTING, true));
-        } else {
-
-          if (player != null) {
-            player.displayClientMessage(
-                Component.translatable("item.comforts.hammock.no_space"), true);
-          }
+            level.setBlockAndUpdate(pos, state.setValue(RopeAndNailBlock.SUPPORTING, true));
+            level.setBlockAndUpdate(partnerPos, partnerState.setValue(RopeAndNailBlock.SUPPORTING, true));
+        } else if (player != null) {
+            player.displayClientMessage(Component.translatable("item.comforts.hammock.no_space"), true);
         }
         return result;
-      } else if (player != null) {
-        boolean flag = hasPartneredRopes(state, level.getBlockState(pos.relative(direction, 1)));
-        flag = flag || hasPartneredRopes(state, level.getBlockState(pos.relative(direction, 2)));
-
-        if (flag) {
-          player.displayClientMessage(
-              Component.translatable("item.comforts.hammock.no_space"), true);
-        } else {
-
-          if (findNearestPartnerRope(level, state, pos, direction, 3, 12) != -1) {
-            player.displayClientMessage(
-                Component.translatable("item.comforts.hammock.ropes_too_far"), true);
-          } else {
-            player.displayClientMessage(
-                Component.translatable("item.comforts.hammock.missing_rope"), true);
-          }
-        }
-      }
-    } else if (player != null) {
-      player.displayClientMessage(Component.translatable("item.comforts.hammock.no_rope"),
-                                  true);
     }
+
+    if (player != null) {
+        if (partnerDist == 1 || partnerDist == 2) {
+            player.displayClientMessage(Component.translatable("item.comforts.hammock.no_space"), true);
+        } else if (partnerDist > 3) {
+            player.displayClientMessage(Component.translatable("item.comforts.hammock.ropes_too_far"), true);
+        } else {
+            player.displayClientMessage(Component.translatable("item.comforts.hammock.missing_rope"), true);
+        }
+    }
+
     return InteractionResult.FAIL;
   }
 
