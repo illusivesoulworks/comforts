@@ -18,6 +18,7 @@
 package com.illusivesoulworks.comforts.common.item;
 
 import com.illusivesoulworks.comforts.common.block.RopeAndNailBlock;
+import com.mojang.datafixers.util.Either;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import net.minecraft.ChatFormatting;
@@ -45,62 +46,84 @@ public class HammockItem extends BaseComfortsItem {
   @Nonnull
   @Override
   public InteractionResult useOn(UseOnContext context) {
+    final Player player = context.getPlayer();
+    Either<InteractionResult, HammockErrorState> placementResult = hangHammock(context);
+    return placementResult.map(interactionResult -> interactionResult, error -> {
+
+      if (player != null) {
+        player.displayClientMessage(
+            Component.translatable("item.comforts.hammock." + error.key), true);
+      }
+      return InteractionResult.FAIL;
+    });
+  }
+
+  private Either<InteractionResult, HammockErrorState> hangHammock(UseOnContext context) {
     final Level level = context.getLevel();
     final BlockPos pos = context.getClickedPos();
     final BlockState state = level.getBlockState(pos);
-    final Player player = context.getPlayer();
+    HammockErrorState error = HammockErrorState.NO_ROPE;
 
     if (state.getBlock() instanceof RopeAndNailBlock) {
       final Direction direction = state.getValue(RopeAndNailBlock.HORIZONTAL_FACING);
-      final BlockPos blockpos = pos.relative(direction, 3);
-      final BlockState blockstate = level.getBlockState(blockpos);
+      int nearestRope = findNearestPartnerRope(level, state, pos, direction, 3, 3);
+      boolean hasPartner = nearestRope == 3;
 
-      if (hasPartneredRopes(state, blockstate)) {
-        InteractionResult result = this.place(BlockPlaceContext
-                                                  .at(new BlockPlaceContext(context),
-                                                      context.getClickedPos().relative(direction),
-                                                      direction));
+      // Checking for correct rope location and orientation
+      if (hasPartner) {
+        InteractionResult result = this.place(
+            BlockPlaceContext.at(new BlockPlaceContext(context),
+                                 context.getClickedPos().relative(direction),
+                                 direction));
 
+        // Checking that the hammock is placeable between the ropes
         if (result.consumesAction()) {
+          final BlockPos blockpos = pos.relative(direction, 3);
+          final BlockState blockstate = level.getBlockState(blockpos);
           level.setBlockAndUpdate(pos, state.setValue(RopeAndNailBlock.SUPPORTING, true));
           level.setBlockAndUpdate(blockpos, blockstate.setValue(RopeAndNailBlock.SUPPORTING, true));
+          return Either.left(result);
         } else {
+          // If the hammock cannot be placed, check for obstacles
+          nearestRope = findNearestPartnerRope(level, state, pos, direction, 1, 2);
 
-          if (player != null) {
-            player.displayClientMessage(
-                Component.translatable("item.comforts.hammock.no_space"), true);
+          // Found a partner candidate that is too close
+          if (nearestRope > 0) {
+            error = HammockErrorState.NO_SPACE;
+          } else { // Found an obstacle
+            error = HammockErrorState.NO_PARTNERED_ROPE;
           }
         }
-        return result;
-      } else if (player != null) {
-        boolean flag = hasPartneredRopes(state, level.getBlockState(pos.relative(direction, 1)));
-        flag = flag || hasPartneredRopes(state, level.getBlockState(pos.relative(direction, 2)));
+      } else {
+        // If a partner candidate isn't found, scan inward distance first
+        nearestRope = findNearestPartnerRope(level, state, pos, direction, 1, 2);
 
-        if (flag) {
-          player.displayClientMessage(
-              Component.translatable("item.comforts.hammock.no_space"), true);
+        if (nearestRope == -1) {
+          // If a partner candidate still isn't found, scan outward distance
+          nearestRope = findNearestPartnerRope(level, state, pos, direction, 3, 12);
+        }
+
+        if (nearestRope == 0) {
+          // Encountered solid block/obstacle between potential candidates
+          error = HammockErrorState.NO_PARTNERED_ROPE;
+        } else if (nearestRope > 3) {
+          error = HammockErrorState.TOO_FAR;
+        } else if (nearestRope > 0) {
+          error = HammockErrorState.NO_SPACE;
         } else {
-
-          if (findNearestPartnerRope(level, state, pos, direction, 3, 12) != -1) {
-            player.displayClientMessage(
-                Component.translatable("item.comforts.hammock.ropes_too_far"), true);
-          } else {
-            player.displayClientMessage(
-                Component.translatable("item.comforts.hammock.missing_rope"), true);
-          }
+          // No candidates found within a reasonable distance
+          error = HammockErrorState.NO_PARTNERED_ROPE;
         }
       }
-    } else if (player != null) {
-      player.displayClientMessage(Component.translatable("item.comforts.hammock.no_rope"),
-                                  true);
     }
-    return InteractionResult.FAIL;
+    return Either.right(error);
   }
 
-  private int findNearestPartnerRope(Level level, BlockState startingState, BlockPos startingPos,
-                                     Direction direction, int startingDistance, int maxDistance) {
+  private int findNearestPartnerRope(Level level, BlockState startingState,
+                                     BlockPos startingPos, Direction direction,
+                                     int startingDistance, int maxDistance) {
 
-    for (int i = startingDistance; i <= maxDistance; i++) {
+    for (int i = Math.max(1, startingDistance); i <= maxDistance; i++) {
       BlockPos pos = startingPos.relative(direction, i);
       BlockState state = level.getBlockState(pos);
 
@@ -109,7 +132,7 @@ public class HammockItem extends BaseComfortsItem {
         if (hasPartneredRopes(startingState, state)) {
           return i;
         } else if (!state.canBeReplaced()) {
-          break;
+          return 0;
         }
       }
     }
@@ -132,5 +155,18 @@ public class HammockItem extends BaseComfortsItem {
                                            Component.translatable("item.comforts.rope_and_nail")
                                                .withStyle(ChatFormatting.YELLOW))
                         .withStyle(ChatFormatting.GRAY));
+  }
+
+  private enum HammockErrorState {
+    TOO_FAR("ropes_too_far"),
+    NO_SPACE("no_space"),
+    NO_PARTNERED_ROPE("missing_rope"),
+    NO_ROPE("no_rope");
+
+    final String key;
+
+    HammockErrorState(String key) {
+      this.key = key;
+    }
   }
 }
