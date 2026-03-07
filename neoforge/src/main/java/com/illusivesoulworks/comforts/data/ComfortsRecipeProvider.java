@@ -11,18 +11,14 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.AndCondition;
 import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.common.conditions.NotCondition;
-import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 public class ComfortsRecipeProvider extends RecipeProvider {
 
@@ -96,7 +92,7 @@ public class ComfortsRecipeProvider extends RecipeProvider {
 
     List<ICondition> conditions = new ArrayList<>();
     conditions.add(HammockEnabledCondition.INSTANCE);
-    conditions.add(new NotCondition(new TagEmptyCondition<>(Tags.Items.ROPES)));
+    conditions.add(RopesTagCondition.INSTANCE);
 
     this.shapeless(RecipeCategory.DECORATIONS, ropeAndNail, 2)
         .requires(Tags.Items.INGOTS_IRON)

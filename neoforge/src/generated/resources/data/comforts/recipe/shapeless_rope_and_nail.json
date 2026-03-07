@@ -7,11 +7,7 @@
           "type": "comforts:hammock_enabled"
         },
         {
-          "type": "neoforge:not",
-          "value": {
-            "type": "neoforge:tag_empty",
-            "tag": "c:ropes"
-          }
+          "type": "comforts:ropes_tag_has_items"
         }
       ]
     }

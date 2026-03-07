@@ -35,8 +35,7 @@ public class ComfortsRecipeProvider extends FabricRecipeProvider {
     RecipeOutput sleepingBagEnabled =
         this.withConditions(recipeOutput, SleepingBagEnabledCondition.INSTANCE);
     RecipeOutput ropesTagEnabled = this.withConditions(recipeOutput, ResourceConditions.and(
-        HammockEnabledCondition.INSTANCE,
-        ResourceConditions.tagsPopulated(ConventionalItemTags.ROPES)));
+        HammockEnabledCondition.INSTANCE, RopesTagCondition.INSTANCE));
     return new Recipes(provider, recipeOutput, hammockEnabled, sleepingBagEnabled, ropesTagEnabled);
   }
 

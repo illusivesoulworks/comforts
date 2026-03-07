@@ -31,6 +31,7 @@ import com.illusivesoulworks.comforts.data.ComfortsLootTableProvider;
 import com.illusivesoulworks.comforts.data.ComfortsModelProvider;
 import com.illusivesoulworks.comforts.data.ComfortsRecipeProvider;
 import com.illusivesoulworks.comforts.data.HammockEnabledCondition;
+import com.illusivesoulworks.comforts.data.RopesTagCondition;
 import com.illusivesoulworks.comforts.data.SleepingBagEnabledCondition;
 import com.mojang.serialization.MapCodec;
 import java.util.Collections;
@@ -75,6 +76,8 @@ public class ComfortsNeoForgeMod {
       CONDITIONS.register("sleeping_bag_enabled", () -> SleepingBagEnabledCondition.CODEC);
   public static final Supplier<MapCodec<? extends ICondition>> HAMMOCK_CONDITION =
       CONDITIONS.register("hammock_enabled", () -> HammockEnabledCondition.CODEC);
+  public static final Supplier<MapCodec<? extends ICondition>> ROPES_TAG_CONDITION =
+      CONDITIONS.register("ropes_tag_has_items", () -> RopesTagCondition.CODEC);
 
   public ComfortsNeoForgeMod(IEventBus eventBus) {
     ComfortsCommonMod.init();

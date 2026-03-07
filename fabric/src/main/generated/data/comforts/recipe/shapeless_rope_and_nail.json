@@ -7,11 +7,7 @@
           "condition": "comforts:hammock_enabled"
         },
         {
-          "condition": "fabric:tags_populated",
-          "registry": "minecraft:item",
-          "values": [
-            "c:ropes"
-          ]
+          "condition": "comforts:ropes_tag_has_items"
         }
       ]
     }

@@ -24,6 +24,7 @@ import com.illusivesoulworks.comforts.common.network.SPacketAutoSleep;
 import com.illusivesoulworks.comforts.common.network.SPacketPlaceBag;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import com.illusivesoulworks.comforts.data.HammockEnabledCondition;
+import com.illusivesoulworks.comforts.data.RopesTagCondition;
 import com.illusivesoulworks.comforts.data.SleepingBagEnabledCondition;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,5 +92,6 @@ public class ComfortsFabricMod implements ModInitializer {
     PayloadTypeRegistry.playS2C().register(SPacketAutoSleep.TYPE, SPacketAutoSleep.STREAM_CODEC);
     ResourceConditions.register(HammockEnabledCondition.TYPE);
     ResourceConditions.register(SleepingBagEnabledCondition.TYPE);
+    ResourceConditions.register(RopesTagCondition.TYPE);
   }
 }
