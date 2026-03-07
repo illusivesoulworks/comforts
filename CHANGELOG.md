@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [14.0.2+1.21.11] - 2026.03.06
+### Changed
+- Updated clarity on rope and nail feedback messages [#195](https://github.com/illusivesoulworks/comforts/issues/195)
+### Fixed
+- Fixed loading errors for the optional shapeless Rope and Nail recipe [#198](https://github.com/illusivesoulworks/comforts/issues/198)
+
 ## [14.0.1+1.21.11] - 2026.02.05
 ### Added
 - Added additional feedback message to clarify when players have placed the rope and nail pairings too far apart. [#193](https://github.com/illusivesoulworks/comforts/issues/193)

@@ -2,8 +2,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.21.x/CHANGELOG.md).
 
-## [14.0.1+1.21.11] - 2026.02.05
-### Added
-- Added additional feedback message to clarify when players have placed the rope and nail pairings too far apart. [#193](https://github.com/illusivesoulworks/comforts/issues/193)
+## [14.0.2+1.21.11] - 2026.03.06
 ### Changed
-- Updated `zh_cn` localization [#192](https://github.com/illusivesoulworks/comforts/pull/192)
+- Updated clarity on rope and nail feedback messages [#195](https://github.com/illusivesoulworks/comforts/issues/195)
+### Fixed
+- Fixed loading errors for the optional shapeless Rope and Nail recipe [#198](https://github.com/illusivesoulworks/comforts/issues/198)
