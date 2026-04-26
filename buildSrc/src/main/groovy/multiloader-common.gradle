@@ -8,9 +8,13 @@ base {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
     withSourcesJar()
     withJavadocJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = Integer.parseInt("${java_version}")
 }
 
 repositories {
@@ -26,12 +30,12 @@ repositories {
         filter { includeGroupAndSubgroups("org.spongepowered") }
     }
     maven {
-        name = 'Illusive Soulworks'
-        url = 'https://maven.theillusivec4.top'
+        name = 'Local FCAP'
+        url = uri("${rootProject.projectDir}/libs/local-maven")
     }
     maven {
-        name = 'ParchmentMC'
-        url = 'https://maven.parchmentmc.org'
+        name = 'Ladysnake Mods'
+        url = 'https://maven.ladysnake.org/releases'
     }
 }
 
@@ -100,6 +104,7 @@ processResources {
             "description"                : project.description,
             "neoforge_version"           : neoforge_version,
             "neoforge_version_range"     : neoforge_version_range,
+            "loader_version_range"       : loader_version_range,
             "java_version"               : java_version
     ]
 

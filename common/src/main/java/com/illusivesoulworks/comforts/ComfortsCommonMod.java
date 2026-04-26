@@ -17,23 +17,11 @@
 
 package com.illusivesoulworks.comforts;
 
-import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
-import com.illusivesoulworks.spectrelib.config.SpectreConfig;
-import com.illusivesoulworks.spectrelib.config.SpectreConfigLoader;
 
 public class ComfortsCommonMod {
 
   public static void init() {
     ComfortsRegistry.init();
-  }
-
-  public static void initConfig() {
-    SpectreConfig config =
-        SpectreConfigLoader.add(SpectreConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC,
-            ComfortsConstants.MOD_ID);
-    config.addLoadListener((config1, firstLoad) -> ComfortsConfig.reload());
-    SpectreConfigLoader.add(SpectreConfig.Type.COMMON, ComfortsConfig.COMMON_SPEC,
-        ComfortsConstants.MOD_ID);
   }
 }

@@ -18,26 +18,26 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
-import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
+import net.minecraft.resources.Identifier;
+import net.minecraftforge.common.ForgeConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.resources.Identifier;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class ComfortsConfig {
 
-  public static final SpectreConfigSpec SERVER_SPEC;
+  public static final ForgeConfigSpec SERVER_SPEC;
   public static final Server SERVER;
-  public static final SpectreConfigSpec COMMON_SPEC;
+  public static final ForgeConfigSpec COMMON_SPEC;
   public static final Common COMMON;
   private static final String CONFIG_PREFIX = "gui." + ComfortsConstants.MOD_ID + ".config.";
 
   static {
-    Pair<Server, SpectreConfigSpec> specPair1 = new SpectreConfigSpec.Builder()
+    Pair<Server, ForgeConfigSpec> specPair1 = new ForgeConfigSpec.Builder()
         .configure(Server::new);
     SERVER_SPEC = specPair1.getRight();
     SERVER = specPair1.getLeft();
-    Pair<Common, SpectreConfigSpec> specPair2 = new SpectreConfigSpec.Builder()
+    Pair<Common, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder()
         .configure(Common::new);
     COMMON_SPEC = specPair2.getRight();
     COMMON = specPair2.getLeft();
@@ -45,10 +45,10 @@ public class ComfortsConfig {
 
   public static class Common {
 
-    public final SpectreConfigSpec.BooleanValue enableHammockRecipes;
-    public final SpectreConfigSpec.BooleanValue enableSleepingBagRecipes;
+    public final ForgeConfigSpec.BooleanValue enableHammockRecipes;
+    public final ForgeConfigSpec.BooleanValue enableSleepingBagRecipes;
 
-    public Common(SpectreConfigSpec.Builder builder) {
+    public Common(ForgeConfigSpec.Builder builder) {
 
       enableHammockRecipes =
           builder.comment("If enabled, the default hammock recipes will be available.")
@@ -64,21 +64,21 @@ public class ComfortsConfig {
 
   public static class Server {
 
-    public final SpectreConfigSpec.BooleanValue autoUse;
-    public final SpectreConfigSpec.BooleanValue restrictSleeping;
-    public final SpectreConfigSpec.DoubleValue restMultiplier;
-    public final SpectreConfigSpec.EnumValue<ComfortsConstants.TimeUse> hammockUse;
-    public final SpectreConfigSpec.EnumValue<ComfortsConstants.TimeUse> sleepingBagUse;
-    public final SpectreConfigSpec.IntValue daySleepingPercentage;
-    public final SpectreConfigSpec.IntValue dayWakeTimeOffset;
-    public final SpectreConfigSpec.IntValue nightWakeTimeOffset;
-    public final SpectreConfigSpec.BooleanValue sleepingBagsStopPhantoms;
-    public final SpectreConfigSpec.BooleanValue hammocksStopPhantoms;
-    public final SpectreConfigSpec.IntValue sleepingBagBreakChance;
-    public final SpectreConfigSpec.DoubleValue sleepingBagBreakChanceLuckMultiplier;
-    public final SpectreConfigSpec.ConfigValue<List<? extends String>> sleepingBagEffects;
+    public final ForgeConfigSpec.BooleanValue autoUse;
+    public final ForgeConfigSpec.BooleanValue restrictSleeping;
+    public final ForgeConfigSpec.DoubleValue restMultiplier;
+    public final ForgeConfigSpec.EnumValue<ComfortsConstants.TimeUse> hammockUse;
+    public final ForgeConfigSpec.EnumValue<ComfortsConstants.TimeUse> sleepingBagUse;
+    public final ForgeConfigSpec.IntValue daySleepingPercentage;
+    public final ForgeConfigSpec.IntValue dayWakeTimeOffset;
+    public final ForgeConfigSpec.IntValue nightWakeTimeOffset;
+    public final ForgeConfigSpec.BooleanValue sleepingBagsStopPhantoms;
+    public final ForgeConfigSpec.BooleanValue hammocksStopPhantoms;
+    public final ForgeConfigSpec.IntValue sleepingBagBreakChance;
+    public final ForgeConfigSpec.DoubleValue sleepingBagBreakChanceLuckMultiplier;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> sleepingBagEffects;
 
-    public Server(SpectreConfigSpec.Builder builder) {
+    public Server(ForgeConfigSpec.Builder builder) {
 
       autoUse = builder.comment(
               "If enabled, players automatically attempt to use sleeping bags when placed.")

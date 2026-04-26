@@ -18,6 +18,9 @@
 package com.illusivesoulworks.comforts;
 
 import com.illusivesoulworks.comforts.common.ComfortsCommonEventsListener;
+import com.illusivesoulworks.comforts.common.ComfortsConfig;
+import fuzs.forgeconfigapiport.neoforge.api.v5.ForgeConfigRegistry;
+import net.neoforged.fml.config.ModConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.SleepDataAttachment;
 import com.illusivesoulworks.comforts.common.capability.ISleepData;
@@ -81,7 +84,10 @@ public class ComfortsNeoForgeMod {
 
   public ComfortsNeoForgeMod(IEventBus eventBus) {
     ComfortsCommonMod.init();
-    ComfortsCommonMod.initConfig();
+    ForgeConfigRegistry.INSTANCE.register(ComfortsConstants.MOD_ID, ModConfig.Type.SERVER,
+        ComfortsConfig.SERVER_SPEC, ComfortsConstants.MOD_ID + "-server.toml");
+    ForgeConfigRegistry.INSTANCE.register(ComfortsConstants.MOD_ID, ModConfig.Type.COMMON,
+        ComfortsConfig.COMMON_SPEC, ComfortsConstants.MOD_ID + "-common.toml");
 
     if (FMLEnvironment.getDist() == Dist.CLIENT) {
       ComfortsNeoForgeClientMod.init(eventBus);

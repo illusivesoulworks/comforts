@@ -27,14 +27,12 @@ import com.illusivesoulworks.comforts.common.network.SPacketPlaceBag;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -52,20 +50,18 @@ public class ComfortsFabricClientMod implements ClientModInitializer {
             ScreenKeyboardEvents.afterKeyPress(screen).register((screen1, context) ->
                                                                     ComfortsClientEvents.keyPressed(client.player, screen, context)));
 
-    EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_HEAD,
+    ModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_HEAD,
         SleepingBagBlockEntityRenderer::createHeadLayer);
-    EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_FOOT,
+    ModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.SLEEPING_BAG_FOOT,
         SleepingBagBlockEntityRenderer::createFootLayer);
-    EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.HAMMOCK_HEAD,
+    ModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.HAMMOCK_HEAD,
         HammockBlockEntityRenderer::createHeadLayer);
-    EntityModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT,
+    ModelLayerRegistry.registerModelLayer(BaseComfortsBlockEntityRenderer.HAMMOCK_FOOT,
         HammockBlockEntityRenderer::createFootLayer);
     BlockEntityRenderers.register(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(),
         SleepingBagBlockEntityRenderer::new);
     BlockEntityRenderers.register(ComfortsRegistry.HAMMOCK_BLOCK_ENTITY.get(),
         HammockBlockEntityRenderer::new);
-    BlockRenderLayerMap.putBlock(ComfortsRegistry.ROPE_AND_NAIL_BLOCK.get(),
-                                 ChunkSectionLayer.TRANSLUCENT);
     ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
       if (client.player != null) {

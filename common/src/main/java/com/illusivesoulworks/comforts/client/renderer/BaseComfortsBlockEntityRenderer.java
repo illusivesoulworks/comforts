@@ -34,10 +34,10 @@ import net.minecraft.client.renderer.blockentity.state.BedRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.BedBlock;
@@ -62,7 +62,7 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
 
   private final String type;
 
-  protected final MaterialSet materials;
+  protected final SpriteGetter sprites;
   protected final Model.Simple headModel;
   protected final Model.Simple footModel;
 
@@ -70,16 +70,16 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
                                          String type,
                                          ModelLayerLocation headModel,
                                          ModelLayerLocation footModel) {
-    this(type, context.materials(), context.entityModelSet(), headModel, footModel);
+    this(type, context.sprites(), context.entityModelSet(), headModel, footModel);
   }
 
-  public BaseComfortsBlockEntityRenderer(String type, MaterialSet materials,
+  public BaseComfortsBlockEntityRenderer(String type, SpriteGetter sprites,
                                          EntityModelSet modelSet,
                                          ModelLayerLocation headModel,
                                          ModelLayerLocation footModel) {
     this.headModel = new Model.Simple(modelSet.bakeLayer(headModel), RenderTypes::entitySolid);
     this.footModel = new Model.Simple(modelSet.bakeLayer(footModel), RenderTypes::entitySolid);
-    this.materials = materials;
+    this.sprites = sprites;
     this.type = type;
   }
 
@@ -98,8 +98,7 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
                                                  partialTicks, cameraPosition, breakProgress);
     bedRenderState.color = comfortsBlockEntity.getColor();
     bedRenderState.facing = comfortsBlockEntity.getBlockState().getValue(BedBlock.FACING);
-    bedRenderState.isHead =
-        comfortsBlockEntity.getBlockState().getValue(BedBlock.PART) == BedPart.HEAD;
+    bedRenderState.part = comfortsBlockEntity.getBlockState().getValue(BedBlock.PART);
 
     if (comfortsBlockEntity.getLevel() != null) {
       DoubleBlockCombiner.NeighborCombineResult<? extends BedBlockEntity> neighborcombineresult =
@@ -122,8 +121,8 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
   public void submit(@Nonnull BedRenderState bedRenderState, @Nonnull PoseStack poseStack,
                      @Nonnull SubmitNodeCollector nodeCollector,
                      @Nonnull CameraRenderState cameraRenderState) {
-    final Material material =
-        new Material(Identifier.withDefaultNamespace("textures/atlas/blocks.png"),
+    final SpriteId spriteId =
+        new SpriteId(Identifier.withDefaultNamespace("textures/atlas/blocks.png"),
                      Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID,
                                                            "entity/" + this.type + "/"
                                                                + bedRenderState.color.getName()));
@@ -134,14 +133,14 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
     poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F + bedRenderState.facing.toYRot()));
     poseStack.translate(-0.5D, -0.5D, -0.5D);
     nodeCollector.submitModel(
-        bedRenderState.isHead ? this.headModel : this.footModel,
+        bedRenderState.part == BedPart.HEAD ? this.headModel : this.footModel,
         Unit.INSTANCE,
         poseStack,
-        material.renderType(RenderTypes::entitySolid),
+        spriteId.renderType(RenderTypes::entitySolid),
         bedRenderState.lightCoords,
         OverlayTexture.NO_OVERLAY,
         -1,
-        this.materials.get(material),
+        this.sprites.get(spriteId),
         0,
         bedRenderState.breakProgress
     );

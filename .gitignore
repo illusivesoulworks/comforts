@@ -23,3 +23,9 @@ eclipse
 run
 runs
 .cache
+
+# ForgeGradle artifacts
+/META-INF/
+/net/
+/config.json
+/neoforge.mixins.json

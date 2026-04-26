@@ -101,7 +101,7 @@ public class ComfortsRecipeProvider extends RecipeProvider {
                     .group("comforts:rope_and_nail")
                     .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
                     ::save)
-        .save(this.output, RecipeBuilder.getDefaultRecipeId(ropeAndNail));
+        .save(this.output, RecipeBuilder.getDefaultRecipeId(ropeAndNail.getDefaultInstance()).identifier());
 
 
     List<ICondition> conditions = new ArrayList<>();
@@ -153,7 +153,7 @@ public class ComfortsRecipeProvider extends RecipeProvider {
                     .group("comforts:sleeping_bag")
                     .unlockedBy(getHasName(pWool), has(pWool))
                     ::save)
-        .save(this.output, RecipeBuilder.getDefaultRecipeId(pBed));
+        .save(this.output, RecipeBuilder.getDefaultRecipeId(pBed.asItem().getDefaultInstance()).identifier());
   }
 
   protected void hammock(ItemLike pBed, ItemLike pWool) {
@@ -169,7 +169,7 @@ public class ComfortsRecipeProvider extends RecipeProvider {
                     .group("comforts:hammock")
                     .unlockedBy(getHasName(pWool), has(pWool))
                     ::save)
-        .save(this.output, RecipeBuilder.getDefaultRecipeId(pBed));
+        .save(this.output, RecipeBuilder.getDefaultRecipeId(pBed.asItem().getDefaultInstance()).identifier());
   }
 
   public static class Runner extends RecipeProvider.Runner {

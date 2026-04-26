@@ -18,10 +18,16 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.ClockTimeMarker;
+import net.minecraft.world.clock.ClockTimeMarkers;
+import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.util.ClockAdjustment;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
@@ -54,13 +60,31 @@ public class ComfortsCommonEventsListener {
     LevelAccessor levelAccessor = evt.getLevel();
 
     if (levelAccessor instanceof ServerLevel serverLevel) {
-      long newTime = evt.getNewTime();
-      long time = ComfortsEvents.getWakeTime(serverLevel, serverLevel.getDayTime(), newTime);
+      long currentTime = serverLevel.getDefaultClockTime();
+      long newTime = resolveAdjustmentTime(evt.getAdjustment(), serverLevel, currentTime);
+      long time = ComfortsEvents.getWakeTime(serverLevel, currentTime, newTime);
 
-      if (newTime != time) {
-        evt.setTimeAddition(time);
+      if (time != currentTime) {
+        evt.setAdjustment(new ClockAdjustment.Absolute(time));
       }
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private long resolveAdjustmentTime(ClockAdjustment adjustment, ServerLevel level, long currentTime) {
+    if (adjustment instanceof ClockAdjustment.Absolute absolute) {
+      return absolute.ticks();
+    } else if (adjustment instanceof ClockAdjustment.Relative relative) {
+      return currentTime + relative.ticks();
+    } else if (adjustment instanceof ClockAdjustment.Marker marker) {
+      ResourceKey<Registry<ClockTimeMarker>> rootId =
+          (ResourceKey<Registry<ClockTimeMarker>>) (ResourceKey<?>) ClockTimeMarkers.ROOT_ID;
+      return level.registryAccess().lookup(rootId)
+          .flatMap(reg -> reg.get(marker.marker()))
+          .map(h -> h.value().resolveTimeToMoveTo(currentTime))
+          .orElse(currentTime);
+    }
+    return currentTime;
   }
 
   @SubscribeEvent

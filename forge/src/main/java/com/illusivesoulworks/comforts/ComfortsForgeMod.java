@@ -18,9 +18,11 @@
 package com.illusivesoulworks.comforts;
 
 import com.illusivesoulworks.comforts.common.CapabilitySleepData;
+import com.illusivesoulworks.comforts.common.ComfortsConfig;
+import net.minecraftforge.fml.config.ModConfig;
 import com.illusivesoulworks.comforts.common.ComfortsCommonEventsListener;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
-import com.illusivesoulworks.comforts.common.capability.ISleepData;
+
 import com.illusivesoulworks.comforts.common.network.ComfortsForgeNetwork;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import com.illusivesoulworks.comforts.data.ComfortsRecipeProvider;
@@ -37,7 +39,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -60,12 +61,14 @@ public class ComfortsForgeMod {
 
   public ComfortsForgeMod(FMLJavaModLoadingContext context) {
     ComfortsCommonMod.init();
-    ComfortsCommonMod.initConfig();
+    context.registerConfig(ModConfig.Type.SERVER, ComfortsConfig.SERVER_SPEC,
+        ComfortsConstants.MOD_ID + "-server.toml");
+    context.registerConfig(ModConfig.Type.COMMON, ComfortsConfig.COMMON_SPEC,
+        ComfortsConstants.MOD_ID + "-common.toml");
     BusGroup busGroup = context.getModBusGroup();
     CONDITIONS.register(busGroup);
     FMLCommonSetupEvent.getBus(busGroup).addListener(this::setup);
-    RegisterCapabilitiesEvent.getBus(busGroup).addListener(this::registerCapabilities);
-    BuildCreativeModeTabContentsEvent.getBus(busGroup).addListener(this::creativeTab);
+    BuildCreativeModeTabContentsEvent.BUS.addListener(this::creativeTab);
     GatherDataEvent.getBus(busGroup).addListener(this::gatherData);
   }
 
@@ -84,10 +87,6 @@ public class ComfortsForgeMod {
     MinecraftForge.EVENT_BUS.register(new ComfortsCommonEventsListener());
     MinecraftForge.EVENT_BUS.register(new CapabilitySleepData.CapabilityEvents());
     ComfortsForgeNetwork.setup();
-  }
-
-  private void registerCapabilities(final RegisterCapabilitiesEvent evt) {
-    evt.register(ISleepData.class);
   }
 
   private void creativeTab(final BuildCreativeModeTabContentsEvent evt) {

@@ -24,9 +24,6 @@
     "client": [
       "com.illusivesoulworks.comforts.ComfortsFabricClientMod"
     ],
-    "spectrelib-config": [
-      "com.illusivesoulworks.comforts.ComfortsConfigInitializer"
-    ],
     "cardinal-components-entity": [
       "com.illusivesoulworks.comforts.common.ComfortsComponents"
     ]
@@ -41,10 +38,10 @@
     "${mod_id}.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.15",
+    "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": "*",
+    "forgeconfigapiport": "*",
     "minecraft": "${minecraft_version_range_alt}",
     "java": ">=${java_version}"
   }
 }
-  

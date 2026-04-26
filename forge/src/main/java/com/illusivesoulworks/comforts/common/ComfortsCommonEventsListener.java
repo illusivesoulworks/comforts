@@ -56,7 +56,7 @@ public class ComfortsCommonEventsListener {
 
     if (levelAccessor instanceof ServerLevel serverLevel) {
       long newTime = evt.getNewTime();
-      long time = ComfortsEvents.getWakeTime(serverLevel, serverLevel.getDayTime(), newTime);
+      long time = ComfortsEvents.getWakeTime(serverLevel, serverLevel.getDefaultClockTime(), newTime);
 
       if (newTime != time) {
         evt.setTimeAddition(time);

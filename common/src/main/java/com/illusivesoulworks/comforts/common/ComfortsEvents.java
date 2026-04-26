@@ -112,7 +112,7 @@ public class ComfortsEvents {
     if (!level.isClientSide()) {
       Services.SLEEP_EVENTS.getSleepData(player)
           .ifPresent(data -> player.getSleepingPos().ifPresent(bedPos -> {
-            final long wakeTime = level.getDayTime();
+            final long wakeTime = level.getDefaultClockTime();
             final long timeSlept = wakeTime - data.getSleepTime();
             final BlockState state = level.getBlockState(bedPos);
 
@@ -148,14 +148,14 @@ public class ComfortsEvents {
                   }
                 }
 
-                if (level.random.nextDouble() < breakChance) {
+                if (level.getRandom().nextDouble() < breakChance) {
                   broke = true;
                   final BlockPos blockpos = bedPos
                       .relative(state.getValue(HorizontalDirectionalBlock.FACING).getOpposite());
                   level.removeBlock(bedPos, false);
                   level.removeBlock(blockpos, false);
-                  player.displayClientMessage(
-                      Component.translatable("item.comforts.sleeping_bag.broke"), true);
+                  player.sendOverlayMessage(
+                      Component.translatable("item.comforts.sleeping_bag.broke"));
                   level.playSound(null, bedPos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS,
                                   1.0F, 1.0F);
                   player.clearSleepingPos();
@@ -210,7 +210,7 @@ public class ComfortsEvents {
 
     if (!player.level().isClientSide()) {
       return Services.SLEEP_EVENTS.getSleepData(player).map(data -> {
-        final long dayTime = player.level().getDayTime();
+        final long dayTime = player.level().getDefaultClockTime();
         data.setSleepTime(dayTime);
 
         if (ComfortsConfig.SERVER.restrictSleeping.get()) {
@@ -220,8 +220,7 @@ public class ComfortsEvents {
           }
 
           if (data.getTiredTime() > dayTime) {
-            player.displayClientMessage(Component.translatable("capability.comforts.not_sleepy"),
-                                        true);
+            player.sendOverlayMessage(Component.translatable("capability.comforts.not_sleepy"));
             return Player.BedSleepingProblem.OTHER_PROBLEM;
           }
         }
@@ -267,7 +266,7 @@ public class ComfortsEvents {
       }
 
       for (ServerPlayer player : serverLevel.players()) {
-        player.displayClientMessage(component, true);
+        player.sendOverlayMessage(component);
       }
       return true;
     }
