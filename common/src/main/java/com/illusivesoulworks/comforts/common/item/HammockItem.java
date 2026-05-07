@@ -51,8 +51,8 @@ public class HammockItem extends BaseComfortsItem {
     return placementResult.map(interactionResult -> interactionResult, error -> {
 
       if (player != null) {
-        player.displayClientMessage(
-            Component.translatable("item.comforts.hammock." + error.key), true);
+        player.sendSystemMessage(
+            Component.translatable("item.comforts.hammock." + error.key));
       }
       return InteractionResult.FAIL;
     });

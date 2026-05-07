@@ -13,7 +13,6 @@ def publishDiscord() {
         def modLoaders = []
         modLoaders.add(['neoforge', "NeoForge"])
         modLoaders.add(['fabric', "Fabric"])
-        modLoaders.add(['forge', "Forge"])
 
         for (int i = 0; i < links.size(); i++) {
             def link = links[i]
@@ -110,7 +109,7 @@ def ordered(List<String> dependencyPaths) {
 }
 
 tasks.register('publishMod') {
-    def loaders = ['forge', 'fabric', 'neoforge']
+    def loaders = ['fabric', 'neoforge']
     List<String> publishTasks = []
     loaders.each {
         publishTasks.add(":${it}:modrinth")

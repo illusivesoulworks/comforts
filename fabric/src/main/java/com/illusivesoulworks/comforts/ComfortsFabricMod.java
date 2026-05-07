@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.util.EventResult;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.registry.LandPathNodeTypesRegistry;
+import net.fabricmc.fabric.api.registry.LandPathTypeRegistry;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
@@ -50,11 +50,11 @@ public class ComfortsFabricMod implements ModInitializer {
       ComfortsConstants.Result result = ComfortsEvents.canSleep(entity.level(), sleepingPos);
 
       if (result == ComfortsConstants.Result.DENY) {
-        return InteractionResult.FAIL;
+        return EventResult.DENY;
       } else if (result == ComfortsConstants.Result.ALLOW) {
-        return InteractionResult.SUCCESS;
+        return EventResult.ALLOW;
       }
-      return InteractionResult.PASS;
+      return EventResult.PASS;
     });
     EntitySleepEvents.STOP_SLEEPING.register((entity, sleepingPos) -> {
 
@@ -70,26 +70,26 @@ public class ComfortsFabricMod implements ModInitializer {
       Block block = value.get();
 
       if (block instanceof BaseComfortsBlock baseComfortsBlock) {
-        LandPathNodeTypesRegistry.register(block,
+        LandPathTypeRegistry.register(block,
                                            (state, neighbor) -> baseComfortsBlock.getBlockPathType(
                                                state, null, null, null));
       }
     }
-    ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COLORED_BLOCKS).register(entries -> {
+    CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COLORED_BLOCKS).register(output -> {
 
       for (RegistryObject<Block> value : comfortsBlocks) {
-        entries.accept(value.get());
+        output.accept(value.get());
       }
     });
-    ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
+    CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(output -> {
 
       for (RegistryObject<Block> value : comfortsBlocks) {
-        entries.accept(value.get());
+        output.accept(value.get());
       }
-      entries.accept(ComfortsRegistry.ROPE_AND_NAIL_ITEM.get());
+      output.accept(ComfortsRegistry.ROPE_AND_NAIL_ITEM.get());
     });
-    PayloadTypeRegistry.playS2C().register(SPacketPlaceBag.TYPE, SPacketPlaceBag.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C().register(SPacketAutoSleep.TYPE, SPacketAutoSleep.STREAM_CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(SPacketPlaceBag.TYPE, SPacketPlaceBag.STREAM_CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(SPacketAutoSleep.TYPE, SPacketAutoSleep.STREAM_CODEC);
     ResourceConditions.register(HammockEnabledCondition.TYPE);
     ResourceConditions.register(SleepingBagEnabledCondition.TYPE);
     ResourceConditions.register(RopesTagCondition.TYPE);

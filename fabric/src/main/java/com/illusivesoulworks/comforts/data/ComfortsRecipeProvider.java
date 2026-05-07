@@ -5,7 +5,7 @@ import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nonnull;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.ItemLike;
 
 public class ComfortsRecipeProvider extends FabricRecipeProvider {
 
-  public ComfortsRecipeProvider(FabricDataOutput output,
+  public ComfortsRecipeProvider(FabricPackOutput output,
                                 CompletableFuture<HolderLookup.Provider> registriesFuture) {
     super(output, registriesFuture);
   }

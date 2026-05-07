@@ -53,7 +53,7 @@ public class SleepingBagItem extends BaseComfortsItem {
           }
 
           if (text != null) {
-            player.displayClientMessage(text, true);
+            player.sendSystemMessage(text);
           }
           return InteractionResult.FAIL;
         }, unit -> {
