@@ -2,7 +2,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'fabric-loom' version '1.13-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.16-SNAPSHOT'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
 }
@@ -16,19 +16,14 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_mc}:${parchment_version}@zip")
-    })
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-    modImplementation "com.illusivesoulworks.spectrelib:spectrelib-fabric:${spectrelib_version}"
+    implementation "com.illusivesoulworks.spectrelib:spectrelib-fabric:${spectrelib_version}"
     include "com.illusivesoulworks.spectrelib:spectrelib-fabric:${spectrelib_version}"
 
-
-    modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
-    modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    implementation "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
+    implementation "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
 }

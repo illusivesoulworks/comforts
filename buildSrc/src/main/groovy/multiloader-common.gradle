@@ -85,8 +85,6 @@ processResources {
             "version"                    : version,
             "group"                      : project.group, //Else we target the task's group.
             "minecraft_version"          : minecraft_version,
-            "forge_version"              : forge_version,
-            "forge_version_range"        : forge_version_range,
             "minecraft_version_range"    : minecraft_version_range,
             "minecraft_version_range_alt": minecraft_version_range_alt,
             "fabric_version"             : fabric_version,

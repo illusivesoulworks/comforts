@@ -33,18 +33,19 @@ public class MixinServerLevel {
   @Unique
   private long curTime;
 
-  @Inject(at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.setDayTime(J)V"), method = "tick")
+  @Inject(at = @At(value = "INVOKE", target = "net/minecraft/world/clock/ServerClockManager.moveToTimeMarker(Lnet/minecraft/core/Holder;Lnet/minecraft/resources/ResourceKey;)Z"), method = "tick")
   private void comforts$setTimeOfDayPre(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-    curTime = ((ServerLevel) (Object) this).getDayTime();
+    curTime = ((ServerLevel) (Object) this).getOverworldClockTime();
   }
 
-  @Inject(at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.setDayTime(J)V", shift = At.Shift.AFTER), method = "tick")
+  @Inject(at = @At(value = "INVOKE", target = "net/minecraft/world/clock/ServerClockManager.moveToTimeMarker(Lnet/minecraft/core/Holder;Lnet/minecraft/resources/ResourceKey;)Z", shift = At.Shift.AFTER), method = "tick")
   private void comforts$setTimeOfDayPost(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
     ServerLevel world = (ServerLevel) (Object) this;
-    long newTime = ComfortsEvents.getWakeTime(world, curTime, world.getDayTime());
+    long newTime = ComfortsEvents.getWakeTime(world, curTime, world.getOverworldClockTime());
 
     if (newTime != curTime) {
-      world.setDayTime(newTime);
+      world.dimensionType().defaultClock().ifPresent(
+          clock -> world.clockManager().setTotalTicks(clock, newTime));
     }
   }
 }

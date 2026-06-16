@@ -21,6 +21,7 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.util.ClockAdjustment;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
@@ -54,11 +55,12 @@ public class ComfortsCommonEventsListener {
     LevelAccessor levelAccessor = evt.getLevel();
 
     if (levelAccessor instanceof ServerLevel serverLevel) {
-      long newTime = evt.getNewTime();
-      long time = ComfortsEvents.getWakeTime(serverLevel, serverLevel.getDayTime(), newTime);
+      long currentTime = serverLevel.getOverworldClockTime();
+      long vanillaNewTime = ((currentTime / 24000L) + 1L) * 24000L;
+      long time = ComfortsEvents.getWakeTime(serverLevel, currentTime, vanillaNewTime);
 
-      if (newTime != time) {
-        evt.setTimeAddition(time);
+      if (time != vanillaNewTime) {
+        evt.setAdjustment(new ClockAdjustment.Absolute(time));
       }
     }
   }

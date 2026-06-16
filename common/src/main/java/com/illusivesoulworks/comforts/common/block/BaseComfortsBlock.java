@@ -117,7 +117,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       BedRule bedrule = level.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, pos);
 
       if (bedrule.explodes()) {
-        bedrule.errorMessage().ifPresent((msg) -> player.displayClientMessage(msg, true));
+        bedrule.errorMessage().ifPresent((msg) -> player.sendSystemMessage(msg));
         level.removeBlock(pos, false);
         final BlockPos blockpos = pos.relative(state.getValue(FACING).getOpposite());
 
@@ -131,8 +131,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       } else if (state.getValue(OCCUPIED)) {
 
         if (!this.kickVillagerOutOfBed(level, pos)) {
-          player.displayClientMessage(
-              Component.translatable("item.comforts." + this.type.name + ".occupied"), true);
+          player.sendSystemMessage(
+              Component.translatable("item.comforts." + this.type.name + ".occupied"));
         }
         return InteractionResult.SUCCESS_SERVER;
       } else if (player instanceof ServerPlayer serverPlayer) {
@@ -148,7 +148,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
           }
 
           if (text != null) {
-            player.displayClientMessage(text, true);
+            player.sendSystemMessage(text);
           }
         });
       }
@@ -364,7 +364,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       if (timeUse == ComfortsConstants.TimeUse.USE_WITHOUT_SLEEPING) {
         return ComfortsConstants.Result.ALLOW;
       }
-      final long time = level.getDayTime() % 24000L;
+      final long time = level.getOverworldClockTime() % 24000L;
       long[] daySpan = new long[] {100L, 11900L};
       daySpan[0] = Math.max(1, daySpan[0] + ComfortsConfig.SERVER.dayWakeTimeOffset.get());
       daySpan[1] =

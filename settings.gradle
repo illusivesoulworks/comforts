@@ -45,5 +45,4 @@ plugins {
 rootProject.name = "${mod_id}"
 include("common")
 include("fabric")
-include("forge")
 include("neoforge")
