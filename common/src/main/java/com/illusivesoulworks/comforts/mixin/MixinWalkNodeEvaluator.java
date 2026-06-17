@@ -27,7 +27,7 @@ public abstract class MixinWalkNodeEvaluator extends NodeEvaluator {
   )
   private static void comforts$checkNeighbourBlocks(PathfindingContext context,
                                                     int x, int y, int z,
-                                                    PathType pathType,
+                                                    PathType blockPathType,
                                                     CallbackInfoReturnable<PathType> cir) {
     BlockState state = context.level().getBlockState(new BlockPos(x, y + 1, z));
 
@@ -39,27 +39,31 @@ public abstract class MixinWalkNodeEvaluator extends NodeEvaluator {
   @WrapOperation(
       at = @At(
           value = "INVOKE",
-          target = "net/minecraft/world/level/pathfinder/WalkNodeEvaluator.tryJumpOn(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/PathType;Lnet/minecraft/core/BlockPos$MutableBlockPos;)Lnet/minecraft/world/level/pathfinder/Node;"),
+          target = "net/minecraft/world/level/pathfinder/WalkNodeEvaluator.tryJumpOn" +
+              "(IIIIDLnet/minecraft/core/Direction;" +
+              "Lnet/minecraft/world/level/pathfinder/PathType;" +
+              "Lnet/minecraft/core/BlockPos$MutableBlockPos;)" +
+              "Lnet/minecraft/world/level/pathfinder/Node;"),
       method = "findAcceptedNode"
   )
   private Node comforts$findAcceptedNode(WalkNodeEvaluator instance, int x,
                                          int y, int z,
-                                         int verticalDeltaLimit,
-                                         double nodeFloorLevel,
-                                         Direction direction,
-                                         PathType pathType,
-                                         BlockPos.MutableBlockPos pos,
+                                         int jumpSize,
+                                         double nodeHeight,
+                                         Direction travelDirection,
+                                         PathType blockPathTypeCurrent,
+                                         BlockPos.MutableBlockPos reusablePos,
                                          Operation<Node> original) {
 
     if (this.mob instanceof Cat) {
       BlockState state = this.mob.level().getBlockState(new BlockPos(x, y + 1, z));
 
       if (state.getBlock() instanceof HammockBlock) {
-        return original.call(instance, x, y, z, verticalDeltaLimit + 1, nodeFloorLevel, direction,
-                             pathType, pos);
+        return original.call(instance, x, y, z, jumpSize + 1, nodeHeight, travelDirection,
+            blockPathTypeCurrent, reusablePos);
       }
     }
-    return original.call(instance, x, y, z, verticalDeltaLimit, nodeFloorLevel, direction, pathType,
-                         pos);
+    return original.call(instance, x, y, z, jumpSize, nodeHeight, travelDirection,
+        blockPathTypeCurrent, reusablePos);
   }
 }

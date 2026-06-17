@@ -25,7 +25,7 @@ public class MixinSleepStatus implements ServerAware {
       method = "sleepersNeeded",
       cancellable = true
   )
-  private void comforts$sleepersNeeded(int percentage, CallbackInfoReturnable<Integer> cir) {
+  private void comforts$sleepersNeeded(int sleepPercentageNeeded, CallbackInfoReturnable<Integer> cir) {
 
     if (this.comforts$getServer().isBrightOutside()) {
       int result = ComfortsEvents.sleepersNeeded(this.activePlayers);

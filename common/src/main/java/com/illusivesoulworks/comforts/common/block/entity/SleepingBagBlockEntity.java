@@ -18,11 +18,11 @@
 package com.illusivesoulworks.comforts.common.block.entity;
 
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
 
 public class SleepingBagBlockEntity extends BaseComfortsBlockEntity {
 
@@ -34,7 +34,7 @@ public class SleepingBagBlockEntity extends BaseComfortsBlockEntity {
     super(ComfortsRegistry.SLEEPING_BAG_BLOCK_ENTITY.get(), pos, state, colorIn);
   }
 
-  @Nonnull
+  @NonNull
   @Override
   public Component getName() {
     return this.name != null ? this.name : Component.translatable(

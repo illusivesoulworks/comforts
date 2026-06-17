@@ -20,7 +20,6 @@ package com.illusivesoulworks.comforts.common.item;
 import com.illusivesoulworks.comforts.common.block.RopeAndNailBlock;
 import com.mojang.datafixers.util.Either;
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,6 +35,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
 public class HammockItem extends BaseComfortsItem {
 
@@ -43,9 +44,8 @@ public class HammockItem extends BaseComfortsItem {
     super(block);
   }
 
-  @Nonnull
   @Override
-  public InteractionResult useOn(UseOnContext context) {
+  public @NonNull InteractionResult useOn(UseOnContext context) {
     final Player player = context.getPlayer();
     Either<InteractionResult, HammockErrorState> placementResult = hangHammock(context);
     return placementResult.map(interactionResult -> interactionResult, error -> {
@@ -73,8 +73,8 @@ public class HammockItem extends BaseComfortsItem {
       if (hasPartner) {
         InteractionResult result = this.place(
             BlockPlaceContext.at(new BlockPlaceContext(context),
-                                 context.getClickedPos().relative(direction),
-                                 direction));
+                context.getClickedPos().relative(direction),
+                direction));
 
         // Checking that the hammock is placeable between the ropes
         if (result.consumesAction()) {
@@ -148,13 +148,14 @@ public class HammockItem extends BaseComfortsItem {
   }
 
   @Override
-  public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context,
-                              @Nonnull TooltipDisplay tooltipDisplay,
-                              @Nonnull Consumer<Component> consumer, @Nonnull TooltipFlag flag) {
+  public @NullMarked void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                                          TooltipDisplay tooltipDisplay,
+                                          Consumer<Component> consumer,
+                                          TooltipFlag flag) {
     consumer.accept(Component.translatable("item.comforts.hammock.placement.tooltip",
-                                           Component.translatable("item.comforts.rope_and_nail")
-                                               .withStyle(ChatFormatting.YELLOW))
-                        .withStyle(ChatFormatting.GRAY));
+            Component.translatable("item.comforts.rope_and_nail")
+                .withStyle(ChatFormatting.YELLOW))
+        .withStyle(ChatFormatting.GRAY));
   }
 
   private enum HammockErrorState {

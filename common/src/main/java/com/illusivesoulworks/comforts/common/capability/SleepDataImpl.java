@@ -18,10 +18,10 @@
 package com.illusivesoulworks.comforts.common.capability;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class SleepDataImpl implements ISleepData {
 
@@ -61,7 +61,7 @@ public class SleepDataImpl implements ISleepData {
   }
 
   @Override
-  public BlockPos getAutoSleepPos() {
+  public @Nullable BlockPos getAutoSleepPos() {
     return autoSleepPos;
   }
 
@@ -71,21 +71,21 @@ public class SleepDataImpl implements ISleepData {
   }
 
   @Override
-  public void copyFrom(ISleepData other) {
+  public void copyFrom(@NonNull ISleepData other) {
     this.setSleepTime(other.getSleepTime());
     this.setTiredTime(other.getTiredTime());
     this.setWakeTime(other.getWakeTime());
   }
 
   @Override
-  public void write(@NotNull ValueOutput output) {
+  public void write(@NonNull ValueOutput output) {
     output.putLong(WAKE_TAG, this.getWakeTime());
     output.putLong(TIRED_TAG, this.getTiredTime());
     output.putLong(SLEEP_TAG, this.getSleepTime());
   }
 
   @Override
-  public void read(@NotNull ValueInput input) {
+  public void read(@NonNull ValueInput input) {
     this.setWakeTime(input.getLong(WAKE_TAG).orElse(0L));
     this.setTiredTime(input.getLong(TIRED_TAG).orElse(0L));
     this.setSleepTime(input.getLong(SLEEP_TAG).orElse(0L));

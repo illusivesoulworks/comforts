@@ -2,7 +2,6 @@ package com.illusivesoulworks.comforts.common.network;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.item.SleepingBagItem;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 import org.joml.Vector3fc;
+import org.jspecify.annotations.NonNull;
 
 public record SPacketPlaceBag(int entityId, InteractionHand hand, Direction direction,
                               BlockPos blockPos, Vector3fc location, boolean inside)
@@ -46,7 +46,7 @@ public record SPacketPlaceBag(int entityId, InteractionHand hand, Direction dire
     }
   }
 
-  @Nonnull
+  @NonNull
   @Override
   public Type<? extends CustomPacketPayload> type() {
     return TYPE;

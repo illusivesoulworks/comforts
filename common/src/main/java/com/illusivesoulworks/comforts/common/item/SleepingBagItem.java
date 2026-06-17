@@ -5,9 +5,7 @@ import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.datafixers.util.Either;
-import java.util.List;
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -21,16 +19,17 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class SleepingBagItem extends BaseComfortsItem {
 
   public SleepingBagItem(Block block) {
     super(block);
   }
 
-  @Nonnull
   @Override
-  public InteractionResult useOn(@Nonnull UseOnContext context) {
+  public InteractionResult useOn(UseOnContext context) {
     boolean autoUse = ComfortsConfig.SERVER.autoUse.get();
     final Player player = context.getPlayer();
 
@@ -72,20 +71,20 @@ public class SleepingBagItem extends BaseComfortsItem {
     }
   }
 
-  public void syncedUseOn(@Nonnull UseOnContext useOnContext) {
+  public void syncedUseOn(UseOnContext useOnContext) {
     super.useOn(useOnContext);
   }
 
   @Override
-  public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext context,
-                              @Nonnull TooltipDisplay tooltipDisplay,
-                              @Nonnull Consumer<Component> consumer, @Nonnull TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                              TooltipDisplay tooltipDisplay,
+                              Consumer<Component> consumer, TooltipFlag flag) {
 
     if (ComfortsConfig.SERVER.autoUse.get()) {
       consumer.accept(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.0")
-                         .withStyle(ChatFormatting.GRAY));
+          .withStyle(ChatFormatting.GRAY));
       consumer.accept(Component.translatable("item.comforts.sleeping_bag.auto_use.tooltip.1")
-                         .withStyle(ChatFormatting.GRAY));
+          .withStyle(ChatFormatting.GRAY));
     }
   }
 }

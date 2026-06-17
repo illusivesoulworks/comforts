@@ -22,7 +22,6 @@ import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.SleepingBagBlockEntity;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -37,7 +36,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class SleepingBagBlock extends BaseComfortsBlock {
 
   private static final VoxelShape SLEEPING_BAG_SHAPE = Block
@@ -58,16 +59,14 @@ public class SleepingBagBlock extends BaseComfortsBlock {
     this.color = color;
   }
 
-  @Nonnull
   @Override
-  public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn,
-                             @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+  public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos,
+                             CollisionContext context) {
     return SLEEPING_BAG_SHAPE;
   }
 
-  @Nonnull
   @Override
-  public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     return new SleepingBagBlockEntity(pos, state, this.color);
   }
 

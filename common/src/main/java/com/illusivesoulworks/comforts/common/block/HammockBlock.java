@@ -22,7 +22,6 @@ import com.illusivesoulworks.comforts.common.ComfortsConfig;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.illusivesoulworks.comforts.common.block.entity.HammockBlockEntity;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -45,7 +44,10 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class HammockBlock extends BaseComfortsBlock {
 
   private static final VoxelShape HAMMOCK_SHAPE = Block
@@ -97,10 +99,9 @@ public class HammockBlock extends BaseComfortsBlock {
     }
   }
 
-  @Nonnull
   @Override
-  public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
-                             @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+  public VoxelShape getShape(BlockState state, BlockGetter level,
+                             BlockPos pos, CollisionContext context) {
     final Direction direction = getConnectedDirection(state).getOpposite();
     return switch (direction) {
       case NORTH -> NORTH_SHAPE;
@@ -111,10 +112,8 @@ public class HammockBlock extends BaseComfortsBlock {
     };
   }
 
-  @Nonnull
   @Override
-  public BlockState playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
-                                      @Nonnull Player player) {
+  public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
     super.playerWillDestroy(level, pos, state, player);
     final BedPart bedpart = state.getValue(PART);
     final boolean isHead = bedpart == BedPart.HEAD;
@@ -126,7 +125,7 @@ public class HammockBlock extends BaseComfortsBlock {
   }
 
   @Override
-  public BlockState getStateForPlacement(BlockPlaceContext context) {
+  public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
     final Direction direction = context.getClickedFace();
 
     if (direction == Direction.UP || direction == Direction.DOWN) {
@@ -145,9 +144,8 @@ public class HammockBlock extends BaseComfortsBlock {
     return ComfortsConfig.SERVER.hammockUse.get();
   }
 
-  @Nonnull
   @Override
-  public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     return new HammockBlockEntity(pos, state, this.color);
   }
 

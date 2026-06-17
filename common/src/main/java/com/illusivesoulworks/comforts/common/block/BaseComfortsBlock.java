@@ -24,8 +24,6 @@ import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.datafixers.util.Either;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -70,8 +68,10 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterloggedBlock {
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -90,11 +90,9 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     return part == BedPart.FOOT ? direction : direction.getOpposite();
   }
 
-  @Nonnull
   @Override
-  public InteractionResult useWithoutItem(@Nonnull BlockState state, Level level,
-                                          @Nonnull BlockPos pos, @Nonnull Player player,
-                                          @Nonnull BlockHitResult hit) {
+  public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                          BlockHitResult hit) {
 
     if (level.isClientSide()) {
       return InteractionResult.SUCCESS_SERVER;
@@ -117,7 +115,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       BedRule bedrule = level.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, pos);
 
       if (bedrule.explodes()) {
-        bedrule.errorMessage().ifPresent((msg) -> player.sendSystemMessage(msg));
+        bedrule.errorMessage().ifPresent(player::sendSystemMessage);
         level.removeBlock(pos, false);
         final BlockPos blockpos = pos.relative(state.getValue(FACING).getOpposite());
 
@@ -156,7 +154,9 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     return InteractionResult.SUCCESS_SERVER;
   }
 
-  public PathType getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, Mob mob) {
+  @SuppressWarnings("unused")
+  public PathType getBlockPathType(BlockState state, @Nullable BlockGetter level, @Nullable BlockPos pos,
+                                   @Nullable Mob mob) {
     return PathType.WALKABLE;
   }
 
@@ -235,7 +235,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
   protected abstract boolean canRest();
 
   private static boolean bedInRange(ServerPlayer playerEntity, BlockPos blockPos,
-                                    Direction direction) {
+                                    @Nullable Direction direction) {
     if (direction == null) {
       return false;
     }
@@ -275,10 +275,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     }
   }
 
-  @Nonnull
   @Override
-  public BlockState playerWillDestroy(Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
-                                      @Nonnull Player player) {
+  public BlockState playerWillDestroy(Level level, BlockPos pos,  BlockState state, Player player) {
 
     if (!level.isClientSide() && player.isCreative()) {
       final BedPart bedpart = state.getValue(PART);
@@ -307,13 +305,10 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     return state;
   }
 
-  @Nonnull
   @Override
-  protected BlockState updateShape(BlockState stateIn, @NotNull LevelReader levelReader,
-                                   @NotNull ScheduledTickAccess tickAccess,
-                                   @NotNull BlockPos currentPos, @NotNull Direction facing,
-                                   @NotNull BlockPos facingPos, @NotNull BlockState facingState,
-                                   @NotNull RandomSource randomSource) {
+  protected BlockState updateShape(BlockState stateIn, LevelReader levelReader, ScheduledTickAccess tickAccess,
+                                   BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState,
+                                   RandomSource randomSource) {
 
     if (stateIn.getValue(WATERLOGGED)) {
       tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
@@ -337,15 +332,14 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
     super.createBlockStateDefinition(builder);
   }
 
-  @Nonnull
   @Override
   public FluidState getFluidState(BlockState state) {
     return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
   }
 
   @Override
-  public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
-                          @Nullable LivingEntity livingEntity, @Nonnull ItemStack stack) {
+  public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity livingEntity,
+                          ItemStack stack) {
     super.setPlacedBy(level, pos, state, livingEntity, stack);
     BlockPos blockPos = pos.relative(state.getValue(FACING));
 
@@ -364,7 +358,7 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
       if (timeUse == ComfortsConstants.TimeUse.USE_WITHOUT_SLEEPING) {
         return ComfortsConstants.Result.ALLOW;
       }
-      final long time = level.getOverworldClockTime() % 24000L;
+      final long time = level.getDefaultClockTime() % 24000L;
       long[] daySpan = new long[] {100L, 11900L};
       daySpan[0] = Math.max(1, daySpan[0] + ComfortsConfig.SERVER.dayWakeTimeOffset.get());
       daySpan[1] =

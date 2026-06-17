@@ -21,8 +21,6 @@ import com.google.common.collect.ImmutableMap;
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import java.util.EnumMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -54,7 +52,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
 
   public static final EnumProperty<Direction> HORIZONTAL_FACING = HorizontalDirectionalBlock.FACING;
@@ -89,10 +90,9 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
             .setValue(SUPPORTING, false));
   }
 
-  @Nonnull
   @Override
-  public VoxelShape getShape(BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos,
-                             @Nonnull CollisionContext context) {
+  public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos,
+                             CollisionContext context) {
     return state.getValue(SUPPORTING) ? SHAPES_S.get(state.getValue(HORIZONTAL_FACING))
                                       : SHAPES_R.get(state.getValue(HORIZONTAL_FACING));
   }
@@ -134,17 +134,14 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
     }
   }
 
-  @Nonnull
   @Override
-  public BlockState playerWillDestroy(@Nonnull Level level, @Nonnull BlockPos pos,
-                                      @Nonnull BlockState state, @Nonnull Player player) {
+  public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
     dropHammock(level, pos, state);
     return super.playerWillDestroy(level, pos, state, player);
   }
 
-  @Nullable
   @Override
-  public BlockState getStateForPlacement(BlockPlaceContext context) {
+  public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
     final FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
     BlockState blockstate = this.defaultBlockState();
     final LevelReader worldreader = context.getLevel();
@@ -166,13 +163,11 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
     return null;
   }
 
-  @Nonnull
   @Override
-  protected BlockState updateShape(BlockState stateIn, @Nonnull LevelReader levelReader,
-                                   @Nonnull ScheduledTickAccess tickAccess,
-                                   @Nonnull BlockPos currentPos, @Nonnull Direction facing,
-                                   @Nonnull BlockPos facingPos, @Nonnull BlockState facingState,
-                                   @Nonnull RandomSource randomSource) {
+  protected BlockState updateShape(BlockState stateIn, LevelReader levelReader,
+                                   ScheduledTickAccess tickAccess, BlockPos currentPos,
+                                   Direction facing, BlockPos facingPos, BlockState facingState,
+                                   RandomSource randomSource) {
 
     if (stateIn.getValue(BaseComfortsBlock.WATERLOGGED)) {
       tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
@@ -181,15 +176,13 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
         .canSurvive(levelReader, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;
   }
 
-  @Nonnull
   @Override
-  public BlockState rotate(@Nonnull BlockState state, Rotation rot) {
+  public BlockState rotate(BlockState state, Rotation rot) {
     return state.setValue(HORIZONTAL_FACING, rot.rotate(state.getValue(HORIZONTAL_FACING)));
   }
 
-  @Nonnull
   @Override
-  public BlockState mirror(@Nonnull BlockState state, Mirror mirrorIn) {
+  public BlockState mirror(BlockState state, Mirror mirrorIn) {
     return state.rotate(mirrorIn.getRotation(state.getValue(HORIZONTAL_FACING)));
   }
 
@@ -198,7 +191,6 @@ public class RopeAndNailBlock extends Block implements SimpleWaterloggedBlock {
     builder.add(SUPPORTING, HORIZONTAL_FACING, BaseComfortsBlock.WATERLOGGED);
   }
 
-  @Nonnull
   @Override
   public FluidState getFluidState(BlockState state) {
     return state.getValue(BaseComfortsBlock.WATERLOGGED) ? Fluids.WATER.getSource(false)

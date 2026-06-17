@@ -17,7 +17,6 @@
 
 package com.illusivesoulworks.comforts.common.item;
 
-import javax.annotation.Nonnull;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -26,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
 
 public class BaseComfortsItem extends BlockItem {
 
@@ -34,7 +34,7 @@ public class BaseComfortsItem extends BlockItem {
   }
 
   @Override
-  protected boolean placeBlock(BlockPlaceContext context, @Nonnull BlockState state) {
+  protected boolean placeBlock(BlockPlaceContext context, @NonNull BlockState state) {
     return context.getLevel().setBlock(context.getClickedPos(), state, 26);
   }
 }

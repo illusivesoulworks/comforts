@@ -21,8 +21,6 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.block.entity.BaseComfortsBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -46,7 +44,10 @@ import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBlockEntity> implements
     BlockEntityRenderer<T, BedRenderState> {
 
@@ -82,16 +83,15 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
     this.type = type;
   }
 
-  @Nonnull
   @Override
   public BedRenderState createRenderState() {
     return new BedRenderState();
   }
 
   public void extractRenderState(
-      @Nonnull T comfortsBlockEntity, @Nonnull BedRenderState bedRenderState,
-      float partialTicks, @Nonnull Vec3 cameraPosition,
-      @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress
+      T comfortsBlockEntity, BedRenderState bedRenderState,
+      float partialTicks, Vec3 cameraPosition,
+      ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress
   ) {
     BlockEntityRenderer.super.extractRenderState(comfortsBlockEntity, bedRenderState,
                                                  partialTicks, cameraPosition, breakProgress);
@@ -117,9 +117,8 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
   }
 
   @Override
-  public void submit(@Nonnull BedRenderState bedRenderState, @Nonnull PoseStack poseStack,
-                     @Nonnull SubmitNodeCollector nodeCollector,
-                     @Nonnull CameraRenderState cameraRenderState) {
+  public void submit(BedRenderState bedRenderState, PoseStack poseStack, SubmitNodeCollector nodeCollector,
+                     CameraRenderState cameraRenderState) {
     final SpriteId sprite = new SpriteId(
         Identifier.withDefaultNamespace("textures/atlas/blocks.png"),
         Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID,

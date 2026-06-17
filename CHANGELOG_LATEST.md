@@ -2,8 +2,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/comforts/blob/1.21.x/CHANGELOG.md).
 
-## [14.0.2+1.21.11] - 2026.03.06
+## [15.0.0+26.1.2] - 2026.06.21
+### Added
+- Added `comforts:sleep_schedule` timeline with time markers:
+    - `comforts:wake_up_from_sleep` - when to wake up after sleeping through the night, defers to vanilla behavior if unused
+    - `comforts:wake_up_from_nap` - when to wake up after sleeping through the day
 ### Changed
-- Updated clarity on rope and nail feedback messages [#195](https://github.com/illusivesoulworks/comforts/issues/195)
-### Fixed
-- Fixed loading errors for the optional shapeless Rope and Nail recipe [#198](https://github.com/illusivesoulworks/comforts/issues/198)
+- Updated to Minecraft 26.1.2

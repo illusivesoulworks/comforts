@@ -1,0 +1,8 @@
+{
+  "clock": "minecraft:overworld",
+  "period_ticks": 24000,
+  "time_markers": {
+    "comforts:wake_up_from_sleep": 0,
+    "comforts:wake_up_from_nap": 11999
+  }
+}

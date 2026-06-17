@@ -19,7 +19,6 @@ package com.illusivesoulworks.comforts.common.network;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.platform.Services;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -27,6 +26,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.NonNull;
 
 public record SPacketAutoSleep(int entityId, BlockPos pos) implements CustomPacketPayload {
 
@@ -44,7 +44,7 @@ public record SPacketAutoSleep(int entityId, BlockPos pos) implements CustomPack
     Services.SLEEP_EVENTS.getSleepData(player).ifPresent(data -> data.setAutoSleepPos(pos));
   }
 
-  @Nonnull
+  @NonNull
   @Override
   public Type<? extends CustomPacketPayload> type() {
     return TYPE;

@@ -28,14 +28,14 @@ public class MixinPlayer {
       ),
       method = "tick"
   )
-  private void comforts$stopSleepInBed(Player player, boolean wakeImmediately,
-                              boolean updateLevelForSleepingPlayers, Operation<Void> original) {
+  private void comforts$stopSleepInBed(Player player, boolean forcefulWakeUp,
+                                       boolean updateLevelList, Operation<Void> original) {
     boolean allowedSleep = player.getSleepingPos()
         .map(pos -> ComfortsEvents.canSleep(player.level(), pos) == ComfortsConstants.Result.ALLOW)
         .orElse(false);
 
     if (!allowedSleep) {
-      original.call(player, wakeImmediately, updateLevelForSleepingPlayers);
+      original.call(player, forcefulWakeUp, updateLevelList);
     }
   }
 }

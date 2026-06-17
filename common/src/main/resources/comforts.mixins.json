@@ -4,7 +4,9 @@
   "package": "com.illusivesoulworks.comforts.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "AccessorClockInstance",
     "AccessorPlayer",
+    "AccessorServerClockManager",
     "MixinCatLieOnBedGoal",
     "MixinCatRelaxOnOwnerGoal",
     "MixinCatSitOnBlockGoal",
@@ -19,6 +21,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "${mod_id}.refmap.json"
+  }
 }

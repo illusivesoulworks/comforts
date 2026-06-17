@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [15.0.0+26.1.2] - 2026.06.21
+### Added
+- Added `comforts:sleep_schedule` timeline with time markers:
+  - `comforts:wake_up_from_sleep` - when to wake up after sleeping through the night, defers to vanilla behavior if unused
+  - `comforts:wake_up_from_nap` - when to wake up after sleeping through the day
+### Changed
+- Updated to Minecraft 26.1.2
+
 ## [14.0.2+1.21.11] - 2026.03.06
 ### Changed
 - Updated clarity on rope and nail feedback messages [#195](https://github.com/illusivesoulworks/comforts/issues/195)

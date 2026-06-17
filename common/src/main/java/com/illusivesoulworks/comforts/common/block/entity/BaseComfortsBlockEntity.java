@@ -17,8 +17,6 @@
 
 package com.illusivesoulworks.comforts.common.block.entity;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -28,9 +26,13 @@ import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public abstract class BaseComfortsBlockEntity extends BlockEntity implements Nameable {
 
+  @Nullable
   private DyeColor color;
   @Nullable
   protected Component name;
@@ -74,7 +76,7 @@ public abstract class BaseComfortsBlockEntity extends BlockEntity implements Nam
     return this.name;
   }
 
-  public void setName(@Nonnull Component name) {
+  public void setName(Component name) {
     this.name = name;
   }
 }
