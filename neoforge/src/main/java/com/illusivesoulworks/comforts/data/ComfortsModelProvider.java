@@ -40,23 +40,12 @@ public class ComfortsModelProvider extends ModelProvider {
   @Override
   protected void registerModels(@Nonnull BlockModelGenerators blockModels,
                                 @Nonnull ItemModelGenerators itemModels) {
+    // MC 26.2: individual Blocks.*_WOOL constants were replaced by a single
+    // Blocks.WOOL ColorCollection, indexed via pick(DyeColor).
     EnumMap<DyeColor, Block> dyedWool = new EnumMap<>(DyeColor.class);
-    dyedWool.put(DyeColor.WHITE, Blocks.WHITE_WOOL);
-    dyedWool.put(DyeColor.ORANGE, Blocks.ORANGE_WOOL);
-    dyedWool.put(DyeColor.MAGENTA, Blocks.MAGENTA_WOOL);
-    dyedWool.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_WOOL);
-    dyedWool.put(DyeColor.YELLOW, Blocks.YELLOW_WOOL);
-    dyedWool.put(DyeColor.LIME, Blocks.LIME_WOOL);
-    dyedWool.put(DyeColor.PINK, Blocks.PINK_WOOL);
-    dyedWool.put(DyeColor.GRAY, Blocks.GRAY_WOOL);
-    dyedWool.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_WOOL);
-    dyedWool.put(DyeColor.CYAN, Blocks.CYAN_WOOL);
-    dyedWool.put(DyeColor.PURPLE, Blocks.PURPLE_WOOL);
-    dyedWool.put(DyeColor.BLUE, Blocks.BLUE_WOOL);
-    dyedWool.put(DyeColor.BROWN, Blocks.BROWN_WOOL);
-    dyedWool.put(DyeColor.GREEN, Blocks.GREEN_WOOL);
-    dyedWool.put(DyeColor.RED, Blocks.RED_WOOL);
-    dyedWool.put(DyeColor.BLACK, Blocks.BLACK_WOOL);
+    for (DyeColor color : DyeColor.values()) {
+      dyedWool.put(color, Blocks.WOOL.pick(color));
+    }
 
     for (Map.Entry<DyeColor, Block> entry : dyedWool.entrySet()) {
       DyeColor color = entry.getKey();

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [15.1.2+26.2] - 2026.06.18
+### Changed
+- Updated to Minecraft 26.2
+### Fixed
+- Fixed missing textures on the rope and nail block caused by vanilla relocating the lead knot texture in 26.2
+- Fixed Fabric: sleeping bags and hammocks config not loading on world creation due to SpectreLib's bundled JiJ declaring an incompatible Minecraft version range
+
 ## [14.0.2+1.21.11] - 2026.03.06
 ### Changed
 - Updated clarity on rope and nail feedback messages [#195](https://github.com/illusivesoulworks/comforts/issues/195)

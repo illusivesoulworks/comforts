@@ -42,8 +42,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoubleBlockCombiner;
-import net.minecraft.world.level.block.entity.BedBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 
@@ -100,9 +99,11 @@ public abstract class BaseComfortsBlockEntityRenderer<T extends BaseComfortsBloc
     bedRenderState.part = comfortsBlockEntity.getBlockState().getValue(BedBlock.PART);
 
     if (comfortsBlockEntity.getLevel() != null) {
-      DoubleBlockCombiner.NeighborCombineResult<? extends BedBlockEntity> neighborcombineresult =
+      // MC 26.2: vanilla beds dropped their BlockEntity (BedBlockEntity/BlockEntityType.BED are
+      // gone), so use this block entity's own registered type instead of vanilla's.
+      DoubleBlockCombiner.NeighborCombineResult<? extends BlockEntity> neighborcombineresult =
           DoubleBlockCombiner.combineWithNeigbour(
-              BlockEntityType.BED,
+              comfortsBlockEntity.getType(),
               BedBlock::getBlockType,
               BedBlock::getConnectedDirection,
               ChestBlock.FACING,

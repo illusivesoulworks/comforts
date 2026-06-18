@@ -1,8 +1,8 @@
 {
 	"render_type": "translucent",
 	"textures": {
-		"particle": "minecraft:entity/lead_knot",
-		"texture": "minecraft:entity/lead_knot",
+		"particle": "minecraft:entity/lead_knot/lead_knot",
+		"texture": "minecraft:entity/lead_knot/lead_knot",
 		"texture1": "comforts:block/nail",
 		"texture2": "comforts:block/rope_base"
 	},

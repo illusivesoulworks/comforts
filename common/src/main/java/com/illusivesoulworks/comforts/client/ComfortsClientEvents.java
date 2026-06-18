@@ -67,7 +67,8 @@ public class ComfortsClientEvents {
               if (cameratype.isFirstPerson() != mc.options.getCameraType().isFirstPerson()) {
                 mc.gameRenderer.checkEntityPostEffect(mc.options.getCameraType().isFirstPerson() ? mc.getCameraEntity() : null);
               }
-              mc.levelRenderer.needsUpdate();
+              // MC 26.2: LevelRenderer#needsUpdate() was removed; vanilla's equivalent
+              // perspective-toggle code path no longer calls it either.
             }
           }
         }

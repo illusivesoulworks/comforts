@@ -12,7 +12,7 @@
     },
     {
       "type": "single",
-      "resource": "entity/lead_knot"
+      "resource": "entity/lead_knot/lead_knot"
     }
   ]
 }

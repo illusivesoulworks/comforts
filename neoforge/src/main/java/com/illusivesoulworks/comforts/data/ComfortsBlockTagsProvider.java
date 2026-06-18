@@ -21,12 +21,13 @@ public class ComfortsBlockTagsProvider extends BlockTagsProvider {
   @Override
   protected void addTags(@Nonnull HolderLookup.Provider pProvider) {
 
+    // MC 26.2: TagAppender#add now takes a ResourceKey<Block> rather than a Block directly.
     for (RegistryObject<Block> value : ComfortsRegistry.HAMMOCKS.values()) {
-      this.tag(ComfortsTags.Blocks.HAMMOCKS).add(value.get());
+      this.tag(ComfortsTags.Blocks.HAMMOCKS).add(value.get().builtInRegistryHolder().key());
     }
 
     for (RegistryObject<Block> value : ComfortsRegistry.SLEEPING_BAGS.values()) {
-      this.tag(ComfortsTags.Blocks.SLEEPING_BAGS).add(value.get());
+      this.tag(ComfortsTags.Blocks.SLEEPING_BAGS).add(value.get().builtInRegistryHolder().key());
     }
   }
 }
