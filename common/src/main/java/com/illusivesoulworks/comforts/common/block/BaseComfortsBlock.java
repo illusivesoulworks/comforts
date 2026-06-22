@@ -24,7 +24,7 @@ import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
 import com.illusivesoulworks.comforts.platform.Services;
 import com.mojang.datafixers.util.Either;
 import java.util.List;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -54,6 +54,7 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -71,8 +72,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-@NullMarked
-public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterloggedBlock {
+public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterloggedBlock, EntityBlock {
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -122,7 +122,8 @@ public abstract class BaseComfortsBlock extends BedBlock implements SimpleWaterl
         if (level.getBlockState(blockpos).is(this)) {
           level.removeBlock(blockpos, false);
         }
-        Vec3 vec3 = pos.getCenter();
+        // MC 26.2: BlockPos#getCenter() was removed; use Vec3.atCenterOf(BlockPos) instead.
+        Vec3 vec3 = Vec3.atCenterOf(pos);
         level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3, 5.0F,
                       true, Level.ExplosionInteraction.BLOCK);
         return InteractionResult.SUCCESS_SERVER;

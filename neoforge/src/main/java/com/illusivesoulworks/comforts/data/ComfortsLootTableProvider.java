@@ -4,7 +4,8 @@ import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import com.illusivesoulworks.comforts.common.registry.RegistryObject;
 import java.util.Collections;
 import javax.annotation.Nonnull;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+// MC 26.2: StatePropertiesPredicate moved into the advancements.predicates package.
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.loot.BlockLootSubProvider;

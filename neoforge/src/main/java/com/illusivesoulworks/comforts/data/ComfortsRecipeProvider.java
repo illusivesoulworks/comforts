@@ -51,24 +51,9 @@ public class ComfortsRecipeProvider extends RecipeProvider {
     List<Item> sleepingBags = ComfortsRegistry.SLEEPING_BAGS.values().stream()
         .map(blockRegistryObject -> blockRegistryObject.get().asItem()).toList();
 
-    List<Item> wool = List.of(
-        Items.WHITE_WOOL,
-        Items.ORANGE_WOOL,
-        Items.MAGENTA_WOOL,
-        Items.LIGHT_BLUE_WOOL,
-        Items.YELLOW_WOOL,
-        Items.LIME_WOOL,
-        Items.PINK_WOOL,
-        Items.GRAY_WOOL,
-        Items.LIGHT_GRAY_WOOL,
-        Items.CYAN_WOOL,
-        Items.PURPLE_WOOL,
-        Items.BLUE_WOOL,
-        Items.BROWN_WOOL,
-        Items.GREEN_WOOL,
-        Items.RED_WOOL,
-        Items.BLACK_WOOL
-    );
+    // MC 26.2: individual Items.*_WOOL constants were replaced by a single
+    // Items.WOOL ColorCollection; asList() preserves DyeColor enum order (white..black).
+    List<Item> wool = Items.WOOL.asList();
 
     for (int i = 0; i < wool.size(); i++) {
       sleepingBag(this.output, sleepingBags.get(i), wool.get(i));

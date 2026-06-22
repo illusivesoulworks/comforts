@@ -8,19 +8,21 @@ import javax.annotation.Nonnull;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.KeyTagProvider;
+// MC 26.2: KeyTagProvider was renamed/folded back into TagsProvider (its modId parameter
+// was unused for naming purposes, so the constructor call below drops it).
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 
-public class ComfortsItemTagProvider extends KeyTagProvider<Item> {
+public class ComfortsItemTagProvider extends TagsProvider<Item> {
 
   public ComfortsItemTagProvider(PackOutput output,
                                  CompletableFuture<HolderLookup.Provider> registries,
                                  String modId) {
-    super(output, Registries.ITEM, registries, modId);
+    super(output, Registries.ITEM, registries);
   }
 
   @Override
