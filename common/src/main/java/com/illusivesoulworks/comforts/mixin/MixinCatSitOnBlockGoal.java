@@ -1,15 +1,10 @@
 package com.illusivesoulworks.comforts.mixin;
 
 import com.illusivesoulworks.comforts.common.ComfortsMixinHooks;
-import com.illusivesoulworks.comforts.common.ComfortsTags;
-import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.CatSitOnBlockGoal;
-import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BedPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,7 +21,7 @@ public abstract class MixinCatSitOnBlockGoal {
       method = "isValidTarget",
       locals = LocalCapture.CAPTURE_FAILSOFT,
       cancellable = true)
-  private void comforts$isValidTarget(LevelReader levelReader, BlockPos blockPos,
+  private void comforts$isValidTarget(LevelReader level, BlockPos pos,
                                       CallbackInfoReturnable<Boolean> cir, BlockState blockState) {
 
     if (ComfortsMixinHooks.isValidCatBlock(blockState)) {

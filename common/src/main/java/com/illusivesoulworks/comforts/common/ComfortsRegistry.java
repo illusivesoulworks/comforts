@@ -32,6 +32,10 @@ import com.illusivesoulworks.comforts.platform.Services;
 import java.util.Arrays;
 import java.util.EnumMap;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.clock.ClockTimeMarker;
+import net.minecraft.world.clock.ClockTimeMarkers;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -60,6 +64,11 @@ public class ComfortsRegistry {
       SLEEPING_BAG_BLOCK_ENTITY;
   public static final RegistryObject<BlockEntityType<HammockBlockEntity>>
       HAMMOCK_BLOCK_ENTITY;
+
+  public static final ResourceKey<ClockTimeMarker> WAKE_UP_FROM_SLEEP = ResourceKey.create(ClockTimeMarkers.ROOT_ID,
+          Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "wake_up_from_sleep"));
+  public static final ResourceKey<ClockTimeMarker> WAKE_UP_FROM_NAP = ResourceKey.create(ClockTimeMarkers.ROOT_ID,
+          Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "wake_up_from_nap"));
 
   static {
     Arrays.stream(DyeColor.values()).forEach(color -> {

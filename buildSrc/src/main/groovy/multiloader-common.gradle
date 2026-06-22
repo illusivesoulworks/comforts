@@ -35,22 +35,6 @@ repositories {
     }
 }
 
-dependencies {
-    implementation 'org.jetbrains:annotations:24.1.0'
-}
-
-// Declare capabilities on the outgoing configurations.
-// Read more about capabilities here: https://docs.gradle.org/current/userguide/component_capabilities.html#sec:declaring-additional-capabilities-for-a-local-component
-['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
-    configurations."$variant".outgoing {
-        capability("$group:$mod_id-${project.name}:$version")
-        capability("$group:$mod_id:$version")
-    }
-    publishing.publications.configureEach {
-        suppressPomMetadataWarningsFor(variant)
-    }
-}
-
 sourcesJar {
     from(rootProject.file("LICENSE"))
     from(rootProject.file("COPYING"))
@@ -60,7 +44,6 @@ sourcesJar {
 }
 
 jar {
-    archiveClassifier.set("slim")
     from(rootProject.file("LICENSE"))
     from(rootProject.file("COPYING"))
     from(rootProject.file("COPYING.LESSER"))
@@ -100,13 +83,19 @@ processResources {
             "neoforge_version_range"     : neoforge_version_range,
             "java_version"               : java_version
     ]
+    var jsonExpandProps = expandProps.collectEntries {
+        key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
+    }
 
-    filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
+    filesMatching(['META-INF/mods.toml', 'META-INF/neoforge.mods.toml']) {
         expand expandProps
+    }
+
+    filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
+        expand jsonExpandProps
     }
     exclude('.cache')
     inputs.properties(expandProps)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 publishing {

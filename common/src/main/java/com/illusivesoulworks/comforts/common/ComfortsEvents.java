@@ -21,14 +21,18 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.block.BaseComfortsBlock;
 import com.illusivesoulworks.comforts.common.block.HammockBlock;
 import com.illusivesoulworks.comforts.common.block.SleepingBagBlock;
+import com.illusivesoulworks.comforts.mixin.AccessorClockInstance;
 import com.illusivesoulworks.comforts.mixin.AccessorPlayer;
+import com.illusivesoulworks.comforts.mixin.AccessorServerClockManager;
 import com.illusivesoulworks.comforts.platform.Services;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +40,7 @@ import net.minecraft.server.players.SleepStatus;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.clock.*;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -67,7 +72,7 @@ public class ComfortsEvents {
     });
   }
 
-  public static long getWakeTime(ServerLevel level, long currentTime, long newTime) {
+  public static long getWakeTime(ServerLevel level, long currentTime) {
     final boolean[] daySleeping = {false};
     List<? extends Player> players = level.players();
 
@@ -94,13 +99,36 @@ public class ComfortsEvents {
         break;
       }
     }
+    ResourceKey<ClockTimeMarker> marker = ClockTimeMarkers.WAKE_UP_FROM_SLEEP;
+    long offset = ComfortsConfig.SERVER.dayWakeTimeOffset.get();
 
     if (daySleeping[0] && level.getLevel().isBrightOutside()) {
-      final long i = currentTime + 24000L;
-      long result = (i - i % 24000L) - 12001L;
-      return Math.max(ComfortsConfig.SERVER.nightWakeTimeOffset.get() + result, currentTime);
+      marker = ComfortsRegistry.WAKE_UP_FROM_NAP;
+      offset = ComfortsConfig.SERVER.nightWakeTimeOffset.get();
     }
-    return Math.max(newTime + ComfortsConfig.SERVER.dayWakeTimeOffset.get(), currentTime);
+    ClockTimeMarker clockTimeMarker = getMarkerFromOverworldClock(level, marker);
+    long newTime = marker == ComfortsRegistry.WAKE_UP_FROM_NAP ? 11999 : 0;
+
+    if (clockTimeMarker != null) {
+      newTime = clockTimeMarker.resolveTimeToMoveTo(currentTime);
+    }
+    return newTime + offset;
+  }
+
+  public static ClockTimeMarker getMarkerFromOverworldClock(Level level, ResourceKey<ClockTimeMarker> marker) {
+    try {
+      Holder<WorldClock> worldClock = level.registryAccess().getOrThrow(WorldClocks.OVERWORLD);
+      ServerClockManager.ClockInstance clockInstance = ((AccessorServerClockManager) level.clockManager()).callGetInstance(worldClock);
+      Map<ResourceKey<ClockTimeMarker>, ClockTimeMarker> clocks = ((AccessorClockInstance) clockInstance).getTimeMarkers();
+
+      if (marker == ClockTimeMarkers.WAKE_UP_FROM_SLEEP && clocks.get(ComfortsRegistry.WAKE_UP_FROM_SLEEP).ticks() > 0) {
+        marker = ComfortsRegistry.WAKE_UP_FROM_SLEEP;
+      }
+      return clocks.get(marker);
+    } catch (Exception e) {
+      ComfortsConstants.LOG.error("Could not find marker {} for overworld clock", marker, e);
+    }
+    return null;
   }
 
   private static final List<MobEffectInstance> SLEEPING_BAG_EFFECTS = new ArrayList<>();
@@ -112,7 +140,7 @@ public class ComfortsEvents {
     if (!level.isClientSide()) {
       Services.SLEEP_EVENTS.getSleepData(player)
           .ifPresent(data -> player.getSleepingPos().ifPresent(bedPos -> {
-            final long wakeTime = level.getOverworldClockTime();
+            final long wakeTime = level.getDefaultClockTime();
             final long timeSlept = wakeTime - data.getSleepTime();
             final BlockState state = level.getBlockState(bedPos);
 
@@ -197,8 +225,8 @@ public class ComfortsEvents {
       int duration = 0;
       int amp = 0;
       try {
-        duration = Math.max(1, Math.min(Integer.parseInt(elements[1]), 1600));
-        amp = Math.max(1, Math.min(Integer.parseInt(elements[2]), 4));
+        duration = Math.clamp(Integer.parseInt(elements[1]), 1, 1600);
+        amp = Math.clamp(Integer.parseInt(elements[2]), 1, 4);
       } catch (Exception e) {
         ComfortsConstants.LOG.error("Problem parsing sleeping bag effects in config!", e);
       }
@@ -210,7 +238,7 @@ public class ComfortsEvents {
 
     if (!player.level().isClientSide()) {
       return Services.SLEEP_EVENTS.getSleepData(player).map(data -> {
-        final long dayTime = player.level().getOverworldClockTime();
+        final long dayTime = player.level().getDefaultClockTime();
         data.setSleepTime(dayTime);
 
         if (ComfortsConfig.SERVER.restrictSleeping.get()) {

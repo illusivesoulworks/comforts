@@ -35,17 +35,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinLivingEntityRenderer<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
 
   @Inject(at = @At("HEAD"), method = "submit*")
-  private void comforts$sleepingTranslate(S livingEntityRenderState, PoseStack poseStack,
+  private void comforts$sleepingTranslate(S state, PoseStack poseStack,
                                           SubmitNodeCollector submitNodeCollector,
-                                          CameraRenderState cameraRenderState, CallbackInfo ci) {
-    ComfortsClientEvents.onPlayerRenderPre(livingEntityRenderState, poseStack);
+                                          CameraRenderState camera, CallbackInfo ci) {
+    ComfortsClientEvents.onPlayerRenderPre(state, poseStack);
   }
 
   @Inject(at = @At("TAIL"), method = "submit*")
-  private void comforts$resetSleepingTranslate(S livingEntityRenderState, PoseStack poseStack,
+  private void comforts$resetSleepingTranslate(S state, PoseStack poseStack,
                                                SubmitNodeCollector submitNodeCollector,
-                                               CameraRenderState cameraRenderState,
+                                               CameraRenderState camera,
                                                CallbackInfo ci) {
-    ComfortsClientEvents.onPlayerRenderPost(livingEntityRenderState, poseStack);
+    ComfortsClientEvents.onPlayerRenderPost(state, poseStack);
   }
 }

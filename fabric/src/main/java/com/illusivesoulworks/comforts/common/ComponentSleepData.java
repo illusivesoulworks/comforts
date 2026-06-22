@@ -18,20 +18,21 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.common.capability.SleepDataImpl;
-import javax.annotation.Nonnull;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.ladysnake.cca.api.v3.component.Component;
+import org.jspecify.annotations.NullMarked;
+import org.ladysnake.cca.api.v8.component.CardinalComponent;
 
-public class ComponentSleepData extends SleepDataImpl implements Component {
+@NullMarked
+public class ComponentSleepData extends SleepDataImpl implements CardinalComponent {
 
   @Override
-  public void readData(@Nonnull ValueInput valueInput) {
+  public void readData(ValueInput valueInput) {
     this.read(valueInput);
   }
 
   @Override
-  public void writeData(@Nonnull ValueOutput valueOutput) {
+  public void writeData(ValueOutput valueOutput) {
     this.write(valueOutput);
   }
 }

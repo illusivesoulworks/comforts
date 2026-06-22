@@ -18,12 +18,14 @@
 package com.illusivesoulworks.comforts.common.capability;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface ISleepData {
 
   Identifier ID =
@@ -44,13 +46,13 @@ public interface ISleepData {
 
   void setTiredTime(long tiredTime);
 
-  BlockPos getAutoSleepPos();
+  @Nullable BlockPos getAutoSleepPos();
 
-  void setAutoSleepPos(BlockPos pos);
+  void setAutoSleepPos(@Nullable BlockPos pos);
 
   void copyFrom(ISleepData other);
 
-  void write(@Nonnull ValueOutput output);
+  void write(ValueOutput output);
 
-  void read(@Nonnull ValueInput input);
+  void read(ValueInput input);
 }

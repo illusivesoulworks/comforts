@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public record HammockEnabledCondition() implements ResourceCondition {
 
@@ -19,6 +20,7 @@ public record HammockEnabledCondition() implements ResourceCondition {
       Identifier.fromNamespaceAndPath(ComfortsConstants.MOD_ID, "hammock_enabled"),
       CODEC);
 
+  @NonNull
   @Override
   public ResourceConditionType<?> getType() {
     return TYPE;

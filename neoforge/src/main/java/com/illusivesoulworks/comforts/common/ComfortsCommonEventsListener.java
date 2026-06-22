@@ -18,9 +18,10 @@
 package com.illusivesoulworks.comforts.common;
 
 import com.illusivesoulworks.comforts.ComfortsConstants;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.ClockTimeMarker;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.util.ClockAdjustment;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
@@ -37,7 +38,6 @@ public class ComfortsCommonEventsListener {
 
   @SubscribeEvent
   public void onSleepTimeCheck(final CanContinueSleepingEvent evt) {
-
     evt.getEntity().getSleepingPos().ifPresent(sleepingPos -> {
       ComfortsConstants.Result result =
           ComfortsEvents.canSleep(evt.getEntity().level(), sleepingPos);
@@ -56,13 +56,35 @@ public class ComfortsCommonEventsListener {
 
     if (levelAccessor instanceof ServerLevel serverLevel) {
       long currentTime = serverLevel.getOverworldClockTime();
-      long vanillaNewTime = ((currentTime / 24000L) + 1L) * 24000L;
-      long time = ComfortsEvents.getWakeTime(serverLevel, currentTime, vanillaNewTime);
+      long adjustedTime = currentTime;
 
-      if (time != vanillaNewTime) {
-        evt.setAdjustment(new ClockAdjustment.Absolute(time));
+      try {
+        adjustedTime = getClockAdjustmentTime(evt.getAdjustment(), serverLevel, currentTime);
+      } catch (IllegalStateException e) {
+        ComfortsConstants.LOG.error("Failed to adjust wake time accurately.", e);
+      }
+      long newTime = ComfortsEvents.getWakeTime(serverLevel, currentTime);
+
+      if (newTime != adjustedTime) {
+        evt.setAdjustment(new ClockAdjustment.Absolute(newTime));
       }
     }
+  }
+
+  private static long getClockAdjustmentTime(ClockAdjustment originalAdjustment, ServerLevel level, long currentTime)
+          throws IllegalStateException {
+    if (originalAdjustment instanceof ClockAdjustment.Absolute(long ticks)) {
+      return ticks;
+    } else if (originalAdjustment instanceof ClockAdjustment.Relative(long ticks)) {
+      return currentTime + ticks;
+    } else if (originalAdjustment instanceof ClockAdjustment.Marker(ResourceKey<ClockTimeMarker> key)) {
+      ClockTimeMarker marker = ComfortsEvents.getMarkerFromOverworldClock(level, key);
+
+      if (marker != null) {
+        return marker.resolveTimeToMoveTo(currentTime);
+      }
+    }
+    return currentTime;
   }
 
   @SubscribeEvent

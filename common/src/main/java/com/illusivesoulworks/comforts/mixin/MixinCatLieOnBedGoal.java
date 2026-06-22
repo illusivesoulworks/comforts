@@ -16,11 +16,11 @@ public class MixinCatLieOnBedGoal {
       at = @At("RETURN"),
       method = "isValidTarget",
       cancellable = true)
-  private void comforts$isValidTarget(LevelReader levelReader, BlockPos blockPos,
+  private void comforts$isValidTarget(LevelReader level, BlockPos pos,
                                       CallbackInfoReturnable<Boolean> cir) {
 
     if (!cir.getReturnValue() && ComfortsMixinHooks.isValidCatBlock(
-        levelReader.getBlockState(blockPos))) {
+        level.getBlockState(pos))) {
       cir.setReturnValue(true);
     }
   }

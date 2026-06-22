@@ -1,6 +1,6 @@
 plugins {
     id 'multiloader-common'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev'
 }
 
 neoForge {
@@ -13,11 +13,11 @@ neoForge {
 }
 
 dependencies {
-    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    compileOnly "org.spongepowered:mixin:0.8.5"
     // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
-    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
-    annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
-    compileOnly group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-common', version: "${spectrelib_version}"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.3"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.3"
+    compileOnly "com.illusivesoulworks.spectrelib:spectrelib-common:$spectrelib_version"
 }
 
 configurations {
@@ -34,4 +34,23 @@ configurations {
 artifacts {
     commonJava sourceSets.main.java.sourceDirectories.singleFile
     commonResources sourceSets.main.resources.sourceDirectories.files
+}
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'common')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'common')
+            }
+        }
+    }
 }

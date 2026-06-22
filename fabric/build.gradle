@@ -2,7 +2,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'net.fabricmc.fabric-loom' version '1.16-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
 }
@@ -18,7 +18,6 @@ dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation "com.illusivesoulworks.spectrelib:spectrelib-fabric:${spectrelib_version}"
     include "com.illusivesoulworks.spectrelib:spectrelib-fabric:${spectrelib_version}"
 
@@ -63,16 +62,18 @@ loom {
 
 tasks.register('publishCurseForge', TaskPublishCurseForge) {
     apiToken = "${System.getenv('CURSEFORGE_KEY')}"
+    //debugMode = true
     def projectId = "${cf_id}".toString()
     def mainFile = upload(projectId, file("${project.layout.buildDirectory.get()}/libs/${base.archivesName.get()}-${version}.jar"))
     mainFile.changelogType = 'markdown'
     mainFile.changelog = file('../CHANGELOG_LATEST.md')
     mainFile.releaseType = "${release_type}"
+    def sourceFile = mainFile.withAdditionalFile(sourcesJar)
     "${release_versions}".split(',').each {
         mainFile.addGameVersion("${it}")
+        sourceFile.gameVersions.add("")
     }
     mainFile.addRequirement("fabric-api")
-    mainFile.withAdditionalFile(sourcesJar)
 
     doLast {
 
@@ -103,45 +104,21 @@ tasks.modrinth.doLast {
     }
 }
 
-// spectrelib 0.21.0+26.1.2 declares "minecraft": "~26.1" in its fabric.mod.json, which causes
-// Fabric Loader to silently skip loading it on MC 26.2. Patch the bundled JiJ copy to use
-// ">=26.1" so it loads on any 26.x build.
-tasks.named('jar') {
-    doLast {
-        def jarFile = archiveFile.get().asFile
-        def spectrelibEntryName = "META-INF/jars/spectrelib-fabric-${spectrelib_version}.jar"
-        def outerUri = new URI("jar:" + jarFile.toURI().toString())
-        def outerFs = java.nio.file.FileSystems.newFileSystem(outerUri, Collections.emptyMap())
-        try {
-            def spectrelibPath = outerFs.getPath(spectrelibEntryName)
-            if (!java.nio.file.Files.exists(spectrelibPath)) {
-                logger.warn("Could not find ${spectrelibEntryName} in output JAR to patch")
-                return
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
             }
-            def spectrelibBytes = java.nio.file.Files.readAllBytes(spectrelibPath)
-            def baos = new java.io.ByteArrayOutputStream()
-            def zos = new java.util.zip.ZipOutputStream(baos)
-            def zis = new java.util.zip.ZipInputStream(new java.io.ByteArrayInputStream(spectrelibBytes))
-            def zipEntry
-            while ((zipEntry = zis.getNextEntry()) != null) {
-                zos.putNextEntry(new java.util.zip.ZipEntry(zipEntry.name))
-                if (zipEntry.name == "fabric.mod.json") {
-                    def content = new String(zis.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8)
-                    def patched = content.replace('"~26.1"', '">=26.1"')
-                    zos.write(patched.getBytes(java.nio.charset.StandardCharsets.UTF_8))
-                    if (patched != content) {
-                        logger.lifecycle("Patched spectrelib JiJ: minecraft ~26.1 -> >=26.1")
-                    }
-                } else {
-                    zos.write(zis.readAllBytes())
-                }
-                zos.closeEntry()
-            }
-            zis.close()
-            zos.close()
-            java.nio.file.Files.write(spectrelibPath, baos.toByteArray())
-        } finally {
-            outerFs.close()
         }
     }
 }

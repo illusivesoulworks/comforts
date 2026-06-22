@@ -4,7 +4,6 @@ import com.illusivesoulworks.comforts.ComfortsConstants;
 import com.illusivesoulworks.comforts.common.ComfortsRegistry;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nonnull;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
@@ -18,7 +17,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class ComfortsRecipeProvider extends FabricRecipeProvider {
 
   public ComfortsRecipeProvider(FabricPackOutput output,
@@ -26,7 +27,6 @@ public class ComfortsRecipeProvider extends FabricRecipeProvider {
     super(output, registriesFuture);
   }
 
-  @Nonnull
   @Override
   protected RecipeProvider createRecipeProvider(HolderLookup.Provider provider,
                                                 RecipeOutput recipeOutput) {
@@ -151,7 +151,6 @@ public class ComfortsRecipeProvider extends FabricRecipeProvider {
     }
   }
 
-  @Nonnull
   @Override
   public String getName() {
     return ComfortsConstants.MOD_ID;
