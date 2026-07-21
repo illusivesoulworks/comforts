@@ -50,6 +50,7 @@
   "item.comforts.hammock.no_rope": "Tenés que colgar la hamaca entre dos sogas y clavos",
   "item.comforts.hammock.no_space": "No hay suficiente espacio para colocar la hamaca",
   "item.comforts.hammock.missing_rope": "Debe haber otra soga y clavo del otro lado para colgar la hamaca",
+  "item.comforts.hammock.ropes_too_far": "La soga y el clavo del otro extremo están demasiado lejos para colgar la hamaca",
   "item.comforts.sleeping_bag.broke": "La bolsa de dormir se rompió",
   "capability.comforts.not_sleepy": "No podés descansar ahora; todavía no tenés sueño",
   "gui.comforts.config.autoUse.name": "Usar bolsas de dormir automáticamente",
